@@ -4,13 +4,6 @@ from psycopg2._psycopg import cursor
 
 
 class DatabaseQueryService:
-    __connection = connect(
-        host="postgres",
-        database=os.environ.get("POSTGRES_DB"),
-        user=os.environ.get("POSTGRES_USER"),
-        password=os.environ.get("POSTGRES_PASSWORD"),
-        port=5432
-    )
 
     def __init__(self) -> None:
         self.__cursor = self.__get_cursor()
@@ -19,11 +12,11 @@ class DatabaseQueryService:
     def __get_cursor() -> cursor:
         try:
             connection = connect(
-                host="postgres",
+                host=os.environ.get("POSTGRES_HOST"),
                 database=os.environ.get("POSTGRES_DB"),
                 user=os.environ.get("POSTGRES_USER"),
                 password=os.environ.get("POSTGRES_PASSWORD"),
-                port=5432
+                port=os.environ.get("POSTGRES_PORT")
             )
 
             return connection.cursor()
