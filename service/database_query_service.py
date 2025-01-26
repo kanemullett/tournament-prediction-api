@@ -1,6 +1,9 @@
 import os
 from psycopg2 import connect
 from psycopg2._psycopg import cursor
+from typing import Any
+
+from model.query_request import QueryRequest
 
 
 class DatabaseQueryService:
@@ -29,3 +32,7 @@ class DatabaseQueryService:
         rows = self.__cursor.fetchall()
         for row in rows:
             print(row)
+
+    def retrieve_records(self, query_request: QueryRequest) -> list[tuple[Any, ...]]:
+        self.__cursor.execute(f"SELECT * FROM {query_request.schema_}.{query_request.table};")
+        return self.__cursor.fetchall()
