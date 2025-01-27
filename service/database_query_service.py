@@ -1,5 +1,3 @@
-import os
-from psycopg2 import connect
 from psycopg2._psycopg import connection, cursor
 from typing import Any
 
