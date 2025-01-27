@@ -1,3 +1,5 @@
+from typing import Any
+
 from model.sql_condition import SqlCondition
 from model.sql_condition_group import SqlConditionGroup
 from model.sql_query import SqlQuery
@@ -32,12 +34,19 @@ class QueryBuilderFunction:
 
         return f" {sql_condition_group.join.value} ".join(condition_strings)
 
-    @staticmethod
-    def __build_condition(sql_condition: SqlCondition) -> str:
+    def __build_condition(self, sql_condition: SqlCondition) -> str:
 
         condition_parts: list[str] = [sql_condition.column, sql_condition.operator.value]
 
         if sql_condition.value is not None:
-            condition_parts.append(f"'{str(sql_condition.value)}'")
+            condition_parts.append(self.__build_value(sql_condition.value))
 
         return " ".join(condition_parts)
+
+    @staticmethod
+    def __build_value(value: Any) -> str:
+
+        if isinstance(value, str):
+            return f"'{value}'"
+
+        return str(value)

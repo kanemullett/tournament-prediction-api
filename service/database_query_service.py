@@ -40,9 +40,9 @@ class DatabaseQueryService:
             conditionGroup=query_request.conditionGroup
         )
 
+        print(self.__query_builder.apply(sql_query))
         this_cursor.execute(self.__query_builder.apply(sql_query))
         rows: list[tuple[Any, ...]] = this_cursor.fetchall()
-        print(self.__query_builder.apply(sql_query))
 
         this_cursor.close()
         return rows
