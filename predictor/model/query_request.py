@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 
-from model.sql_condition_group import SqlConditionGroup
+from predictor.model.sql_condition_group import SqlConditionGroup
 
 
 class QueryRequest(BaseModel):

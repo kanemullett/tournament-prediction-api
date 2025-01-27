@@ -1,9 +1,9 @@
 from typing import Any
 
-from model.sql_condition import SqlCondition
-from model.sql_condition_group import SqlConditionGroup
-from model.sql_query import SqlQuery
-from model.type.sql_operator import SqlOperator
+from predictor.model.sql_condition import SqlCondition
+from predictor.model.sql_condition_group import SqlConditionGroup
+from predictor.model.sql_query import SqlQuery
+from predictor.model.type.sql_operator import SqlOperator
 
 
 class QueryBuilderFunction:

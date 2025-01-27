@@ -1,8 +1,8 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 
-from model.sql_condition_group import SqlConditionGroup
-from model.type.sql_operator import SqlOperator
+from predictor.model.sql_condition_group import SqlConditionGroup
+from predictor.model.type.sql_operator import SqlOperator
 
 
 class SqlQuery(BaseModel):
