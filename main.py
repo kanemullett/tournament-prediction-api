@@ -1,10 +1,10 @@
-from predictor.model.query_request import QueryRequest
-from predictor.model.sql_condition import SqlCondition
-from predictor.model.sql_condition_group import SqlConditionGroup
-from predictor.model.type.sql_condition_operator import SqlConditionOperator
-from predictor.model.type.sql_join import SqlJoin
-from predictor.service.database_query_service import DatabaseQueryService
-from predictor.util.database_utils import DatabaseUtils
+from db_handler.model.query_request import QueryRequest
+from db_handler.model.sql_condition import SqlCondition
+from db_handler.model.sql_condition_group import SqlConditionGroup
+from db_handler.model.type.sql_condition_operator import SqlConditionOperator
+from db_handler.model.type.sql_join import SqlJoin
+from db_handler.service.database_query_service import DatabaseQueryService
+from db_handler.util.database_utils import DatabaseUtils
 
 
 def main():

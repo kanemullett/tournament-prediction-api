@@ -1,11 +1,11 @@
 from psycopg2._psycopg import connection, cursor
 from typing import Any
 
-from predictor.function.query_builder_function import QueryBuilderFunction
-from predictor.function.record_builder_function import RecordBuilderFunction
-from predictor.model.query_request import QueryRequest
-from predictor.model.sql_query import SqlQuery
-from predictor.model.type.sql_operator import SqlOperator
+from db_handler.function.query_builder_function import QueryBuilderFunction
+from db_handler.function.record_builder_function import RecordBuilderFunction
+from db_handler.model.query_request import QueryRequest
+from db_handler.model.sql_query import SqlQuery
+from db_handler.model.type.sql_operator import SqlOperator
 
 
 class DatabaseQueryService:
