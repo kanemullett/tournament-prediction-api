@@ -4,10 +4,11 @@ from model.sql_condition_group import SqlConditionGroup
 from model.type.sql_condition_operator import SqlConditionOperator
 from model.type.sql_join import SqlJoin
 from service.database_query_service import DatabaseQueryService
+from util.database_utils import DatabaseUtils
 
 
 def main():
-    database_query_service: DatabaseQueryService = DatabaseQueryService()
+    database_query_service: DatabaseQueryService = DatabaseQueryService(DatabaseUtils.DATABASE_CONNECTION)
 
     query_request: QueryRequest = QueryRequest(
         schema="predictor",

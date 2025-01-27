@@ -12,24 +12,10 @@ from model.type.sql_operator import SqlOperator
 
 class DatabaseQueryService:
 
-    def __init__(self) -> None:
-        self.__connection = self.__get_connection()
+    def __init__(self, database_connection: connection) -> None:
+        self.__connection = database_connection
         self.__query_builder = QueryBuilderFunction()
         self.__record_builder = RecordBuilderFunction()
-
-    @staticmethod
-    def __get_connection() -> connection:
-        try:
-            return connect(
-                host=os.environ.get("POSTGRES_HOST"),
-                database=os.environ.get("POSTGRES_DB"),
-                user=os.environ.get("POSTGRES_USER"),
-                password=os.environ.get("POSTGRES_PASSWORD"),
-                port=os.environ.get("POSTGRES_PORT")
-            )
-
-        except Exception as e:
-            print("Error connecting to the database:", e)
 
     def retrieve_records(self, query_request: QueryRequest) -> list[dict[str, Any]]:
         this_cursor: cursor = self.__connection.cursor()
