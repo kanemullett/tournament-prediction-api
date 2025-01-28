@@ -10,10 +10,14 @@ from db_handler.db_handler.model.type.sql_operator import SqlOperator
 
 class DatabaseQueryService:
 
-    def __init__(self, database_connection: connection) -> None:
+    def __init__(
+            self,
+            database_connection: connection,
+            query_builder: QueryBuilderFunction,
+            record_builder: RecordBuilderFunction) -> None:
         self.__connection = database_connection
-        self.__query_builder = QueryBuilderFunction()
-        self.__record_builder = RecordBuilderFunction()
+        self.__query_builder = query_builder
+        self.__record_builder = record_builder
 
     def retrieve_records(self, query_request: QueryRequest) -> list[dict[str, Any]]:
         this_cursor: cursor = self.__connection.cursor()
@@ -26,7 +30,6 @@ class DatabaseQueryService:
             conditionGroup=query_request.conditionGroup
         )
 
-        print(self.__query_builder.apply(sql_query))
         this_cursor.execute(self.__query_builder.apply(sql_query))
         rows: list[tuple[Any, ...]] = this_cursor.fetchall()
         column_headers: list[str] = [desc[0] for desc in this_cursor.description]
