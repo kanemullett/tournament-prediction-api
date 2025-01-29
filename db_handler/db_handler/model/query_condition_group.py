@@ -1,9 +1,16 @@
 from pydantic import BaseModel
 
 from db_handler.db_handler.model.query_condition import QueryCondition
-from db_handler.db_handler.model.type.join import Join
+from db_handler.db_handler.model.type.condition_join import ConditionJoin
 
 
 class QueryConditionGroup(BaseModel):
+    """
+    Object representing a group of query conditions.
+
+    Attributes:
+        conditions (list[QueryCondition]): The conditions to validate the returning data by.
+        join (ConditionJoin): The join to apply to the conditions.
+    """
     conditions: list[QueryCondition]
-    join: Join = Join.AND
+    join: ConditionJoin = ConditionJoin.AND

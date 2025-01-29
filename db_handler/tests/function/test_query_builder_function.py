@@ -6,7 +6,7 @@ from db_handler.db_handler.model.sql_query import SqlQuery
 from db_handler.db_handler.model.table import Table
 from db_handler.db_handler.model.table_join import TableJoin
 from db_handler.db_handler.model.type.condition_operator import ConditionOperator
-from db_handler.db_handler.model.type.join import Join
+from db_handler.db_handler.model.type.condition_join import ConditionJoin
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.type.table_join_type import TableJoinType
 from predictor_common.test_resources.assertions import Assertions
@@ -132,7 +132,7 @@ class TestQueryBuilderFunction:
                         value=23
                     )
                 ],
-                join=Join.OR
+                join=ConditionJoin.OR
             )
         )
 
@@ -176,7 +176,7 @@ class TestQueryBuilderFunction:
                         value=23
                     )
                 ],
-                join=Join.OR
+                join=ConditionJoin.OR
             )
         )
 
@@ -256,7 +256,7 @@ class TestQueryBuilderFunction:
                         value=23
                     )
                 ],
-                join=Join.OR
+                join=ConditionJoin.OR
             )
         )
 

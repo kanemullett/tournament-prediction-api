@@ -9,6 +9,15 @@ from db_handler.db_handler.model.table_join import TableJoin
 
 
 class QueryRequest(BaseModel):
+    """
+    Object representing a query to be sent to the database.
+
+    Attributes:
+        table (Table): The table to query.
+        columns (Optional[list[Column]]): The columns to retrieve.
+        tableJoins (Optional[list[TableJoin]]): The tables to join.
+        conditionGroup (QueryConditionGroup): The filtering conditions to apply.
+    """
     table: Table
     columns: Optional[list[Column]] = None
     tableJoins: Optional[list[TableJoin]] = None

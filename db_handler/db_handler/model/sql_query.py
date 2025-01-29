@@ -10,6 +10,17 @@ from db_handler.db_handler.model.type.sql_operator import SqlOperator
 
 
 class SqlQuery(BaseModel):
+    """
+    Object representing a SQL query.
+
+    Attributes:
+        operator (SqlOperator): The sql query operator.
+        table (Table): The table to query.
+        columns (Optional[list[Column]]): The columns to retrieve.
+        tableJoins (Optional[list[TableJoin]]): The tables to join.
+        conditionGroup (QueryConditionGroup): The filtering conditions to apply.
+    """
+
     operator: SqlOperator
     table: Table
     columns: Optional[list[Column]] = None
