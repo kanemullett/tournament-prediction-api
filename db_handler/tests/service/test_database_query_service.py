@@ -5,6 +5,7 @@ from db_handler.db_handler.model.column import Column
 from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.query_condition_group import QueryConditionGroup
+from db_handler.db_handler.model.table import Table
 from db_handler.db_handler.model.type.condition_operator import ConditionOperator
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.service.database_query_service import DatabaseQueryService
@@ -22,8 +23,10 @@ class TestDatabaseQueryService:
     def test_should_build_and_send_select_query(self):
         # Given
         query_request: QueryRequest = QueryRequest(
-            schema="test_schema",
-            table="test_table",
+            table=Table(
+                schema="test_schema",
+                table="test_table"
+            ),
             columns=[
                 Column(
                     parts=["id"]

@@ -24,9 +24,9 @@ class DatabaseQueryService:
 
         sql_query: SqlQuery = SqlQuery(
             operator=SqlOperator.SELECT,
-            schema=query_request.schema_,
             table=query_request.table,
             columns=query_request.columns,
+            tableJoins=query_request.tableJoins,
             conditionGroup=query_request.conditionGroup
         )
 
