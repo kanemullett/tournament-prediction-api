@@ -1,7 +1,7 @@
 from typing import Any
 
-from db_handler.db_handler.model.sql_condition import SqlCondition
-from db_handler.db_handler.model.sql_condition_group import SqlConditionGroup
+from db_handler.db_handler.model.query_condition import QueryCondition
+from db_handler.db_handler.model.query_condition_group import QueryConditionGroup
 from db_handler.db_handler.model.sql_query import SqlQuery
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 
@@ -29,12 +29,12 @@ class QueryBuilderFunction:
 
         return string_parts
 
-    def __build_conditions(self, sql_condition_group: SqlConditionGroup) -> str:
+    def __build_conditions(self, sql_condition_group: QueryConditionGroup) -> str:
         condition_strings: list[str] = list(map(lambda condition: self.__build_condition(condition), sql_condition_group.conditions))
 
         return f" {sql_condition_group.join.value} ".join(condition_strings)
 
-    def __build_condition(self, sql_condition: SqlCondition) -> str:
+    def __build_condition(self, sql_condition: QueryCondition) -> str:
 
         condition_parts: list[str] = [sql_condition.column, sql_condition.operator.value]
 

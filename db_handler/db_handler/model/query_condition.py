@@ -4,7 +4,7 @@ from typing import Any
 from db_handler.db_handler.model.type.sql_condition_operator import SqlConditionOperator
 
 
-class SqlCondition(BaseModel):
+class QueryCondition(BaseModel):
     column: str
     operator: SqlConditionOperator
     value: Any = None

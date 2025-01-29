@@ -1,6 +1,6 @@
 from db_handler.db_handler.function.query_builder_function import QueryBuilderFunction
-from db_handler.db_handler.model.sql_condition import SqlCondition
-from db_handler.db_handler.model.sql_condition_group import SqlConditionGroup
+from db_handler.db_handler.model.query_condition import QueryCondition
+from db_handler.db_handler.model.query_condition_group import QueryConditionGroup
 from db_handler.db_handler.model.sql_query import SqlQuery
 from db_handler.db_handler.model.type.sql_condition_operator import SqlConditionOperator
 from db_handler.db_handler.model.type.sql_join import SqlJoin
@@ -62,9 +62,9 @@ class TestQueryBuilderFunction:
             operator=SqlOperator.SELECT,
             schema="test_schema",
             table="test_table",
-            conditionGroup=SqlConditionGroup(
+            conditionGroup=QueryConditionGroup(
                 conditions=[
-                    SqlCondition(
+                    QueryCondition(
                         column="column1",
                         operator=SqlConditionOperator.EQUAL,
                         value="test_value"
@@ -85,14 +85,14 @@ class TestQueryBuilderFunction:
             operator=SqlOperator.SELECT,
             schema="test_schema",
             table="test_table",
-            conditionGroup=SqlConditionGroup(
+            conditionGroup=QueryConditionGroup(
                 conditions=[
-                    SqlCondition(
+                    QueryCondition(
                         column="column1",
                         operator=SqlConditionOperator.EQUAL,
                         value="test_value"
                     ),
-                    SqlCondition(
+                    QueryCondition(
                         column="column2",
                         operator=SqlConditionOperator.EQUAL,
                         value=23

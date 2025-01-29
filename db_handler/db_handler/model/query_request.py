@@ -1,10 +1,10 @@
 from pydantic import BaseModel, Field
 
-from db_handler.db_handler.model.sql_condition_group import SqlConditionGroup
+from db_handler.db_handler.model.query_condition_group import QueryConditionGroup
 
 
 class QueryRequest(BaseModel):
     schema_: str = Field(alias="schema")
     table: str
     columns: list[str] = None
-    conditionGroup: SqlConditionGroup = None
+    conditionGroup: QueryConditionGroup = None

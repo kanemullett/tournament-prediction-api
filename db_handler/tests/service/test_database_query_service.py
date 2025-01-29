@@ -2,8 +2,8 @@ from typing import Any
 from unittest.mock import MagicMock
 
 from db_handler.db_handler.model.query_request import QueryRequest
-from db_handler.db_handler.model.sql_condition import SqlCondition
-from db_handler.db_handler.model.sql_condition_group import SqlConditionGroup
+from db_handler.db_handler.model.query_condition import QueryCondition
+from db_handler.db_handler.model.query_condition_group import QueryConditionGroup
 from db_handler.db_handler.model.type.sql_condition_operator import SqlConditionOperator
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.service.database_query_service import DatabaseQueryService
@@ -24,14 +24,14 @@ class TestDatabaseQueryService:
             schema="test_schema",
             table="test_table",
             columns=["id", "column1", "column2"],
-            conditionGroup=SqlConditionGroup(
+            conditionGroup=QueryConditionGroup(
                 conditions=[
-                    SqlCondition(
+                    QueryCondition(
                         column="column1",
                         operator=SqlConditionOperator.LESS_THAN,
                         value=23
                     ),
-                    SqlCondition(
+                    QueryCondition(
                         column="column2",
                         operator=SqlConditionOperator.EQUAL,
                         value="hello"
