@@ -1,9 +1,10 @@
 from db_handler.db_handler.function.query_builder_function import QueryBuilderFunction
+from db_handler.db_handler.model.column import Column
 from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.query_condition_group import QueryConditionGroup
 from db_handler.db_handler.model.sql_query import SqlQuery
-from db_handler.db_handler.model.type.sql_condition_operator import SqlConditionOperator
-from db_handler.db_handler.model.type.sql_join import SqlJoin
+from db_handler.db_handler.model.type.condition_operator import ConditionOperator
+from db_handler.db_handler.model.type.join import Join
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from predictor_common.test_resources.assertions import Assertions
 
@@ -32,7 +33,11 @@ class TestQueryBuilderFunction:
             operator=SqlOperator.SELECT,
             schema="test_schema",
             table="test_table",
-            columns=["column1"]
+            columns=[
+                Column(
+                    parts=["column1"]
+                )
+            ]
         )
 
         # When
@@ -47,7 +52,17 @@ class TestQueryBuilderFunction:
             operator=SqlOperator.SELECT,
             schema="test_schema",
             table="test_table",
-            columns=["column1", "column2", "column3"]
+            columns=[
+                Column(
+                    parts=["column1"]
+                ),
+                Column(
+                    parts=["column2"]
+                ),
+                Column(
+                    parts=["column3"]
+                )
+            ]
         )
 
         # When
@@ -65,8 +80,10 @@ class TestQueryBuilderFunction:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column="column1",
-                        operator=SqlConditionOperator.EQUAL,
+                        column=Column(
+                            parts=["column1"]
+                        ),
+                        operator=ConditionOperator.EQUAL,
                         value="test_value"
                     )
                 ]
@@ -79,7 +96,7 @@ class TestQueryBuilderFunction:
         # Then
         Assertions.assert_equals("SELECT * FROM test_schema.test_table WHERE column1 = 'test_value' ;", query_string)
 
-    def test_should_build_select_statement_with_multiple_condition(self):
+    def test_should_build_select_statement_with_multiple_conditions(self):
         # Given
         sql_query: SqlQuery = SqlQuery(
             operator=SqlOperator.SELECT,
@@ -88,17 +105,21 @@ class TestQueryBuilderFunction:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column="column1",
-                        operator=SqlConditionOperator.EQUAL,
+                        column=Column(
+                            parts=["column1"]
+                        ),
+                        operator=ConditionOperator.EQUAL,
                         value="test_value"
                     ),
                     QueryCondition(
-                        column="column2",
-                        operator=SqlConditionOperator.EQUAL,
+                        column=Column(
+                            parts=["column2"]
+                        ),
+                        operator=ConditionOperator.EQUAL,
                         value=23
                     )
                 ],
-                join=SqlJoin.OR
+                join=Join.OR
             )
         )
 
@@ -107,3 +128,45 @@ class TestQueryBuilderFunction:
 
         # Then
         Assertions.assert_equals("SELECT * FROM test_schema.test_table WHERE column1 = 'test_value' OR column2 = 23 ;", query_string)
+
+    def test_should_build_select_statement_with_multiple_conditions_and_alias(self):
+        # Given
+        sql_query: SqlQuery = SqlQuery(
+            operator=SqlOperator.SELECT,
+            schema="test_schema",
+            table="test_table",
+            alias="my_table",
+            columns=[
+                Column(
+                    parts=["my_table", "name"],
+                    alias="user_name"
+                )
+            ],
+            conditionGroup=QueryConditionGroup(
+                conditions=[
+                    QueryCondition(
+                        column=Column(
+                            parts=["my_table", "column1"],
+                            alias="should_ignore"
+                        ),
+                        operator=ConditionOperator.EQUAL,
+                        value="test_value"
+                    ),
+                    QueryCondition(
+                        column=Column(
+                            parts=["my_table", "column2"],
+                            alias="should_ignore"
+                        ),
+                        operator=ConditionOperator.EQUAL,
+                        value=23
+                    )
+                ],
+                join=Join.OR
+            )
+        )
+
+        # When
+        query_string: str = self.__query_builder.apply(sql_query)
+
+        # Then
+        Assertions.assert_equals("SELECT my_table.name AS user_name FROM test_schema.test_table AS my_table WHERE my_table.column1 = 'test_value' OR my_table.column2 = 23 ;", query_string)

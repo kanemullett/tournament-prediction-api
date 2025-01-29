@@ -1,6 +1,6 @@
 from enum import Enum
 
 
-class SqlJoin(Enum):
+class Join(Enum):
     AND = "AND"
     OR = "OR"

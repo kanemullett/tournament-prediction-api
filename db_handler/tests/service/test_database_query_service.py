@@ -1,10 +1,11 @@
 from typing import Any
 from unittest.mock import MagicMock
 
+from db_handler.db_handler.model.column import Column
 from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.query_condition_group import QueryConditionGroup
-from db_handler.db_handler.model.type.sql_condition_operator import SqlConditionOperator
+from db_handler.db_handler.model.type.condition_operator import ConditionOperator
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.service.database_query_service import DatabaseQueryService
 from predictor_common.test_resources.assertions import Assertions
@@ -23,17 +24,31 @@ class TestDatabaseQueryService:
         query_request: QueryRequest = QueryRequest(
             schema="test_schema",
             table="test_table",
-            columns=["id", "column1", "column2"],
+            columns=[
+                Column(
+                    parts=["id"]
+                ),
+                Column(
+                    parts=["column1"]
+                ),
+                Column(
+                    parts=["column2"]
+                )
+            ],
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column="column1",
-                        operator=SqlConditionOperator.LESS_THAN,
+                        column=Column(
+                            parts=["column1"]
+                        ),
+                        operator=ConditionOperator.LESS_THAN,
                         value=23
                     ),
                     QueryCondition(
-                        column="column2",
-                        operator=SqlConditionOperator.EQUAL,
+                        column=Column(
+                            parts=["column2"]
+                        ),
+                        operator=ConditionOperator.EQUAL,
                         value="hello"
                     )
                 ]
