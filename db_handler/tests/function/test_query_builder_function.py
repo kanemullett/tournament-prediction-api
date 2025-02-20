@@ -11,6 +11,9 @@ from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.type.table_join_type import TableJoinType
 from predictor_common.test_resources.assertions import Assertions
 
+from fastapi import HTTPException
+from pytest import raises
+
 
 class TestQueryBuilderFunction:
 
@@ -343,3 +346,95 @@ class TestQueryBuilderFunction:
 
         # Then
         Assertions.assert_equals("INSERT INTO test_schema.test_table (col1, col2) VALUES (NULL, 2), ('val3', NULL) ;", query_string)
+
+    def test_should_build_update_statement_with_single_record(self):
+        # Given
+        sql_query: SqlQuery = SqlQuery(
+            operator=SqlOperator.UPDATE,
+            table=Table(
+                schema="test_schema",
+                table="test_table"
+            ),
+            records=[
+                {
+                    "id": "id1",
+                    "col1": "val1",
+                    "col2": 2
+                }
+            ]
+        )
+
+        # When
+        query_string: str = self.__query_builder.apply(sql_query)
+        expected: str = ("UPDATE test_schema.test_table SET "
+                         "col1 = CASE WHEN id = 'id1' THEN 'val1' ELSE col1 END, "
+                         "col2 = CASE WHEN id = 'id1' THEN 2 ELSE col2 END "
+                         "WHERE id IN ('id1') ;")
+
+        # Then
+        Assertions.assert_equals(expected, query_string)
+
+    def test_should_build_update_statement_with_multiple_records(self):
+        # Given
+        sql_query: SqlQuery = SqlQuery(
+            operator=SqlOperator.UPDATE,
+            table=Table(
+                schema="test_schema",
+                table="test_table"
+            ),
+            records=[
+                {
+                    "id": "id1",
+                    "col1": "val1",
+                    "col2": 2
+                },
+                {
+                    "id": "id2",
+                    "col2": 5,
+                    "col3": "val3"
+                }
+            ]
+        )
+
+        # When
+        query_string: str = self.__query_builder.apply(sql_query)
+        expected: str = ("UPDATE test_schema.test_table SET "
+                         "col1 = CASE WHEN id = 'id1' THEN 'val1' ELSE col1 END, "
+                         "col2 = CASE "
+                            "WHEN id = 'id1' THEN 2 "
+                            "WHEN id = 'id2' THEN 5 "
+                         "ELSE col2 END, "
+                         "col3 = CASE WHEN id = 'id2' THEN 'val3' ELSE col3 END "
+                         "WHERE id IN ('id1', 'id2') ;")
+
+        # Then
+        Assertions.assert_equals(expected, query_string)
+
+    def test_should_throw_exception_if_missing_id(self):
+        # Given
+        sql_query: SqlQuery = SqlQuery(
+            operator=SqlOperator.UPDATE,
+            table=Table(
+                schema="test_schema",
+                table="test_table"
+            ),
+            records=[
+                {
+                    "id": "id1",
+                    "col1": "val1",
+                    "col2": 2
+                },
+                {
+                    "col2": 5,
+                    "col3": "val3"
+                }
+            ]
+        )
+
+        # When
+        with raises(HTTPException) as httpe:
+            self.__query_builder.apply(sql_query)
+
+        # Then
+        Assertions.assert_equals(400, httpe.value.status_code)
+        Assertions.assert_equals("All records in update requests should contain id field.", httpe.value.detail)

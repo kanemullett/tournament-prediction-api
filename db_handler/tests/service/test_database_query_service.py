@@ -146,3 +146,44 @@ class TestDatabaseQueryService:
         Assertions.assert_equals(SqlOperator.INSERT, captured_args_query_build[0].operator)
         Assertions.assert_equals(update_request.table, captured_args_query_build[0].table)
         Assertions.assert_equals(update_request.records, captured_args_query_build[0].records)
+
+    def test_should_build_and_send_update_query(self):
+        # Given
+        update_request: UpdateRequest = UpdateRequest(
+            operation=SqlOperator.UPDATE,
+            table=Table(
+                schema="test_schema",
+                table="test_table"
+            ),
+            records=[
+                {
+                    "id": "id1",
+                    "column1": "value1"
+                }
+            ]
+        )
+
+        cursor: MagicMock = MagicMock()
+        cursor.rowcount = 1
+
+        self.__connection.cursor.return_value = cursor
+
+        query: str = ("UPDATE test_schema.test_table SET column1 = CASE WHEN id = 'id1' THEN 'value1' ELSE column1 END "
+                      "WHERE id IN ('id1') ;")
+        self.__query_builder.apply.return_value = query
+
+        # When
+        query_response: QueryResponse = self.__database_query_service.update_records(update_request)
+
+        # Then
+        Assertions.assert_type(UUID, query_response.referenceId)
+        Assertions.assert_equals(1, query_response.recordCount)
+        Assertions.assert_null(query_response.records)
+
+        captured_args_query, captured_kwargs = cursor.execute.call_args
+        Assertions.assert_equals(query, captured_args_query[0])
+
+        captured_args_query_build, captured_kwargs = self.__query_builder.apply.call_args
+        Assertions.assert_equals(SqlOperator.UPDATE, captured_args_query_build[0].operator)
+        Assertions.assert_equals(update_request.table, captured_args_query_build[0].table)
+        Assertions.assert_equals(update_request.records, captured_args_query_build[0].records)
