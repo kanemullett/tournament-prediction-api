@@ -1,2 +1,2 @@
 class StoreConstants:
-    ID = "$id"
+    ID = "id"

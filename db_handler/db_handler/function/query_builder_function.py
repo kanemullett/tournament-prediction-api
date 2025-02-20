@@ -92,10 +92,23 @@ class QueryBuilderFunction:
         return string_parts
 
     def __build_update_statement(self, sql_query: SqlQuery, string_parts: list[str]) -> list[str]:
+        """
+        Convert a SqlQuery object representing an UPDATE query into a SQL query string.
+
+        Args:
+            sql_query (SqlQuery): The SqlQuery object to be converted.
+            string_parts (list[str]): The component parts of the SQL query string.
+
+        Returns:
+            str: The SQL UPDATE query string.
+
+        Examples:
+            - UPDATE test_schema.test_table SET col1 = CASE WHEN $id = 'id1' THEN 'val1' ELSE col1 END WHERE $id IN ('id1') ;
+        """
         string_parts.append(self.__build_table(sql_query.table))
 
         string_parts.append("SET")
-        string_parts.append(self.__build_case_clauses(sql_query.records))
+        string_parts.append(self.__build_set_clause(sql_query.records))
 
         return string_parts
 
@@ -268,7 +281,20 @@ class QueryBuilderFunction:
 
         return f"({", ".join(values)})"
 
-    def __build_case_clauses(self, records: list[dict[str, Any]]) -> str:
+    def __build_set_clause(self, records: list[dict[str, Any]]) -> str:
+        """
+        Convert a list of records into a SQL SET clause string.
+
+        Args:
+            records (list[dict[str, Any]]): The records to be converted.
+
+        Returns:
+            str: The SQL SET clause string.
+
+        Examples:
+            - col1 = CASE WHEN $id = 'id1' THEN 'val1' ELSE col1 END WHERE $id IN ('id1')
+            - col1 = CASE WHEN $id = 'id1' THEN 'val1' ELSE col1, col2 = CASE WHEN $id = 'id2' THEN 'val2' ELSE col2 END WHERE $id IN ('id1', 'id2')
+        """
         records_with_id: list[dict[str, Any]] = list(filter(lambda record: StoreConstants.ID in record, records))
 
         if len(records_with_id) < len(records):
@@ -283,9 +309,35 @@ class QueryBuilderFunction:
                 f"IN ({", ".join(sorted(list({self.__build_value(item[StoreConstants.ID]) for item in records})))})")
 
     def __build_case_clause(self, column: str, records: list[dict[str, Any]]) -> str:
+        """
+        Convert a column and list of records into a SQL CASE clause string.
+
+        Args:
+            column (str): The column to be converted.
+            records (list[dict[str, Any]]): The records to be converted.
+
+        Returns:
+            str: The SQL CASE clause string.
+
+        Examples:
+            - col1 = CASE WHEN $id = 'id1' THEN 'val1' ELSE col1 END
+        """
         filtered: list[dict[str, Any]] = list(filter(lambda record: column in record, records))
 
         return f"{column} = CASE {" ".join(list(map(lambda record: self.__build_when_clause(column, record), filtered)))} ELSE {column} END"
 
     def __build_when_clause(self, column: str, record: dict[str, Any]) -> str:
+        """
+        Convert a column and record into a SQL WHEN clause string.
+
+        Args:
+            column (str): The column to be converted.
+            record (dict[str, Any]): The record to be converted.
+
+        Returns:
+            str: The SQL WHEN clause string.
+
+        Examples:
+            - WHEN $id = 'id1' THEN 'val1'
+        """
         return f"WHEN {StoreConstants.ID} = '{record[StoreConstants.ID]}' THEN {self.__build_value(record[column])}"

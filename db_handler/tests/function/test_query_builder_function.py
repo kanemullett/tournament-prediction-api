@@ -11,6 +11,9 @@ from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.type.table_join_type import TableJoinType
 from predictor_common.test_resources.assertions import Assertions
 
+from fastapi import HTTPException
+from pytest import raises
+
 
 class TestQueryBuilderFunction:
 
@@ -406,3 +409,32 @@ class TestQueryBuilderFunction:
 
         # Then
         Assertions.assert_equals(expected, query_string)
+
+    def test_should_throw_exception_if_missing_id(self):
+        # Given
+        sql_query: SqlQuery = SqlQuery(
+            operator=SqlOperator.UPDATE,
+            table=Table(
+                schema="test_schema",
+                table="test_table"
+            ),
+            records=[
+                {
+                    "$id": "id1",
+                    "col1": "val1",
+                    "col2": 2
+                },
+                {
+                    "col2": 5,
+                    "col3": "val3"
+                }
+            ]
+        )
+
+        # When
+        with raises(HTTPException) as httpe:
+            self.__query_builder.apply(sql_query)
+
+        # Then
+        Assertions.assert_equals(400, httpe.value.status_code)
+        Assertions.assert_equals("All records in update requests should contain $id field.", httpe.value.detail)
