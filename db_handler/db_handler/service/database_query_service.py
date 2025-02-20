@@ -46,7 +46,7 @@ class DatabaseQueryService:
             query_request (QueryRequest): The query request specification.
 
         Returns:
-            list[dict[str, Any]]: The records to return.
+            QueryResponse: The record response.
         """
         this_cursor: cursor = self.__connection.cursor()
 
@@ -73,6 +73,15 @@ class DatabaseQueryService:
         )
 
     def update_records(self, update_request: UpdateRequest) -> QueryResponse:
+        """
+        Update records in the database based on an update request specification.
+
+        Args:
+            update_request (UpdateRequest): The update request specification.
+
+        Returns:
+            QueryResponse: The update response.
+        """
         this_cursor: cursor = self.__connection.cursor()
 
         sql_query: SqlQuery = SqlQuery(
