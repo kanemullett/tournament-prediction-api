@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 
 from pydantic import BaseModel, Field
 
@@ -26,3 +26,4 @@ class SqlQuery(BaseModel):
     columns: Optional[list[Column]] = None
     tableJoins: Optional[list[TableJoin]] = None
     conditionGroup: QueryConditionGroup = None
+    records: Optional[list[dict[str, Any]]] = None

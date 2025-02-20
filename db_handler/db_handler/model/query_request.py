@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from db_handler.db_handler.model.column import Column
 from db_handler.db_handler.model.query_condition_group import QueryConditionGroup

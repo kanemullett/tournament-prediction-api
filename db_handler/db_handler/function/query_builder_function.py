@@ -28,6 +28,8 @@ class QueryBuilderFunction:
 
         if sql_query.operator == SqlOperator.SELECT:
             string_parts = self.__build_select_statement(sql_query, string_parts)
+        elif sql_query.operator == SqlOperator.INSERT:
+            string_parts = self.__build_insert_statement(sql_query, string_parts)
 
         string_parts.append(";")
 
@@ -57,6 +59,17 @@ class QueryBuilderFunction:
         if sql_query.conditionGroup is not None and len(sql_query.conditionGroup.conditions) > 0:
             string_parts.append("WHERE")
             string_parts.append(self.__build_conditions(sql_query.conditionGroup))
+
+        return string_parts
+
+    def __build_insert_statement(self, sql_query: SqlQuery, string_parts: list[str]) -> list[str]:
+        string_parts.append(self.__build_table(sql_query.table))
+
+        columns: list[str] = sorted(list({key for rec in sql_query.records for key in rec}))
+        string_parts.append(f"({", ".join(columns)})")
+
+        string_parts.append("VALUES")
+        string_parts.append(self.__build_insert_records(sql_query.records, columns))
 
         return string_parts
 
@@ -162,6 +175,9 @@ class QueryBuilderFunction:
             - 23
             - example_schema.example_table
         """
+        if value == "NULL":
+            return value
+
         if isinstance(value, str):
             return f"'{value}'"
 
@@ -190,3 +206,11 @@ class QueryBuilderFunction:
             return f"{".".join(column.parts)} AS {column.alias}"
 
         return ".".join(column.parts)
+
+    def __build_insert_records(self, records: list[dict[str, Any]], columns: list[str]) -> str:
+        return ", ".join(list(map(lambda record: self.__build_insert_record(record, columns), records)))
+
+    def __build_insert_record(self, record: dict[str, Any], columns: list[str]) -> str:
+        values: list[str] = [self.__build_value(record.get(column, "NULL")) for column in columns]
+
+        return f"({", ".join(values)})"

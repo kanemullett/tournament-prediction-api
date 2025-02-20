@@ -5,6 +5,7 @@ from db_handler.db_handler.model.column import Column
 from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.query_condition_group import QueryConditionGroup
+from db_handler.db_handler.model.query_response import QueryResponse
 from db_handler.db_handler.model.table import Table
 from db_handler.db_handler.model.type.condition_operator import ConditionOperator
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
@@ -76,12 +77,13 @@ class TestDatabaseQueryService:
             }
 
         # When
-        records: list[dict[str, Any]] = self.__database_query_service.retrieve_records(query_request)
+        query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
 
         # Then
-        Assertions.assert_true(len(records) == 1)
+        Assertions.assert_equals(1, query_response.recordCount)
+        Assertions.assert_equals(1, len(query_response.records))
 
-        built_record: dict[str, Any] = records[0]
+        built_record: dict[str, Any] = query_response.records[0]
         Assertions.assert_equals("id1", built_record["id"])
         Assertions.assert_equals(11, built_record["column1"])
         Assertions.assert_equals("hello", built_record["column2"])

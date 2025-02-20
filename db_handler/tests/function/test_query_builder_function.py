@@ -271,3 +271,25 @@ class TestQueryBuilderFunction:
             "WHERE my_table.column1 = 'test_value' OR my_table.column2 = 23 ;",
             query_string
         )
+
+    def test_should_build_insert_statement_with_single_record(self):
+        # Given
+        sql_query: SqlQuery = SqlQuery(
+            operator=SqlOperator.INSERT,
+            table=Table(
+                schema="test_schema",
+                table="test_table"
+            ),
+            records=[
+                {
+                    "col1": "val1",
+                    "col2": 2
+                }
+            ]
+        )
+
+        # When
+        query_string: str = self.__query_builder.apply(sql_query)
+
+        # Then
+        Assertions.assert_equals("INSERT INTO test_schema.test_table (col1, col2) VALUES ('val1', 2) ;", query_string)
