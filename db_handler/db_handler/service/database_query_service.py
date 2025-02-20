@@ -85,6 +85,8 @@ class DatabaseQueryService:
         this_cursor.execute(self.__query_builder.apply(sql_query))
         record_count: int = this_cursor.rowcount
 
+        self.__connection.commit()
+
         this_cursor.close()
 
         return QueryResponse(
