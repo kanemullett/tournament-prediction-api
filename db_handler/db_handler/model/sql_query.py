@@ -25,5 +25,5 @@ class SqlQuery(BaseModel):
     table: Table
     columns: Optional[list[Column]] = None
     tableJoins: Optional[list[TableJoin]] = None
-    conditionGroup: QueryConditionGroup = None
+    conditionGroup: Optional[QueryConditionGroup] = None
     records: Optional[list[dict[str, Any]]] = None

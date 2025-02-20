@@ -14,3 +14,11 @@ class Assertions:
     @staticmethod
     def assert_false(condition: bool) -> None:
         assert condition is False
+
+    @staticmethod
+    def assert_null(actual: Any) -> None:
+        assert actual is None
+
+    @staticmethod
+    def assert_type(expected_type: type, actual: Any) -> None:
+        assert isinstance(actual, expected_type)
