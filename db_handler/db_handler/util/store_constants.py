@@ -1,0 +1,2 @@
+class StoreConstants:
+    ID = "$id"

@@ -1,5 +1,7 @@
 from typing import Any
 
+from fastapi import HTTPException
+
 from db_handler.db_handler.model.column import Column
 from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.query_condition_group import QueryConditionGroup
@@ -7,6 +9,7 @@ from db_handler.db_handler.model.sql_query import SqlQuery
 from db_handler.db_handler.model.table import Table
 from db_handler.db_handler.model.table_join import TableJoin
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
+from db_handler.db_handler.util.store_constants import StoreConstants
 
 
 class QueryBuilderFunction:
@@ -30,6 +33,8 @@ class QueryBuilderFunction:
             string_parts = self.__build_select_statement(sql_query, string_parts)
         elif sql_query.operator == SqlOperator.INSERT:
             string_parts = self.__build_insert_statement(sql_query, string_parts)
+        elif sql_query.operator == SqlOperator.UPDATE:
+            string_parts = self.__build_update_statement(sql_query, string_parts)
 
         string_parts.append(";")
 
@@ -83,6 +88,14 @@ class QueryBuilderFunction:
 
         string_parts.append("VALUES")
         string_parts.append(self.__build_insert_records(sql_query.records, columns))
+
+        return string_parts
+
+    def __build_update_statement(self, sql_query: SqlQuery, string_parts: list[str]) -> list[str]:
+        string_parts.append(self.__build_table(sql_query.table))
+
+        string_parts.append("SET")
+        string_parts.append(self.__build_case_clauses(sql_query.records))
 
         return string_parts
 
@@ -254,3 +267,25 @@ class QueryBuilderFunction:
         values: list[str] = [self.__build_value(record.get(column, "NULL")) for column in columns]
 
         return f"({", ".join(values)})"
+
+    def __build_case_clauses(self, records: list[dict[str, Any]]) -> str:
+        records_with_id: list[dict[str, Any]] = list(filter(lambda record: StoreConstants.ID in record, records))
+
+        if len(records_with_id) < len(records):
+            raise HTTPException(status_code=400, detail="All records in update requests should contain $id field.")
+
+        columns: list[str] = sorted(list({key for rec in records for key in rec}))
+        columns.remove(StoreConstants.ID)
+
+        case_clauses: list[str] = list(map(lambda column: self.__build_case_clause(column, records), columns))
+
+        return (f"{", ".join(case_clauses)} WHERE {StoreConstants.ID} "
+                f"IN ({", ".join(sorted(list({self.__build_value(item[StoreConstants.ID]) for item in records})))})")
+
+    def __build_case_clause(self, column: str, records: list[dict[str, Any]]) -> str:
+        filtered: list[dict[str, Any]] = list(filter(lambda record: column in record, records))
+
+        return f"{column} = CASE {" ".join(list(map(lambda record: self.__build_when_clause(column, record), filtered)))} ELSE {column} END"
+
+    def __build_when_clause(self, column: str, record: dict[str, Any]) -> str:
+        return f"WHEN {StoreConstants.ID} = '{record[StoreConstants.ID]}' THEN {self.__build_value(record[column])}"
