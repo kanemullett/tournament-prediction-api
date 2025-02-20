@@ -103,7 +103,7 @@ class QueryBuilderFunction:
             str: The SQL UPDATE query string.
 
         Examples:
-            - UPDATE test_schema.test_table SET col1 = CASE WHEN $id = 'id1' THEN 'val1' ELSE col1 END WHERE $id IN ('id1') ;
+            - UPDATE test_schema.test_table SET col1 = CASE WHEN id = 'id1' THEN 'val1' ELSE col1 END WHERE id IN ('id1') ;
         """
         string_parts.append(self.__build_table(sql_query.table))
 
@@ -292,13 +292,13 @@ class QueryBuilderFunction:
             str: The SQL SET clause string.
 
         Examples:
-            - col1 = CASE WHEN $id = 'id1' THEN 'val1' ELSE col1 END WHERE $id IN ('id1')
-            - col1 = CASE WHEN $id = 'id1' THEN 'val1' ELSE col1, col2 = CASE WHEN $id = 'id2' THEN 'val2' ELSE col2 END WHERE $id IN ('id1', 'id2')
+            - col1 = CASE WHEN id = 'id1' THEN 'val1' ELSE col1 END WHERE id IN ('id1')
+            - col1 = CASE WHEN id = 'id1' THEN 'val1' ELSE col1, col2 = CASE WHEN id = 'id2' THEN 'val2' ELSE col2 END WHERE id IN ('id1', 'id2')
         """
         records_with_id: list[dict[str, Any]] = list(filter(lambda record: StoreConstants.ID in record, records))
 
         if len(records_with_id) < len(records):
-            raise HTTPException(status_code=400, detail="All records in update requests should contain $id field.")
+            raise HTTPException(status_code=400, detail="All records in update requests should contain id field.")
 
         columns: list[str] = sorted(list({key for rec in records for key in rec}))
         columns.remove(StoreConstants.ID)
@@ -320,7 +320,7 @@ class QueryBuilderFunction:
             str: The SQL CASE clause string.
 
         Examples:
-            - col1 = CASE WHEN $id = 'id1' THEN 'val1' ELSE col1 END
+            - col1 = CASE WHEN id = 'id1' THEN 'val1' ELSE col1 END
         """
         filtered: list[dict[str, Any]] = list(filter(lambda record: column in record, records))
 
@@ -338,6 +338,6 @@ class QueryBuilderFunction:
             str: The SQL WHEN clause string.
 
         Examples:
-            - WHEN $id = 'id1' THEN 'val1'
+            - WHEN id = 'id1' THEN 'val1'
         """
         return f"WHEN {StoreConstants.ID} = '{record[StoreConstants.ID]}' THEN {self.__build_value(record[column])}"

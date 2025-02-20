@@ -157,7 +157,7 @@ class TestDatabaseQueryService:
             ),
             records=[
                 {
-                    "$id": "id1",
+                    "id": "id1",
                     "column1": "value1"
                 }
             ]
@@ -168,8 +168,8 @@ class TestDatabaseQueryService:
 
         self.__connection.cursor.return_value = cursor
 
-        query: str = ("UPDATE test_schema.test_table SET column1 = CASE WHEN $id = 'id1' THEN 'value1' ELSE column1 END "
-                      "WHERE $id IN ('id1') ;")
+        query: str = ("UPDATE test_schema.test_table SET column1 = CASE WHEN id = 'id1' THEN 'value1' ELSE column1 END "
+                      "WHERE id IN ('id1') ;")
         self.__query_builder.apply.return_value = query
 
         # When
