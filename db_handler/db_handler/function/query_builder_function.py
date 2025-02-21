@@ -35,6 +35,8 @@ class QueryBuilderFunction:
             string_parts = self.__build_insert_statement(sql_query, string_parts)
         elif sql_query.operator == SqlOperator.UPDATE:
             string_parts = self.__build_update_statement(sql_query, string_parts)
+        elif sql_query.operator == SqlOperator.DELETE:
+            string_parts = self.__build_delete_statement(sql_query, string_parts)
 
         string_parts.append(";")
 
@@ -109,6 +111,27 @@ class QueryBuilderFunction:
 
         string_parts.append("SET")
         string_parts.append(self.__build_set_clause(sql_query.records))
+
+        return string_parts
+
+    def __build_delete_statement(self, sql_query: SqlQuery, string_parts: list[str]) -> list[str]:
+        """
+        Convert a SqlQuery object representing a DELETE query into a SQL query string.
+
+        Args:
+            sql_query (SqlQuery): The SqlQuery object to be converted.
+            string_parts (list[str]): The component parts of the SQL query string.
+
+        Returns:
+            str: The SQL DELETE query string.
+
+        Examples:
+            - DELETE FROM example_schema.example_table WHERE col1 = 'val1' ;
+        """
+        string_parts.append(self.__build_table(sql_query.table))
+
+        string_parts.append("WHERE")
+        string_parts.append(self.__build_conditions(sql_query.conditionGroup))
 
         return string_parts
 

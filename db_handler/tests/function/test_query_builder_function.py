@@ -438,3 +438,65 @@ class TestQueryBuilderFunction:
         # Then
         Assertions.assert_equals(400, httpe.value.status_code)
         Assertions.assert_equals("All records in update requests should contain id field.", httpe.value.detail)
+
+    def test_should_build_delete_statement_with_single_condition(self):
+        # Given
+        sql_query: SqlQuery = SqlQuery(
+            operator=SqlOperator.DELETE,
+            table=Table(
+                schema="test_schema",
+                table="test_table"
+            ),
+            conditionGroup=QueryConditionGroup(
+                conditions=[
+                    QueryCondition(
+                        column=Column(
+                            parts=["column1"]
+                        ),
+                        operator=ConditionOperator.EQUAL,
+                        value="test_value"
+                    )
+                ]
+            )
+        )
+
+        # When
+        query_string: str = self.__query_builder.apply(sql_query)
+
+        # Then
+        Assertions.assert_equals("DELETE FROM test_schema.test_table WHERE column1 = 'test_value' ;", query_string)
+
+    def test_should_build_delete_statement_with_multiple_conditions(self):
+        # Given
+        sql_query: SqlQuery = SqlQuery(
+            operator=SqlOperator.DELETE,
+            table=Table(
+                schema="test_schema",
+                table="test_table"
+            ),
+            conditionGroup=QueryConditionGroup(
+                conditions=[
+                    QueryCondition(
+                        column=Column(
+                            parts=["column1"]
+                        ),
+                        operator=ConditionOperator.EQUAL,
+                        value="test_value"
+                    ),
+                    QueryCondition(
+                        column=Column(
+                            parts=["column2"]
+                        ),
+                        operator=ConditionOperator.EQUAL,
+                        value=23
+                    )
+                ],
+                join=ConditionJoin.OR
+            )
+        )
+
+        # When
+        query_string: str = self.__query_builder.apply(sql_query)
+
+        # Then
+        Assertions.assert_equals("DELETE FROM test_schema.test_table WHERE column1 = 'test_value' OR column2 = 23 ;", query_string)
