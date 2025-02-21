@@ -115,6 +115,19 @@ class QueryBuilderFunction:
         return string_parts
 
     def __build_delete_statement(self, sql_query: SqlQuery, string_parts: list[str]) -> list[str]:
+        """
+        Convert a SqlQuery object representing a DELETE query into a SQL query string.
+
+        Args:
+            sql_query (SqlQuery): The SqlQuery object to be converted.
+            string_parts (list[str]): The component parts of the SQL query string.
+
+        Returns:
+            str: The SQL DELETE query string.
+
+        Examples:
+            - DELETE FROM example_schema.example_table WHERE col1 = 'val1' ;
+        """
         string_parts.append(self.__build_table(sql_query.table))
 
         string_parts.append("WHERE")
