@@ -1,4 +1,7 @@
+from datetime import datetime
+from enum import EnumMeta
 from typing import Any
+from uuid import UUID
 
 from fastapi import HTTPException
 
@@ -85,8 +88,10 @@ class QueryBuilderFunction:
         """
         string_parts.append(self.__build_table(sql_query.table))
 
-        columns: list[str] = sorted(list({key for rec in sql_query.records for key in rec}))
-        string_parts.append(f"({', '.join(columns)})")
+        columns: list[str] = sorted({key for rec in sql_query.records for key in rec})
+        formatted_columns = [f'"{col}"' for col in columns]  # Wrap each column name in double quotes
+        column_string = ", ".join(formatted_columns)  # Join columns with a comma
+        string_parts.append(f"({column_string})")
 
         string_parts.append("VALUES")
         string_parts.append(self.__build_insert_records(sql_query.records, columns))
@@ -240,8 +245,11 @@ class QueryBuilderFunction:
         if value == "NULL":
             return value
 
-        if isinstance(value, str):
+        if isinstance(value, str) or isinstance(value, UUID) or isinstance(value, datetime):
             return f"'{value}'"
+
+        if isinstance(type(value), EnumMeta):
+            return f"'{value.value}'"
 
         if isinstance(value, Column):
             return self.__build_column(value, True)
@@ -265,9 +273,9 @@ class QueryBuilderFunction:
             - example_table.example_column AS example
         """
         if column.alias is not None and not is_condition:
-            return f"{'.'.join(column.parts)} AS {column.alias}"
+            return "{} AS {}".format('.'.join(f'"{part}"' for part in column.parts), column.alias)
 
-        return ".".join(column.parts)
+        return '.'.join(f'"{part}"' for part in column.parts)
 
     def __build_insert_records(self, records: list[dict[str, Any]], columns: list[str]) -> str:
         """

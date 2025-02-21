@@ -1,9 +1,12 @@
+from typing import Any
 from unittest.mock import MagicMock
 from uuid import UUID
 
 from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_response import QueryResponse
 from db_handler.db_handler.model.table import Table
+from db_handler.db_handler.model.type.sql_operator import SqlOperator
+from db_handler.db_handler.model.update_request import UpdateRequest
 from predictor_api.predictor_api.model.tournament import Tournament
 from predictor_api.predictor_api.model.type.competition import Competition
 from predictor_api.predictor_api.service.tournament_service import TournamentService
@@ -60,4 +63,55 @@ class TestTournamentService:
         Assertions.assert_type(Tournament, tournament2)
         Assertions.assert_type(UUID, tournament2.id)
         Assertions.assert_equals(2026, tournament2.year)
+        Assertions.assert_equals(Competition.WORLD_CUP, tournament2.competition)
+
+    def test_should_create_tournaments(self):
+        # Given
+        tournaments: list[Tournament] = [
+            Tournament(
+                year=2024,
+                competition=Competition.EUROS
+            ),
+            Tournament(
+                year=2022,
+                competition=Competition.WORLD_CUP
+            )
+        ]
+
+        # When
+        created: list[Tournament] = self.__tournament_service.create_tournaments(tournaments)
+
+        # Then
+        captured_args_retrieve_records, captured_kwargs = self.__database_query_service.update_records.call_args
+        Assertions.assert_type(UpdateRequest, captured_args_retrieve_records[0])
+
+        update_request: UpdateRequest = captured_args_retrieve_records[0]
+        Assertions.assert_equals(SqlOperator.INSERT, update_request.operation)
+
+        table: Table = update_request.table
+        Assertions.assert_equals(PredictorConstants.PREDICTOR_SCHEMA, table.schema_)
+        Assertions.assert_equals("tournaments", table.table)
+
+        record1: dict[str, Any] = update_request.records[0]
+        Assertions.assert_type(UUID, record1["id"])
+        Assertions.assert_equals(2024, record1["year"])
+        Assertions.assert_equals(Competition.EUROS, record1["competition"])
+
+        record2: dict[str, Any] = update_request.records[1]
+        Assertions.assert_type(UUID, record2["id"])
+        Assertions.assert_equals(2022, record2["year"])
+        Assertions.assert_equals(Competition.WORLD_CUP, record2["competition"])
+
+        Assertions.assert_equals(2, len(created))
+
+        tournament1 = created[0]
+        Assertions.assert_type(Tournament, tournament1)
+        Assertions.assert_type(UUID, tournament1.id)
+        Assertions.assert_equals(2024, tournament1.year)
+        Assertions.assert_equals(Competition.EUROS, tournament1.competition)
+
+        tournament2 = created[1]
+        Assertions.assert_type(Tournament, tournament2)
+        Assertions.assert_type(UUID, tournament2.id)
+        Assertions.assert_equals(2022, tournament2.year)
         Assertions.assert_equals(Competition.WORLD_CUP, tournament2.competition)
