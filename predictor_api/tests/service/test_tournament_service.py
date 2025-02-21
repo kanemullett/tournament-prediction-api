@@ -2,9 +2,14 @@ from typing import Any
 from unittest.mock import MagicMock
 from uuid import UUID
 
+from fastapi import HTTPException
+from pytest import raises
+
+from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_response import QueryResponse
 from db_handler.db_handler.model.table import Table
+from db_handler.db_handler.model.type.condition_operator import ConditionOperator
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.update_request import UpdateRequest
 from predictor_api.predictor_api.model.tournament import Tournament
@@ -115,3 +120,55 @@ class TestTournamentService:
         Assertions.assert_type(UUID, tournament2.id)
         Assertions.assert_equals(2022, tournament2.year)
         Assertions.assert_equals(Competition.WORLD_CUP, tournament2.competition)
+
+    def test_should_return_tournament_by_id(self):
+        # Given
+        self.__database_query_service.retrieve_records.return_value = QueryResponse(
+            referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
+            recordCount=1,
+            records=[
+                {
+                    "id": "c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
+                    "year": 2024,
+                    "competition": "EUROS"
+                }
+            ]
+        )
+
+        # When
+        tournament: Tournament = self.__tournament_service.get_tournament_by_id(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"))
+
+        # Then
+        captured_args_retrieve_records, captured_kwargs = self.__database_query_service.retrieve_records.call_args
+        Assertions.assert_type(QueryRequest, captured_args_retrieve_records[0])
+
+        query_request: QueryRequest = captured_args_retrieve_records[0]
+        table: Table = query_request.table
+        Assertions.assert_equals(PredictorConstants.PREDICTOR_SCHEMA, table.schema_)
+        Assertions.assert_equals("tournaments", table.table)
+
+        condition: QueryCondition = query_request.conditionGroup.conditions[0]
+        Assertions.assert_equals("id", condition.column.parts[0])
+        Assertions.assert_equals(ConditionOperator.EQUAL, condition.operator)
+        Assertions.assert_equals(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"), condition.value)
+
+        Assertions.assert_type(Tournament, tournament)
+        Assertions.assert_equals(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"), tournament.id)
+        Assertions.assert_equals(2024, tournament.year)
+        Assertions.assert_equals(Competition.EUROS, tournament.competition)
+
+    def test_should_raise_exception_if_tournament_not_found(self):
+        # Given
+        self.__database_query_service.retrieve_records.return_value = QueryResponse(
+            referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
+            recordCount=0,
+            records=[]
+        )
+
+        # When
+        with raises(HTTPException) as httpe:
+            self.__tournament_service.get_tournament_by_id(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"))
+
+        # Then
+        Assertions.assert_equals(404, httpe.value.status_code)
+        Assertions.assert_equals("No tournaments found with a matching id.", httpe.value.detail)

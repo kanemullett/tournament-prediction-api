@@ -1,6 +1,9 @@
 from unittest.mock import MagicMock
 from uuid import UUID
 
+from fastapi import HTTPException
+from pytest import raises
+
 from predictor_api.predictor_api.controller.tournament_controller import TournamentController
 from predictor_api.predictor_api.model.tournament import Tournament
 from predictor_api.predictor_api.model.type.competition import Competition
@@ -94,3 +97,33 @@ class TestTournamentController:
         Assertions.assert_type(UUID, tournament2.id)
         Assertions.assert_equals(2026, tournament2.year)
         Assertions.assert_equals(Competition.WORLD_CUP, tournament2.competition)
+
+    @pytest.mark.asyncio
+    async def test_should_pass_found_tournament_as_response(self):
+        # Given
+        self.__tournament_service.get_tournament_by_id.return_value = Tournament(
+            id="c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
+            year=2024,
+            competition=Competition.EUROS
+        )
+
+        # When
+        tournament: Tournament = await self.__tournament_controller.get_tournament_by_id(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"))
+
+        # Then
+        Assertions.assert_equals(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"), tournament.id)
+        Assertions.assert_equals(2024, tournament.year)
+        Assertions.assert_equals(Competition.EUROS, tournament.competition)
+
+    @pytest.mark.asyncio
+    async def test_should_pass_error_if_tournament_not_found(self):
+        # Given
+        self.__tournament_service.get_tournament_by_id.side_effect = HTTPException(status_code=404, detail="No tournaments found with a matching id.")
+
+        # When
+        with raises(HTTPException) as httpe:
+            await self.__tournament_controller.get_tournament_by_id(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"))
+
+        # Then
+        Assertions.assert_equals(404, httpe.value.status_code)
+        Assertions.assert_equals("No tournaments found with a matching id.", httpe.value.detail)
