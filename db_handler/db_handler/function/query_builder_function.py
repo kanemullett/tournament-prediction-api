@@ -86,7 +86,7 @@ class QueryBuilderFunction:
         string_parts.append(self.__build_table(sql_query.table))
 
         columns: list[str] = sorted(list({key for rec in sql_query.records for key in rec}))
-        string_parts.append(f"({", ".join(columns)})")
+        string_parts.append(f"({', '.join(columns)})")
 
         string_parts.append("VALUES")
         string_parts.append(self.__build_insert_records(sql_query.records, columns))
@@ -265,7 +265,7 @@ class QueryBuilderFunction:
             - example_table.example_column AS example
         """
         if column.alias is not None and not is_condition:
-            return f"{".".join(column.parts)} AS {column.alias}"
+            return f"{'.'.join(column.parts)} AS {column.alias}"
 
         return ".".join(column.parts)
 
@@ -302,7 +302,7 @@ class QueryBuilderFunction:
         """
         values: list[str] = [self.__build_value(record.get(column, "NULL")) for column in columns]
 
-        return f"({", ".join(values)})"
+        return f"({', '.join(values)})"
 
     def __build_set_clause(self, records: list[dict[str, Any]]) -> str:
         """
@@ -328,8 +328,8 @@ class QueryBuilderFunction:
 
         case_clauses: list[str] = list(map(lambda column: self.__build_case_clause(column, records), columns))
 
-        return (f"{", ".join(case_clauses)} WHERE {StoreConstants.ID} "
-                f"IN ({", ".join(sorted(list({self.__build_value(item[StoreConstants.ID]) for item in records})))})")
+        return (f"{', '.join(case_clauses)} WHERE {StoreConstants.ID} "
+                f"IN ({', '.join(sorted(list({self.__build_value(item[StoreConstants.ID]) for item in records})))})")
 
     def __build_case_clause(self, column: str, records: list[dict[str, Any]]) -> str:
         """
@@ -347,7 +347,7 @@ class QueryBuilderFunction:
         """
         filtered: list[dict[str, Any]] = list(filter(lambda record: column in record, records))
 
-        return f"{column} = CASE {" ".join(list(map(lambda record: self.__build_when_clause(column, record), filtered)))} ELSE {column} END"
+        return f"{column} = CASE {' '.join(list(map(lambda record: self.__build_when_clause(column, record), filtered)))} ELSE {column} END"
 
     def __build_when_clause(self, column: str, record: dict[str, Any]) -> str:
         """

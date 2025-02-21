@@ -1,5 +1,12 @@
-def main():
-    print("Hello World!")
+from fastapi import FastAPI
 
-if __name__ == "__main__":
-    main()
+from db_handler.db_handler.function.query_builder_function import QueryBuilderFunction
+from db_handler.db_handler.function.record_builder_function import RecordBuilderFunction
+from db_handler.db_handler.service.database_query_service import DatabaseQueryService
+from db_handler.db_handler.util.database_utils import DatabaseUtils
+from predictor_api.predictor_api.controller.tournament_controller import TournamentController
+
+
+app = FastAPI()
+
+app.include_router(TournamentController(DatabaseQueryService(DatabaseUtils.DATABASE_CONNECTION, QueryBuilderFunction(), RecordBuilderFunction())).router)
