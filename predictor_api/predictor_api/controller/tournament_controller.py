@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from db_handler.db_handler.model.query_response import QueryResponse
+from predictor_api.predictor_api.model.tournament import Tournament
 from predictor_api.predictor_api.service.tournament_service import TournamentService
 
 
@@ -12,5 +12,5 @@ class TournamentController:
 
         self.router.add_api_route("/", self.get_tournaments, methods=["GET"])
 
-    async def get_tournaments(self) -> QueryResponse:
+    async def get_tournaments(self) -> list[Tournament]:
         return self.__tournament_service.get_tournaments()
