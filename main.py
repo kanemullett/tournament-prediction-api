@@ -5,8 +5,10 @@ from db_handler.db_handler.function.record_builder_function import RecordBuilder
 from db_handler.db_handler.service.database_query_service import DatabaseQueryService
 from db_handler.db_handler.util.database_utils import DatabaseUtils
 from predictor_api.predictor_api.controller.tournament_controller import TournamentController
-
+from predictor_api.predictor_api.service.tournament_service import TournamentService
 
 app = FastAPI()
 
-app.include_router(TournamentController(DatabaseQueryService(DatabaseUtils.DATABASE_CONNECTION, QueryBuilderFunction(), RecordBuilderFunction())).router)
+database_query_service: DatabaseQueryService = DatabaseQueryService(DatabaseUtils.DATABASE_CONNECTION, QueryBuilderFunction(), RecordBuilderFunction())
+
+app.include_router(TournamentController(TournamentService(database_query_service)).router)
