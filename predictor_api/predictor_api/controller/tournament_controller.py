@@ -14,6 +14,7 @@ class TournamentController:
 
         self.router.add_api_route("/", self.get_tournaments, methods=["GET"])
         self.router.add_api_route("/", self.create_tournaments, methods=["POST"])
+        self.router.add_api_route("/", self.update_tournaments, methods=["PUT"])
         self.router.add_api_route("/{tournament_id}", self.get_tournament_by_id, methods=["GET"])
 
     async def get_tournaments(self) -> list[Tournament]:
@@ -21,6 +22,9 @@ class TournamentController:
 
     async def create_tournaments(self, tournaments: list[Tournament]) -> list[Tournament]:
         return self.__tournament_service.create_tournaments(tournaments)
+
+    async def update_tournaments(self, tournaments: list[Tournament]) -> list[Tournament]:
+        return self.__tournament_service.update_tournaments(tournaments)
 
     async def get_tournament_by_id(self, tournament_id: UUID) -> Tournament:
         return self.__tournament_service.get_tournament_by_id(tournament_id)

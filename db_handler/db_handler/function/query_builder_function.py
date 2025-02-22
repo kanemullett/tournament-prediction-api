@@ -11,6 +11,7 @@ from db_handler.db_handler.model.query_condition_group import QueryConditionGrou
 from db_handler.db_handler.model.sql_query import SqlQuery
 from db_handler.db_handler.model.table import Table
 from db_handler.db_handler.model.table_join import TableJoin
+from db_handler.db_handler.model.type.condition_operator import ConditionOperator
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.util.store_constants import StoreConstants
 
@@ -254,6 +255,9 @@ class QueryBuilderFunction:
         if isinstance(value, Column):
             return self.__build_column(value, True)
 
+        if isinstance(value, list):
+            return f"({', '.join(sorted(list({self.__build_value(item) for item in value})))})"
+
         return str(value)
 
     @staticmethod
@@ -335,9 +339,15 @@ class QueryBuilderFunction:
         columns.remove(StoreConstants.ID)
 
         case_clauses: list[str] = list(map(lambda column: self.__build_case_clause(column, records), columns))
+        where_condition: str = self.__build_condition(QueryCondition(
+            column=Column(
+                parts=[StoreConstants.ID]
+            ),
+            operator=ConditionOperator.IN,
+            value=list({item[StoreConstants.ID] for item in records})
+        ))
 
-        return (f"{', '.join(case_clauses)} WHERE {StoreConstants.ID} "
-                f"IN ({', '.join(sorted(list({self.__build_value(item[StoreConstants.ID]) for item in records})))})")
+        return f"{', '.join(case_clauses)} WHERE {where_condition}"
 
     def __build_case_clause(self, column: str, records: list[dict[str, Any]]) -> str:
         """

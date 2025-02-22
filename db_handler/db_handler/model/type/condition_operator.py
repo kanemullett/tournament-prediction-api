@@ -13,3 +13,4 @@ class ConditionOperator(Enum):
     EQUAL = "="
     LESS_THAN = "<"
     GREATER_THAN = ">"
+    IN = "IN"

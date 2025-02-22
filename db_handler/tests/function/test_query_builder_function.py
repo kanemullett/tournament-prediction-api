@@ -369,7 +369,7 @@ class TestQueryBuilderFunction:
         expected: str = ("UPDATE test_schema.test_table SET "
                          "col1 = CASE WHEN id = 'id1' THEN 'val1' ELSE col1 END, "
                          "col2 = CASE WHEN id = 'id1' THEN 2 ELSE col2 END "
-                         "WHERE id IN ('id1') ;")
+                         "WHERE \"id\" IN ('id1') ;")
 
         # Then
         Assertions.assert_equals(expected, query_string)
@@ -405,7 +405,7 @@ class TestQueryBuilderFunction:
                             "WHEN id = 'id2' THEN 5 "
                          "ELSE col2 END, "
                          "col3 = CASE WHEN id = 'id2' THEN 'val3' ELSE col3 END "
-                         "WHERE id IN ('id1', 'id2') ;")
+                         "WHERE \"id\" IN ('id1', 'id2') ;")
 
         # Then
         Assertions.assert_equals(expected, query_string)
@@ -500,3 +500,30 @@ class TestQueryBuilderFunction:
 
         # Then
         Assertions.assert_equals("DELETE FROM test_schema.test_table WHERE \"column1\" = 'test_value' OR \"column2\" = 23 ;", query_string)
+
+    def test_should_build_statement_with_in_condition(self):
+        # Given
+        sql_query: SqlQuery = SqlQuery(
+            operator=SqlOperator.SELECT,
+            table=Table(
+                schema="test_schema",
+                table="test_table"
+            ),
+            conditionGroup=QueryConditionGroup(
+                conditions=[
+                    QueryCondition(
+                        column=Column(
+                            parts=["column1"]
+                        ),
+                        operator=ConditionOperator.IN,
+                        value=["val", 23]
+                    )
+                ]
+            )
+        )
+
+        # When
+        query_string: str = self.__query_builder.apply(sql_query)
+
+        # Then
+        Assertions.assert_equals("SELECT * FROM test_schema.test_table WHERE \"column1\" IN ('val', 23) ;", query_string)

@@ -53,6 +53,41 @@ class TournamentService:
 
         return tournaments
 
+    def update_tournaments(self, tournaments: list[Tournament]) -> list[Tournament]:
+        records: list[dict[str, Any]] = list(map(lambda tournament: tournament.model_dump(exclude_none=True), tournaments))
+
+        update_request: UpdateRequest = UpdateRequest(
+            operation=SqlOperator.UPDATE,
+            table=Table(
+                schema=PredictorConstants.PREDICTOR_SCHEMA,
+                table="tournaments"
+            ),
+            records=records
+        )
+
+        self.__database_query_service.update_records(update_request)
+
+        included_ids: list[UUID] = list(map(lambda tournament: tournament.id, tournaments))
+        included_records: list[dict[str, Any]] = self.__database_query_service.retrieve_records(QueryRequest(
+            table=Table(
+                schema=PredictorConstants.PREDICTOR_SCHEMA,
+                table="tournaments"
+            ),
+            conditionGroup=QueryConditionGroup(
+                conditions=[
+                    QueryCondition(
+                        column=Column(
+                            parts=[StoreConstants.ID]
+                        ),
+                        operator=ConditionOperator.IN,
+                        value=included_ids
+                    )
+                ]
+            )
+        )).records
+
+        return list(map(lambda record: Tournament.model_validate(record), included_records))
+
     def get_tournament_by_id(self, tournament_id: UUID) -> Tournament:
 
         query_request: QueryRequest = QueryRequest(

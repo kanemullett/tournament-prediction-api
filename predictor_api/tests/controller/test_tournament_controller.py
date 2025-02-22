@@ -99,6 +99,51 @@ class TestTournamentController:
         Assertions.assert_equals(Competition.WORLD_CUP, tournament2.competition)
 
     @pytest.mark.asyncio
+    async def test_should_pass_updated_tournaments_as_response(self):
+        # Given
+        tournaments: list[Tournament] = [
+            Tournament(
+                id=UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+                competition=Competition.EUROS
+            ),
+            Tournament(
+                id=UUID("023b3aa0-7f61-4331-8206-d75232f49ebc"),
+                year=2026
+            )
+        ]
+
+        self.__tournament_service.update_tournaments.return_value = [
+            Tournament(
+                id=UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+                year=2024,
+                competition=Competition.EUROS
+            ),
+            Tournament(
+                id=UUID("023b3aa0-7f61-4331-8206-d75232f49ebc"),
+                year=2026,
+                competition=Competition.WORLD_CUP
+            )
+        ]
+
+        # When
+        updated: list[Tournament] = await self.__tournament_controller.update_tournaments(tournaments)
+
+        # Then
+        Assertions.assert_equals(2, len(updated))
+
+        tournament1 = updated[0]
+        Assertions.assert_type(Tournament, tournament1)
+        Assertions.assert_type(UUID, tournament1.id)
+        Assertions.assert_equals(2024, tournament1.year)
+        Assertions.assert_equals(Competition.EUROS, tournament1.competition)
+
+        tournament2 = updated[1]
+        Assertions.assert_type(Tournament, tournament2)
+        Assertions.assert_type(UUID, tournament2.id)
+        Assertions.assert_equals(2026, tournament2.year)
+        Assertions.assert_equals(Competition.WORLD_CUP, tournament2.competition)
+
+    @pytest.mark.asyncio
     async def test_should_pass_found_tournament_as_response(self):
         # Given
         self.__tournament_service.get_tournament_by_id.return_value = Tournament(
