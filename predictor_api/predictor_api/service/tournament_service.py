@@ -114,3 +114,26 @@ class TournamentService:
             raise HTTPException(status_code=404, detail="No tournaments found with a matching id.")
 
         return list(map(lambda record: Tournament.model_validate(record), query_response.records))[0]
+
+    def delete_tournament_by_id(self, tournament_id: UUID) -> None:
+
+        update_request: UpdateRequest = UpdateRequest(
+            operation=SqlOperator.DELETE,
+            table=Table(
+                schema=PredictorConstants.PREDICTOR_SCHEMA,
+                table="tournaments"
+            ),
+            conditionGroup=QueryConditionGroup(
+                conditions=[
+                    QueryCondition(
+                        column=Column(
+                            parts=[StoreConstants.ID]
+                        ),
+                        operator=ConditionOperator.EQUAL,
+                        value=tournament_id
+                    )
+                ]
+            )
+        )
+
+        self.__database_query_service.update_records(update_request)

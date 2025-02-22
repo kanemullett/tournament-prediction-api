@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 
 from predictor_api.predictor_api.model.tournament import Tournament
 from predictor_api.predictor_api.service.tournament_service import TournamentService
@@ -16,6 +16,7 @@ class TournamentController:
         self.router.add_api_route("/", self.create_tournaments, methods=["POST"])
         self.router.add_api_route("/", self.update_tournaments, methods=["PUT"])
         self.router.add_api_route("/{tournament_id}", self.get_tournament_by_id, methods=["GET"])
+        self.router.add_api_route("/{tournament_id}", self.delete_tournament_by_id, methods=["DELETE"])
 
     async def get_tournaments(self) -> list[Tournament]:
         return self.__tournament_service.get_tournaments()
@@ -28,3 +29,8 @@ class TournamentController:
 
     async def get_tournament_by_id(self, tournament_id: UUID) -> Tournament:
         return self.__tournament_service.get_tournament_by_id(tournament_id)
+
+    async def delete_tournament_by_id(self, tournament_id: UUID) -> Response:
+        self.__tournament_service.delete_tournament_by_id(tournament_id)
+
+        return Response(status_code=204)
