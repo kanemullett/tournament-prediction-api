@@ -157,9 +157,9 @@ class QueryBuilderFunction:
             - example_schema.example_table as example
         """
         if table.alias is None:
-            return f"{table.schema_}.{table.table}"
+            return f'"{table.schema_}"."{table.table}"'
 
-        return f"{table.schema_}.{table.table} AS {table.alias}"
+        return f'"{table.schema_}"."{table.table}" AS {table.alias}'
 
     def __build_table_joins(self, table_joins: list[TableJoin]) -> str:
         """
