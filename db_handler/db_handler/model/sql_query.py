@@ -19,6 +19,7 @@ class SqlQuery(BaseModel):
         columns (Optional[list[Column]]): The columns to retrieve.
         tableJoins (Optional[list[TableJoin]]): The tables to join.
         conditionGroup (QueryConditionGroup): The filtering conditions to apply.
+        records (Optional[list[dict[str, Any]]]): The records to create/update.
     """
 
     operator: SqlOperator

@@ -7,10 +7,11 @@ from db_handler.db_handler.service.database_query_service import DatabaseQuerySe
 from db_handler.db_handler.util.database_utils import DatabaseUtils
 from predictor_api.predictor_api.controller.tournament_controller import TournamentController
 from predictor_api.predictor_api.service.tournament_service import TournamentService
+from predictor_api.predictor_api.util.predictor_constants import PredictorConstants
 
 app = FastAPI()
 
-database_initializer_service: DatabaseInitializerService = DatabaseInitializerService(DatabaseUtils.DATABASE_CONNECTION)
+database_initializer_service: DatabaseInitializerService = DatabaseInitializerService(DatabaseUtils.DATABASE_CONNECTION, PredictorConstants.PREDICTOR_SCHEMA)
 database_initializer_service.initialize_tables()
 
 database_query_service: DatabaseQueryService = DatabaseQueryService(DatabaseUtils.DATABASE_CONNECTION, QueryBuilderFunction(), RecordBuilderFunction())

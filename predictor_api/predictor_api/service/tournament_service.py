@@ -19,12 +19,29 @@ from predictor_api.predictor_api.util.predictor_constants import PredictorConsta
 
 
 class TournamentService:
+    """
+    Service for performing tournament-related actions.
+
+    Attributes:
+        __database_query_service (DatabaseQueryService): The database query service.
+    """
 
     def __init__(self, database_query_service: DatabaseQueryService) -> None:
+        """
+        Initialise the TournamentService.
+
+        Args:
+            database_query_service (DatabaseQueryService): The database query service.
+        """
         self.__database_query_service = database_query_service
 
     def get_tournaments(self) -> list[Tournament]:
+        """
+        Retrieve stored tournaments.
 
+        Returns:
+            list[Tournament]: The stored tournaments.
+        """
         query_request: QueryRequest = QueryRequest(
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
@@ -37,7 +54,15 @@ class TournamentService:
         return list(map(lambda record: Tournament.model_validate(record), query_response.records))
 
     def create_tournaments(self, tournaments: list[Tournament]) -> list[Tournament]:
+        """
+        Create new tournaments.
 
+        Args:
+            tournaments (list[Tournament]): The new tournaments to create.
+
+        Returns:
+            list[Tournament]: The newly created tournaments.
+        """
         records: list[dict[str, Any]] = list(map(lambda tournament: tournament.model_dump(), tournaments))
 
         update_request: UpdateRequest = UpdateRequest(
@@ -54,6 +79,15 @@ class TournamentService:
         return tournaments
 
     def update_tournaments(self, tournaments: list[Tournament]) -> list[Tournament]:
+        """
+        Update existing tournaments.
+
+        Args:
+            tournaments (list[Tournament]): The tournaments to update.
+
+        Returns:
+            list[Tournament]: The newly updated tournaments.
+        """
         records: list[dict[str, Any]] = list(map(lambda tournament: tournament.model_dump(exclude_none=True), tournaments))
 
         update_request: UpdateRequest = UpdateRequest(
@@ -89,7 +123,15 @@ class TournamentService:
         return list(map(lambda record: Tournament.model_validate(record), included_records))
 
     def get_tournament_by_id(self, tournament_id: UUID) -> Tournament:
+        """
+        Retrieve a single stored tournament by its id.
 
+        Args:
+            tournament_id (UUID): The id of the tournament to retrieve.
+
+        Returns:
+            Tournament: The retrieved tournament.
+        """
         query_request: QueryRequest = QueryRequest(
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
@@ -116,7 +158,12 @@ class TournamentService:
         return list(map(lambda record: Tournament.model_validate(record), query_response.records))[0]
 
     def delete_tournament_by_id(self, tournament_id: UUID) -> None:
+        """
+        Delete a single stored tournament by its id.
 
+        Args:
+            tournament_id (UUID): The id of the tournament to delete.
+        """
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.DELETE,
             table=Table(
