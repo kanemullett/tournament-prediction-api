@@ -54,7 +54,7 @@ class TestQueryBuilderFunction:
         query_string: str = self.__query_builder.apply(sql_query)
 
         # Then
-        Assertions.assert_equals("SELECT column1 FROM test_schema.test_table ;", query_string)
+        Assertions.assert_equals("SELECT \"column1\" FROM test_schema.test_table ;", query_string)
 
     def test_should_build_select_statement_with_multiple_columns(self):
         # Given
@@ -81,7 +81,7 @@ class TestQueryBuilderFunction:
         query_string: str = self.__query_builder.apply(sql_query)
 
         # Then
-        Assertions.assert_equals("SELECT column1, column2, column3 FROM test_schema.test_table ;", query_string)
+        Assertions.assert_equals("SELECT \"column1\", \"column2\", \"column3\" FROM test_schema.test_table ;", query_string)
 
     def test_should_build_select_statement_with_single_condition(self):
         # Given
@@ -108,7 +108,7 @@ class TestQueryBuilderFunction:
         query_string: str = self.__query_builder.apply(sql_query)
 
         # Then
-        Assertions.assert_equals("SELECT * FROM test_schema.test_table WHERE column1 = 'test_value' ;", query_string)
+        Assertions.assert_equals("SELECT * FROM test_schema.test_table WHERE \"column1\" = 'test_value' ;", query_string)
 
     def test_should_build_select_statement_with_multiple_conditions(self):
         # Given
@@ -143,7 +143,7 @@ class TestQueryBuilderFunction:
         query_string: str = self.__query_builder.apply(sql_query)
 
         # Then
-        Assertions.assert_equals("SELECT * FROM test_schema.test_table WHERE column1 = 'test_value' OR column2 = 23 ;", query_string)
+        Assertions.assert_equals("SELECT * FROM test_schema.test_table WHERE \"column1\" = 'test_value' OR \"column2\" = 23 ;", query_string)
 
     def test_should_build_select_statement_with_multiple_conditions_and_alias(self):
         # Given
@@ -187,7 +187,7 @@ class TestQueryBuilderFunction:
         query_string: str = self.__query_builder.apply(sql_query)
 
         # Then
-        Assertions.assert_equals("SELECT my_table.name AS user_name FROM test_schema.test_table AS my_table WHERE my_table.column1 = 'test_value' OR my_table.column2 = 23 ;", query_string)
+        Assertions.assert_equals("SELECT \"my_table\".\"name\" AS user_name FROM test_schema.test_table AS my_table WHERE \"my_table\".\"column1\" = 'test_value' OR \"my_table\".\"column2\" = 23 ;", query_string)
 
     def test_should_build_select_statement_with_multiple_conditions_and_table_joins(self):
         # Given
@@ -268,10 +268,10 @@ class TestQueryBuilderFunction:
 
         # Then
         Assertions.assert_equals(
-            "SELECT my_table.name AS user_name FROM test_schema.test_table AS my_table "
-            "INNER JOIN test_schema.join_table_one AS first_joiner ON my_table.id = first_joiner.baseId "
-            "LEFT JOIN test_schema.join_table_two AS second_joiner ON my_table.id = second_joiner.baseId "
-            "WHERE my_table.column1 = 'test_value' OR my_table.column2 = 23 ;",
+            "SELECT \"my_table\".\"name\" AS user_name FROM test_schema.test_table AS my_table "
+            "INNER JOIN test_schema.join_table_one AS first_joiner ON \"my_table\".\"id\" = \"first_joiner\".\"baseId\" "
+            "LEFT JOIN test_schema.join_table_two AS second_joiner ON \"my_table\".\"id\" = \"second_joiner\".\"baseId\" "
+            "WHERE \"my_table\".\"column1\" = 'test_value' OR \"my_table\".\"column2\" = 23 ;",
             query_string
         )
 
@@ -295,7 +295,7 @@ class TestQueryBuilderFunction:
         query_string: str = self.__query_builder.apply(sql_query)
 
         # Then
-        Assertions.assert_equals("INSERT INTO test_schema.test_table (col1, col2) VALUES ('val1', 2) ;", query_string)
+        Assertions.assert_equals("INSERT INTO test_schema.test_table (\"col1\", \"col2\") VALUES ('val1', 2) ;", query_string)
 
     def test_should_build_insert_statement_with_multiple_records(self):
         # Given
@@ -321,7 +321,7 @@ class TestQueryBuilderFunction:
         query_string: str = self.__query_builder.apply(sql_query)
 
         # Then
-        Assertions.assert_equals("INSERT INTO test_schema.test_table (col1, col2) VALUES ('val1', 2), (3, 'val4') ;", query_string)
+        Assertions.assert_equals("INSERT INTO test_schema.test_table (\"col1\", \"col2\") VALUES ('val1', 2), (3, 'val4') ;", query_string)
 
     def test_should_build_insert_statement_with_multiple_records_and_missing_columns(self):
         # Given
@@ -345,7 +345,7 @@ class TestQueryBuilderFunction:
         query_string: str = self.__query_builder.apply(sql_query)
 
         # Then
-        Assertions.assert_equals("INSERT INTO test_schema.test_table (col1, col2) VALUES (NULL, 2), ('val3', NULL) ;", query_string)
+        Assertions.assert_equals("INSERT INTO test_schema.test_table (\"col1\", \"col2\") VALUES (NULL, 2), ('val3', NULL) ;", query_string)
 
     def test_should_build_update_statement_with_single_record(self):
         # Given
@@ -369,7 +369,7 @@ class TestQueryBuilderFunction:
         expected: str = ("UPDATE test_schema.test_table SET "
                          "col1 = CASE WHEN id = 'id1' THEN 'val1' ELSE col1 END, "
                          "col2 = CASE WHEN id = 'id1' THEN 2 ELSE col2 END "
-                         "WHERE id IN ('id1') ;")
+                         "WHERE \"id\" IN ('id1') ;")
 
         # Then
         Assertions.assert_equals(expected, query_string)
@@ -405,7 +405,7 @@ class TestQueryBuilderFunction:
                             "WHEN id = 'id2' THEN 5 "
                          "ELSE col2 END, "
                          "col3 = CASE WHEN id = 'id2' THEN 'val3' ELSE col3 END "
-                         "WHERE id IN ('id1', 'id2') ;")
+                         "WHERE \"id\" IN ('id1', 'id2') ;")
 
         # Then
         Assertions.assert_equals(expected, query_string)
@@ -464,7 +464,7 @@ class TestQueryBuilderFunction:
         query_string: str = self.__query_builder.apply(sql_query)
 
         # Then
-        Assertions.assert_equals("DELETE FROM test_schema.test_table WHERE column1 = 'test_value' ;", query_string)
+        Assertions.assert_equals("DELETE FROM test_schema.test_table WHERE \"column1\" = 'test_value' ;", query_string)
 
     def test_should_build_delete_statement_with_multiple_conditions(self):
         # Given
@@ -499,4 +499,31 @@ class TestQueryBuilderFunction:
         query_string: str = self.__query_builder.apply(sql_query)
 
         # Then
-        Assertions.assert_equals("DELETE FROM test_schema.test_table WHERE column1 = 'test_value' OR column2 = 23 ;", query_string)
+        Assertions.assert_equals("DELETE FROM test_schema.test_table WHERE \"column1\" = 'test_value' OR \"column2\" = 23 ;", query_string)
+
+    def test_should_build_statement_with_in_condition(self):
+        # Given
+        sql_query: SqlQuery = SqlQuery(
+            operator=SqlOperator.SELECT,
+            table=Table(
+                schema="test_schema",
+                table="test_table"
+            ),
+            conditionGroup=QueryConditionGroup(
+                conditions=[
+                    QueryCondition(
+                        column=Column(
+                            parts=["column1"]
+                        ),
+                        operator=ConditionOperator.IN,
+                        value=["val", 23]
+                    )
+                ]
+            )
+        )
+
+        # When
+        query_string: str = self.__query_builder.apply(sql_query)
+
+        # Then
+        Assertions.assert_equals("SELECT * FROM test_schema.test_table WHERE \"column1\" IN ('val', 23) ;", query_string)

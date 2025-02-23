@@ -1,4 +1,7 @@
+from datetime import datetime
+from enum import EnumMeta
 from typing import Any
+from uuid import UUID
 
 from fastapi import HTTPException
 
@@ -8,6 +11,7 @@ from db_handler.db_handler.model.query_condition_group import QueryConditionGrou
 from db_handler.db_handler.model.sql_query import SqlQuery
 from db_handler.db_handler.model.table import Table
 from db_handler.db_handler.model.table_join import TableJoin
+from db_handler.db_handler.model.type.condition_operator import ConditionOperator
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.util.store_constants import StoreConstants
 
@@ -85,8 +89,10 @@ class QueryBuilderFunction:
         """
         string_parts.append(self.__build_table(sql_query.table))
 
-        columns: list[str] = sorted(list({key for rec in sql_query.records for key in rec}))
-        string_parts.append(f"({", ".join(columns)})")
+        columns: list[str] = sorted({key for rec in sql_query.records for key in rec})
+        formatted_columns = [f'"{col}"' for col in columns]  # Wrap each column name in double quotes
+        column_string = ", ".join(formatted_columns)  # Join columns with a comma
+        string_parts.append(f"({column_string})")
 
         string_parts.append("VALUES")
         string_parts.append(self.__build_insert_records(sql_query.records, columns))
@@ -240,11 +246,17 @@ class QueryBuilderFunction:
         if value == "NULL":
             return value
 
-        if isinstance(value, str):
+        if isinstance(value, str) or isinstance(value, UUID) or isinstance(value, datetime):
             return f"'{value}'"
+
+        if isinstance(type(value), EnumMeta):
+            return f"'{value.value}'"
 
         if isinstance(value, Column):
             return self.__build_column(value, True)
+
+        if isinstance(value, list):
+            return f"({', '.join(sorted(list({self.__build_value(item) for item in value})))})"
 
         return str(value)
 
@@ -265,9 +277,9 @@ class QueryBuilderFunction:
             - example_table.example_column AS example
         """
         if column.alias is not None and not is_condition:
-            return f"{".".join(column.parts)} AS {column.alias}"
+            return "{} AS {}".format('.'.join(f'"{part}"' for part in column.parts), column.alias)
 
-        return ".".join(column.parts)
+        return '.'.join(f'"{part}"' for part in column.parts)
 
     def __build_insert_records(self, records: list[dict[str, Any]], columns: list[str]) -> str:
         """
@@ -302,7 +314,7 @@ class QueryBuilderFunction:
         """
         values: list[str] = [self.__build_value(record.get(column, "NULL")) for column in columns]
 
-        return f"({", ".join(values)})"
+        return f"({', '.join(values)})"
 
     def __build_set_clause(self, records: list[dict[str, Any]]) -> str:
         """
@@ -327,9 +339,15 @@ class QueryBuilderFunction:
         columns.remove(StoreConstants.ID)
 
         case_clauses: list[str] = list(map(lambda column: self.__build_case_clause(column, records), columns))
+        where_condition: str = self.__build_condition(QueryCondition(
+            column=Column(
+                parts=[StoreConstants.ID]
+            ),
+            operator=ConditionOperator.IN,
+            value=list({item[StoreConstants.ID] for item in records})
+        ))
 
-        return (f"{", ".join(case_clauses)} WHERE {StoreConstants.ID} "
-                f"IN ({", ".join(sorted(list({self.__build_value(item[StoreConstants.ID]) for item in records})))})")
+        return f"{', '.join(case_clauses)} WHERE {where_condition}"
 
     def __build_case_clause(self, column: str, records: list[dict[str, Any]]) -> str:
         """
@@ -347,7 +365,7 @@ class QueryBuilderFunction:
         """
         filtered: list[dict[str, Any]] = list(filter(lambda record: column in record, records))
 
-        return f"{column} = CASE {" ".join(list(map(lambda record: self.__build_when_clause(column, record), filtered)))} ELSE {column} END"
+        return f"{column} = CASE {' '.join(list(map(lambda record: self.__build_when_clause(column, record), filtered)))} ELSE {column} END"
 
     def __build_when_clause(self, column: str, record: dict[str, Any]) -> str:
         """
