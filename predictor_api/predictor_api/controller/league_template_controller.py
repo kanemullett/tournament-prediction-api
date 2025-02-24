@@ -12,10 +12,55 @@ class LeagueTemplateController:
         self.router: APIRouter = APIRouter(prefix="/league-templates", tags=["League Templates"])
         self.__league_template_service = league_template_service
 
-        self.router.add_api_route("/", self.get_league_templates, methods=["GET"])
-        self.router.add_api_route("/", self.create_league_templates, methods=["POST"])
-        self.router.add_api_route("/{league_template_id}", self.get_league_template_by_id, methods=["GET"])
-        self.router.add_api_route("/{league_template_id}", self.delete_league_template_by_id, methods=["DELETE"])
+        self.router.add_api_route(
+            "/",
+            self.get_league_templates,
+            methods=["GET"]
+        )
+        self.router.add_api_route(
+            "/",
+            self.create_league_templates,
+            methods=["POST"]
+        )
+        self.router.add_api_route(
+            "/{league_template_id}",
+            self.get_league_template_by_id,
+            methods=["GET"],
+            responses={
+                404: {
+                    "description": "Not Found - No league templates found with a matching id.",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "detail": "No league templates found with a matching id."
+                            }
+                        }
+                    }
+                }
+            }
+        )
+        self.router.add_api_route(
+            "/{league_template_id}",
+            self.delete_league_template_by_id,
+            methods=["DELETE"],
+            responses={
+                204: {
+                    "description": "No Content - The league template was successfully deleted."
+                },
+                409: {
+                    "description": "Conflict - The league template cannot be deleted as it is part of an existing "
+                                   "tournament template.",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "detail": "Cannot delete league template as it is part of an existing tournament "
+                                          "template."
+                            }
+                        }
+                    }
+                }
+            }
+        )
 
     async def get_league_templates(self) -> list[LeagueTemplate]:
         """

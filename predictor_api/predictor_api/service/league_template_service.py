@@ -15,6 +15,7 @@ from db_handler.db_handler.model.update_request import UpdateRequest
 from db_handler.db_handler.service.database_query_service import DatabaseQueryService
 from db_handler.db_handler.util.store_constants import StoreConstants
 from predictor_api.predictor_api.model.league_template import LeagueTemplate
+from predictor_api.predictor_api.model.tournament_template import TournamentTemplate
 from predictor_api.predictor_api.util.predictor_constants import PredictorConstants
 
 
@@ -78,6 +79,29 @@ class LeagueTemplateService:
         return list(map(lambda record: LeagueTemplate.model_validate(record), query_response.records))[0]
 
     def delete_league_template_by_id(self, league_template_id: UUID):
+        query_request: QueryRequest = QueryRequest(
+            table=Table(
+                schema=PredictorConstants.PREDICTOR_SCHEMA,
+                table=TournamentTemplate.TARGET_TABLE
+            ),
+            conditionGroup=QueryConditionGroup(
+                conditions=[
+                    QueryCondition(
+                        column=Column(
+                            parts=["leagueTemplateId"]
+                        ),
+                        operator=ConditionOperator.EQUAL,
+                        value=league_template_id
+                    )
+                ]
+            )
+        )
+
+        query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
+
+        if query_response.recordCount > 0:
+            raise HTTPException(status_code=409, detail="Cannot delete league template as it is part of an existing tournament template.")
+
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.DELETE,
             table=Table(
