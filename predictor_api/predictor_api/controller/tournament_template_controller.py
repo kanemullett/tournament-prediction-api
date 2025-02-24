@@ -3,6 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, Response
 
 from predictor_api.predictor_api.model.tournament_template import TournamentTemplate
+from predictor_api.predictor_api.model.tournament_template_request import TournamentTemplateRequest
 from predictor_api.predictor_api.service.tournament_template_service import TournamentTemplateService
 
 
@@ -22,16 +23,16 @@ class TournamentTemplateController:
         GET /tournament-templates endpoint to retrieve stored tournament templates.
 
         Returns:
-            list[TournamentTemplate]: The stored tournament templates.
+            list[TournamentTemplateBase]: The stored tournament templates.
         """
         return self.__tournament_template_service.get_tournament_templates()
 
-    async def create_tournament_templates(self, tournament_templates: list[TournamentTemplate]) -> list[TournamentTemplate]:
+    async def create_tournament_templates(self, tournament_templates: list[TournamentTemplateRequest]) -> list[TournamentTemplate]:
         """
         POST /tournament-templates endpoint to create new tournament templates.
 
         Args:
-            tournament_templates (list[TournamentTemplate]): The new tournament templates to create.
+            tournament_templates (list[TournamentTemplateBase]): The new tournament templates to create.
 
         Returns:
             list[TournamentTemplate]: The newly created tournament templates.
@@ -47,7 +48,7 @@ class TournamentTemplateController:
             tournament_template_id (UUID): The id of the tournament template to retrieve.
 
         Returns:
-            TournamentTemplate: The retrieved tournament template.
+            TournamentTemplateBase: The retrieved tournament template.
         """
         return self.__tournament_template_service.get_tournament_template_by_id(tournament_template_id)
 

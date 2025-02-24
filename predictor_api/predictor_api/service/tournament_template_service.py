@@ -5,6 +5,7 @@ from predictor_api.predictor_api.model.knockout_round import KnockoutRound
 from predictor_api.predictor_api.model.knockout_template import KnockoutTemplate
 from predictor_api.predictor_api.model.league_template import LeagueTemplate
 from predictor_api.predictor_api.model.tournament_template import TournamentTemplate
+from predictor_api.predictor_api.model.tournament_template_request import TournamentTemplateRequest
 
 
 class TournamentTemplateService:
@@ -15,7 +16,7 @@ class TournamentTemplateService:
     def get_tournament_templates(self) -> list[TournamentTemplate]:
         return []
 
-    def create_tournament_templates(self, tournament_templates: list[TournamentTemplate]) -> list[TournamentTemplate]:
+    def create_tournament_templates(self, tournament_templates: list[TournamentTemplateRequest]) -> list[TournamentTemplate]:
         return []
 
     def get_tournament_template_by_id(self, tournament_template_id: UUID) -> TournamentTemplate:
