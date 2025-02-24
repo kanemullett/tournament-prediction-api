@@ -187,7 +187,7 @@ class TestQueryBuilderFunction:
         query_string: str = self.__query_builder.apply(sql_query)
 
         # Then
-        Assertions.assert_equals("SELECT \"my_table\".\"name\" AS user_name FROM \"test_schema\".\"test_table\" AS my_table WHERE \"my_table\".\"column1\" = 'test_value' OR \"my_table\".\"column2\" = 23 ;", query_string)
+        Assertions.assert_equals("SELECT \"my_table\".\"name\" AS \"user_name\" FROM \"test_schema\".\"test_table\" AS \"my_table\" WHERE \"my_table\".\"column1\" = 'test_value' OR \"my_table\".\"column2\" = 23 ;", query_string)
 
     def test_should_build_select_statement_with_multiple_conditions_and_table_joins(self):
         # Given
@@ -268,9 +268,9 @@ class TestQueryBuilderFunction:
 
         # Then
         Assertions.assert_equals(
-            "SELECT \"my_table\".\"name\" AS user_name FROM \"test_schema\".\"test_table\" AS my_table "
-            "INNER JOIN \"test_schema\".\"join_table_one\" AS first_joiner ON \"my_table\".\"id\" = \"first_joiner\".\"baseId\" "
-            "LEFT JOIN \"test_schema\".\"join_table_two\" AS second_joiner ON \"my_table\".\"id\" = \"second_joiner\".\"baseId\" "
+            "SELECT \"my_table\".\"name\" AS \"user_name\" FROM \"test_schema\".\"test_table\" AS \"my_table\" "
+            "INNER JOIN \"test_schema\".\"join_table_one\" AS \"first_joiner\" ON \"my_table\".\"id\" = \"first_joiner\".\"baseId\" "
+            "LEFT JOIN \"test_schema\".\"join_table_two\" AS \"second_joiner\" ON \"my_table\".\"id\" = \"second_joiner\".\"baseId\" "
             "WHERE \"my_table\".\"column1\" = 'test_value' OR \"my_table\".\"column2\" = 23 ;",
             query_string
         )

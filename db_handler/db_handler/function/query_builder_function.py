@@ -159,7 +159,7 @@ class QueryBuilderFunction:
         if table.alias is None:
             return f'"{table.schema_}"."{table.table}"'
 
-        return f'"{table.schema_}"."{table.table}" AS {table.alias}'
+        return f'"{table.schema_}"."{table.table}" AS "{table.alias}"'
 
     def __build_table_joins(self, table_joins: list[TableJoin]) -> str:
         """
@@ -277,7 +277,7 @@ class QueryBuilderFunction:
             - example_table.example_column AS example
         """
         if column.alias is not None and not is_condition:
-            return "{} AS {}".format('.'.join(f'"{part}"' for part in column.parts), column.alias)
+            return '{} AS "{}"'.format('.'.join(f'"{part}"' for part in column.parts), column.alias)
 
         return '.'.join(f'"{part}"' for part in column.parts)
 
