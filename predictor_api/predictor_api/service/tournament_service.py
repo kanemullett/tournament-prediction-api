@@ -45,7 +45,7 @@ class TournamentService:
         query_request: QueryRequest = QueryRequest(
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table="tournaments"
+                table=Tournament.TARGET_TABLE
             )
         )
 
@@ -69,7 +69,7 @@ class TournamentService:
             operation=SqlOperator.INSERT,
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table="tournaments"
+                table=Tournament.TARGET_TABLE
             ),
             records=records
         )
@@ -94,7 +94,7 @@ class TournamentService:
             operation=SqlOperator.UPDATE,
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table="tournaments"
+                table=Tournament.TARGET_TABLE
             ),
             records=records
         )
@@ -135,7 +135,7 @@ class TournamentService:
         query_request: QueryRequest = QueryRequest(
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table="tournaments"
+                table=Tournament.TARGET_TABLE
             ),
             conditionGroup=QueryConditionGroup(
                 conditions=[
@@ -168,7 +168,7 @@ class TournamentService:
             operation=SqlOperator.DELETE,
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table="tournaments"
+                table=Tournament.TARGET_TABLE
             ),
             conditionGroup=QueryConditionGroup(
                 conditions=[
