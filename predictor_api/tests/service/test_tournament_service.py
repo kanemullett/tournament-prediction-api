@@ -185,7 +185,10 @@ class TestTournamentService:
         condition: QueryCondition = query_request.conditionGroup.conditions[0]
         Assertions.assert_equals("id", condition.column.parts[0])
         Assertions.assert_equals(ConditionOperator.IN, condition.operator)
-        Assertions.assert_equals([UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"), UUID("023b3aa0-7f61-4331-8206-d75232f49ebc")], condition.value)
+        Assertions.assert_equals(
+            [UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"), UUID("023b3aa0-7f61-4331-8206-d75232f49ebc")],
+            condition.value
+        )
 
         Assertions.assert_equals(2, len(updated))
 
@@ -216,7 +219,9 @@ class TestTournamentService:
         )
 
         # When
-        tournament: Tournament = self.__tournament_service.get_tournament_by_id(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"))
+        tournament: Tournament = self.__tournament_service.get_tournament_by_id(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+        )
 
         # Then
         captured_args_retrieve_records, captured_kwargs = self.__database_query_service.retrieve_records.call_args

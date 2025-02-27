@@ -95,7 +95,9 @@ class TestLeagueTemplateController:
         ]
 
         # When
-        created: list[LeagueTemplate] = await self.__league_template_controller.create_league_templates(league_templates)
+        created: list[LeagueTemplate] = await self.__league_template_controller.create_league_templates(
+            league_templates
+        )
 
         # Then
         Assertions.assert_equals(2, len(created))
@@ -128,7 +130,9 @@ class TestLeagueTemplateController:
         )
 
         # When
-        league_template: LeagueTemplate = await self.__league_template_controller.get_league_template_by_id(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"))
+        league_template: LeagueTemplate = await self.__league_template_controller.get_league_template_by_id(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+        )
 
         # Then
         Assertions.assert_equals(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"), league_template.id)
@@ -140,11 +144,16 @@ class TestLeagueTemplateController:
     @pytest.mark.asyncio
     async def test_should_pass_error_if_league_template_not_found(self):
         # Given
-        self.__league_template_service.get_league_template_by_id.side_effect = HTTPException(status_code=404, detail="No league templates found with a matching id.")
+        self.__league_template_service.get_league_template_by_id.side_effect = HTTPException(
+            status_code=404,
+            detail="No league templates found with a matching id."
+        )
 
         # When
         with raises(HTTPException) as httpe:
-            await self.__league_template_controller.get_league_template_by_id(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"))
+            await self.__league_template_controller.get_league_template_by_id(
+                UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+            )
 
         # Then
         Assertions.assert_equals(404, httpe.value.status_code)
@@ -153,8 +162,10 @@ class TestLeagueTemplateController:
     @pytest.mark.asyncio
     async def test_should_pass_error_if_league_template_is_being_used(self):
         # Given
-        self.__league_template_service.delete_league_template_by_id.side_effect = HTTPException(status_code=409,
-                                                                                                detail="Cannot delete league template as it is part of an existing tournament template.")
+        self.__league_template_service.delete_league_template_by_id.side_effect = HTTPException(
+            status_code=409,
+            detail="Cannot delete league template as it is part of an existing tournament template."
+        )
 
         # When
         with raises(HTTPException) as httpe:
@@ -163,4 +174,7 @@ class TestLeagueTemplateController:
 
         # Then
         Assertions.assert_equals(409, httpe.value.status_code)
-        Assertions.assert_equals("Cannot delete league template as it is part of an existing tournament template.", httpe.value.detail)
+        Assertions.assert_equals(
+            "Cannot delete league template as it is part of an existing tournament template.",
+            httpe.value.detail
+        )

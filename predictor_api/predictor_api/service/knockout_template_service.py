@@ -14,51 +14,51 @@ from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.update_request import UpdateRequest
 from db_handler.db_handler.service.database_query_service import DatabaseQueryService
 from db_handler.db_handler.util.store_constants import StoreConstants
-from predictor_api.predictor_api.model.league_template import LeagueTemplate
+from predictor_api.predictor_api.model.knockout_template import KnockoutTemplate
 from predictor_api.predictor_api.model.tournament_template import TournamentTemplate
 from predictor_api.predictor_api.util.predictor_constants import PredictorConstants
 
 
-class LeagueTemplateService:
+class KnockoutTemplateService:
 
     def __init__(self, database_query_service: DatabaseQueryService):
         self.__database_query_service = database_query_service
 
-    def get_league_templates(self) -> list[LeagueTemplate]:
+    def get_knockout_templates(self) -> list[KnockoutTemplate]:
         query_request: QueryRequest = QueryRequest(
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=LeagueTemplate.TARGET_TABLE
+                table=KnockoutTemplate.TARGET_TABLE
             )
         )
 
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
 
-        return list(map(lambda record: LeagueTemplate.model_validate(record), query_response.records))
+        return list(map(lambda record: KnockoutTemplate.model_validate(record), query_response.records))
 
-    def create_league_templates(self, league_templates: list[LeagueTemplate]) -> list[LeagueTemplate]:
+    def create_knockout_templates(self, knockout_templates: list[KnockoutTemplate]) -> list[KnockoutTemplate]:
         records: list[dict[str, Any]] = list(
-            map(lambda league_template: league_template.model_dump(), league_templates)
+            map(lambda knockout_template: knockout_template.model_dump(), knockout_templates)
         )
 
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.INSERT,
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=LeagueTemplate.TARGET_TABLE
+                table=KnockoutTemplate.TARGET_TABLE
             ),
             records=records
         )
 
         self.__database_query_service.update_records(update_request)
 
-        return league_templates
+        return knockout_templates
 
-    def get_league_template_by_id(self, league_template_id: UUID) -> LeagueTemplate:
+    def get_knockout_template_by_id(self, knockout_template_id: UUID) -> KnockoutTemplate:
         query_request: QueryRequest = QueryRequest(
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=LeagueTemplate.TARGET_TABLE
+                table=KnockoutTemplate.TARGET_TABLE
             ),
             conditionGroup=QueryConditionGroup(
                 conditions=[
@@ -67,7 +67,7 @@ class LeagueTemplateService:
                             parts=[StoreConstants.ID]
                         ),
                         operator=ConditionOperator.EQUAL,
-                        value=league_template_id
+                        value=knockout_template_id
                     )
                 ]
             )
@@ -76,11 +76,11 @@ class LeagueTemplateService:
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
 
         if len(query_response.records) == 0:
-            raise HTTPException(status_code=404, detail="No league templates found with a matching id.")
+            raise HTTPException(status_code=404, detail="No knockout templates found with a matching id.")
 
-        return list(map(lambda record: LeagueTemplate.model_validate(record), query_response.records))[0]
+        return list(map(lambda record: KnockoutTemplate.model_validate(record), query_response.records))[0]
 
-    def delete_league_template_by_id(self, league_template_id: UUID):
+    def delete_knockout_template_by_id(self, knockout_template_id: UUID):
         query_request: QueryRequest = QueryRequest(
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
@@ -90,10 +90,10 @@ class LeagueTemplateService:
                 conditions=[
                     QueryCondition(
                         column=Column(
-                            parts=["leagueTemplateId"]
+                            parts=["knockoutTemplateId"]
                         ),
                         operator=ConditionOperator.EQUAL,
-                        value=league_template_id
+                        value=knockout_template_id
                     )
                 ]
             )
@@ -104,14 +104,14 @@ class LeagueTemplateService:
         if query_response.recordCount > 0:
             raise HTTPException(
                 status_code=409,
-                detail="Cannot delete league template as it is part of an existing tournament template."
+                detail="Cannot delete knockout template as it is part of an existing tournament template."
             )
 
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.DELETE,
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=LeagueTemplate.TARGET_TABLE
+                table=KnockoutTemplate.TARGET_TABLE
             ),
             conditionGroup=QueryConditionGroup(
                 conditions=[
@@ -120,7 +120,7 @@ class LeagueTemplateService:
                             parts=[StoreConstants.ID]
                         ),
                         operator=ConditionOperator.EQUAL,
-                        value=league_template_id
+                        value=knockout_template_id
                     )
                 ]
             )

@@ -16,7 +16,11 @@ class TournamentTemplateController:
         self.router.add_api_route("/", self.get_tournament_templates, methods=["GET"])
         self.router.add_api_route("/", self.create_tournament_templates, methods=["POST"])
         self.router.add_api_route("/{tournament_template_id}", self.get_tournament_template_by_id, methods=["GET"])
-        self.router.add_api_route("/{tournament_template_id}", self.delete_tournament_template_by_id, methods=["DELETE"])
+        self.router.add_api_route(
+            "/{tournament_template_id}",
+            self.delete_tournament_template_by_id,
+            methods=["DELETE"]
+        )
 
     async def get_tournament_templates(self) -> list[TournamentTemplate]:
         """
@@ -27,7 +31,10 @@ class TournamentTemplateController:
         """
         return self.__tournament_template_service.get_tournament_templates()
 
-    async def create_tournament_templates(self, tournament_templates: list[TournamentTemplateRequest]) -> list[TournamentTemplate]:
+    async def create_tournament_templates(
+            self,
+            tournament_templates: list[TournamentTemplateRequest]
+    ) -> list[TournamentTemplate]:
         """
         POST /tournament-templates endpoint to create new tournament templates.
 

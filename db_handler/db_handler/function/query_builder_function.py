@@ -60,7 +60,11 @@ class QueryBuilderFunction:
         Examples:
             - SELECT * FROM example_schema.example_table ;
         """
-        string_parts.append("*" if sql_query.columns is None else ", ".join(list(map(lambda column: self.__build_column(column, False), sql_query.columns))))
+        string_parts.append("*" if sql_query.columns is None else ", ".join(
+            list(
+                map(lambda column: self.__build_column(column, False), sql_query.columns)
+            )
+        ))
         string_parts.append("FROM")
         string_parts.append(self.__build_table(sql_query.table))
 
@@ -188,7 +192,8 @@ class QueryBuilderFunction:
         Examples:
             - INNER JOIN example_schema.join_table AS joiner ON example.id = joiner.id
         """
-        return f"{table_join.joinType.value} {self.__build_table(table_join.table)} ON {self.__build_condition(table_join.joinCondition)}"
+        return (f"{table_join.joinType.value} {self.__build_table(table_join.table)} "
+                f"ON {self.__build_condition(table_join.joinCondition)}")
 
     def __build_conditions(self, query_condition_group: QueryConditionGroup) -> str:
         """
@@ -203,7 +208,9 @@ class QueryBuilderFunction:
         Examples:
             - example.column1 = 'example' AND joiner.column2 < 23
         """
-        condition_strings: list[str] = list(map(lambda condition: self.__build_condition(condition), query_condition_group.conditions))
+        condition_strings: list[str] = list(
+            map(lambda condition: self.__build_condition(condition), query_condition_group.conditions)
+        )
 
         return f" {query_condition_group.join.value} ".join(condition_strings)
 
@@ -221,7 +228,10 @@ class QueryBuilderFunction:
             - example.column1 = 'example'
             - joiner.column2 < 23
         """
-        condition_parts: list[str] = [self.__build_column(query_condition.column, True), query_condition.operator.value]
+        condition_parts: list[str] = [
+            self.__build_column(query_condition.column, True),
+            query_condition.operator.value
+        ]
 
         if query_condition.value is not None:
             condition_parts.append(self.__build_value(query_condition.value))
@@ -365,7 +375,9 @@ class QueryBuilderFunction:
         """
         filtered: list[dict[str, Any]] = list(filter(lambda record: column in record, records))
 
-        return f"{column} = CASE {' '.join(list(map(lambda record: self.__build_when_clause(column, record), filtered)))} ELSE {column} END"
+        return (f"{column} = CASE "
+                f"{' '.join(list(map(lambda record: self.__build_when_clause(column, record), filtered)))} "
+                f"ELSE {column} END")
 
     def __build_when_clause(self, column: str, record: dict[str, Any]) -> str:
         """

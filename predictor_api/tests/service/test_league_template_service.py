@@ -157,7 +157,9 @@ class TestLeagueTemplateService:
         )
 
         # When
-        league_template: LeagueTemplate = self.__league_template_service.get_league_template_by_id(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"))
+        league_template: LeagueTemplate = self.__league_template_service.get_league_template_by_id(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+        )
 
         # Then
         captured_args_retrieve_records, captured_kwargs = self.__database_query_service.retrieve_records.call_args
@@ -237,4 +239,7 @@ class TestLeagueTemplateService:
 
         # Then
         Assertions.assert_equals(409, httpe.value.status_code)
-        Assertions.assert_equals("Cannot delete league template as it is part of an existing tournament template.", httpe.value.detail)
+        Assertions.assert_equals(
+            "Cannot delete league template as it is part of an existing tournament template.",
+            httpe.value.detail
+        )

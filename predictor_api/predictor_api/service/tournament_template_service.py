@@ -16,7 +16,10 @@ class TournamentTemplateService:
     def get_tournament_templates(self) -> list[TournamentTemplate]:
         return []
 
-    def create_tournament_templates(self, tournament_templates: list[TournamentTemplateRequest]) -> list[TournamentTemplate]:
+    def create_tournament_templates(
+            self,
+            tournament_templates: list[TournamentTemplateRequest]
+    ) -> list[TournamentTemplate]:
         return []
 
     def get_tournament_template_by_id(self, tournament_template_id: UUID) -> TournamentTemplate:

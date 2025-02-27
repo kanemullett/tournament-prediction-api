@@ -88,7 +88,9 @@ class TournamentService:
         Returns:
             list[Tournament]: The newly updated tournaments.
         """
-        records: list[dict[str, Any]] = list(map(lambda tournament: tournament.model_dump(exclude_none=True), tournaments))
+        records: list[dict[str, Any]] = list(
+            map(lambda tournament: tournament.model_dump(exclude_none=True), tournaments)
+        )
 
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.UPDATE,
