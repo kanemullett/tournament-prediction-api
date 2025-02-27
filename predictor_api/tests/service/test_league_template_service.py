@@ -225,10 +225,11 @@ class TestLeagueTemplateService:
             recordCount=1,
             records=[
                 {
-                    "id": "793c861f-f541-4ef7-adfa-a8cdd60c7d06",
-                    "name": "32-Team Group & Knockout",
-                    "leagueTemplateId": "c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
-                    "knockoutTemplateId": "8b065f5c-75a0-470b-b0f9-ac7a2e033723"
+                    "id": "c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
+                    "name": "8x4 Group-Stage Single-Game",
+                    "groupCount": 8,
+                    "teamsPerGroup": 4,
+                    "homeAndAway": False
                 }
             ]
         )
