@@ -1,11 +1,28 @@
+from typing import Any
 from uuid import UUID
 
+from fastapi import HTTPException
+
+from db_handler.db_handler.model.column import Column
+from db_handler.db_handler.model.query_condition import QueryCondition
+from db_handler.db_handler.model.query_condition_group import QueryConditionGroup
+from db_handler.db_handler.model.query_request import QueryRequest
+from db_handler.db_handler.model.query_response import QueryResponse
+from db_handler.db_handler.model.table import Table
+from db_handler.db_handler.model.table_join import TableJoin
+from db_handler.db_handler.model.type.condition_operator import ConditionOperator
+from db_handler.db_handler.model.type.sql_operator import SqlOperator
+from db_handler.db_handler.model.type.table_join_type import TableJoinType
+from db_handler.db_handler.model.update_request import UpdateRequest
 from db_handler.db_handler.service.database_query_service import DatabaseQueryService
+from db_handler.db_handler.util.store_constants import StoreConstants
 from predictor_api.predictor_api.model.knockout_round import KnockoutRound
 from predictor_api.predictor_api.model.knockout_template import KnockoutTemplate
 from predictor_api.predictor_api.model.league_template import LeagueTemplate
+from predictor_api.predictor_api.model.tournament import Tournament
 from predictor_api.predictor_api.model.tournament_template import TournamentTemplate
 from predictor_api.predictor_api.model.tournament_template_request import TournamentTemplateRequest
+from predictor_api.predictor_api.util.predictor_constants import PredictorConstants
 
 
 class TournamentTemplateService:
@@ -14,61 +31,381 @@ class TournamentTemplateService:
         self.__database_query_service = database_query_service
 
     def get_tournament_templates(self) -> list[TournamentTemplate]:
-        return []
+        query_request: QueryRequest = QueryRequest(
+            columns=[
+                Column(
+                    parts=["tourn", StoreConstants.ID]
+                ),
+                Column(
+                    parts=["tourn", "name"],
+                    alias="tournamentName"
+                ),
+                Column(
+                    parts=["league", StoreConstants.ID],
+                    alias="leagueId"
+                ),
+                Column(
+                    parts=["league", "name"],
+                    alias="leagueName"
+                ),
+                Column(
+                    parts=["league", "groupCount"]
+                ),
+                Column(
+                    parts=["league", "teamsPerGroup"]
+                ),
+                Column(
+                    parts=["league", "homeAndAway"]
+                ),
+                Column(
+                    parts=["knock", StoreConstants.ID],
+                    alias="knockoutId"
+                ),
+                Column(
+                    parts=["knock", "name"],
+                    alias="knockoutName"
+                ),
+                Column(
+                    parts=["knock", "rounds"]
+                )
+            ],
+            table=Table(
+                schema=PredictorConstants.PREDICTOR_SCHEMA,
+                table=TournamentTemplate.TARGET_TABLE,
+                alias="tourn"
+            ),
+            tableJoins=[
+                TableJoin(
+                    table=Table(
+                        schema=PredictorConstants.PREDICTOR_SCHEMA,
+                        table=LeagueTemplate.TARGET_TABLE,
+                        alias="league"
+                    ),
+                    joinCondition=QueryCondition(
+                        column=Column(
+                            parts=["tourn", "leagueTemplateId"]
+                        ),
+                        operator=ConditionOperator.EQUAL,
+                        value=Column(
+                            parts=["league", StoreConstants.ID]
+                        )
+                    ),
+                    joinType=TableJoinType.LEFT
+                ),
+                TableJoin(
+                    table=Table(
+                        schema=PredictorConstants.PREDICTOR_SCHEMA,
+                        table=KnockoutTemplate.TARGET_TABLE,
+                        alias="knock"
+                    ),
+                    joinCondition=QueryCondition(
+                        column=Column(
+                            parts=["tourn", "knockoutTemplateId"]
+                        ),
+                        operator=ConditionOperator.EQUAL,
+                        value=Column(
+                            parts=["knock", StoreConstants.ID]
+                        )
+                    ),
+                    joinType=TableJoinType.LEFT
+                )
+            ]
+        )
+
+        query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
+
+        return list(map(lambda record: self.__build_tournament_template(record), query_response.records))
 
     def create_tournament_templates(
             self,
             tournament_templates: list[TournamentTemplateRequest]
     ) -> list[TournamentTemplate]:
-        return []
+        records: list[dict[str, Any]] = list(
+            map(lambda tournament_template: tournament_template.model_dump(), tournament_templates)
+        )
 
-    def get_tournament_template_by_id(self, tournament_template_id: UUID) -> TournamentTemplate:
-        return TournamentTemplate(
-            name="32-Team Group & Knockout",
-            league=LeagueTemplate(
-                name="Group Stage",
-                groupCount=8,
-                teamsPerGroup=4,
-                homeAndAway=False
+        update_request: UpdateRequest = UpdateRequest(
+            operation=SqlOperator.INSERT,
+            table=Table(
+                schema=PredictorConstants.PREDICTOR_SCHEMA,
+                table=TournamentTemplate.TARGET_TABLE
             ),
-            knockout=KnockoutTemplate(
-                name="Knockout Phase",
-                rounds=[
-                    KnockoutRound(
-                        name="Round of 16",
-                        teamCount=16,
-                        roundOrder=1,
-                        twoLegs=False,
-                        extraTime=True,
-                        awayGoals=False
+            records=records
+        )
+
+        self.__database_query_service.update_records(update_request)
+
+        included_tournaments: list[UUID] = list(map(lambda tournament_template: tournament_template.id, tournament_templates))
+
+        query_request: QueryRequest = QueryRequest(
+            columns=[
+                Column(
+                    parts=["tourn", StoreConstants.ID]
+                ),
+                Column(
+                    parts=["tourn", "name"],
+                    alias="tournamentName"
+                ),
+                Column(
+                    parts=["league", StoreConstants.ID],
+                    alias="leagueId"
+                ),
+                Column(
+                    parts=["league", "name"],
+                    alias="leagueName"
+                ),
+                Column(
+                    parts=["league", "groupCount"]
+                ),
+                Column(
+                    parts=["league", "teamsPerGroup"]
+                ),
+                Column(
+                    parts=["league", "homeAndAway"]
+                ),
+                Column(
+                    parts=["knock", StoreConstants.ID],
+                    alias="knockoutId"
+                ),
+                Column(
+                    parts=["knock", "name"],
+                    alias="knockoutName"
+                ),
+                Column(
+                    parts=["knock", "rounds"]
+                )
+            ],
+            table=Table(
+                schema=PredictorConstants.PREDICTOR_SCHEMA,
+                table=TournamentTemplate.TARGET_TABLE,
+                alias="tourn"
+            ),
+            tableJoins=[
+                TableJoin(
+                    table=Table(
+                        schema=PredictorConstants.PREDICTOR_SCHEMA,
+                        table=LeagueTemplate.TARGET_TABLE,
+                        alias="league"
                     ),
-                    KnockoutRound(
-                        name="Quarter-Finals",
-                        teamCount=8,
-                        roundOrder=2,
-                        twoLegs=False,
-                        extraTime=True,
-                        awayGoals=False
+                    joinCondition=QueryCondition(
+                        column=Column(
+                            parts=["tourn", "leagueTemplateId"]
+                        ),
+                        operator=ConditionOperator.EQUAL,
+                        value=Column(
+                            parts=["league", StoreConstants.ID]
+                        )
                     ),
-                    KnockoutRound(
-                        name="Semi-Finals",
-                        teamCount=4,
-                        roundOrder=3,
-                        twoLegs=False,
-                        extraTime=True,
-                        awayGoals=False
+                    joinType=TableJoinType.LEFT
+                ),
+                TableJoin(
+                    table=Table(
+                        schema=PredictorConstants.PREDICTOR_SCHEMA,
+                        table=KnockoutTemplate.TARGET_TABLE,
+                        alias="knock"
                     ),
-                    KnockoutRound(
-                        name="Final",
-                        teamCount=2,
-                        roundOrder=4,
-                        twoLegs=False,
-                        extraTime=True,
-                        awayGoals=False
+                    joinCondition=QueryCondition(
+                        column=Column(
+                            parts=["tourn", "knockoutTemplateId"]
+                        ),
+                        operator=ConditionOperator.EQUAL,
+                        value=Column(
+                            parts=["knock", StoreConstants.ID]
+                        )
+                    ),
+                    joinType=TableJoinType.LEFT
+                )
+            ],
+            conditionGroup=QueryConditionGroup(
+                conditions=[
+                    QueryCondition(
+                        column=Column(
+                            parts=["tourn", StoreConstants.ID]
+                        ),
+                        operator=ConditionOperator.IN,
+                        value=included_tournaments
                     )
                 ]
             )
         )
 
+        query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
+
+        return list(map(lambda record: self.__build_tournament_template(record), query_response.records))
+
+    def get_tournament_template_by_id(self, tournament_template_id: UUID) -> TournamentTemplate:
+        query_request: QueryRequest = QueryRequest(
+            columns=[
+                Column(
+                    parts=["tourn", StoreConstants.ID]
+                ),
+                Column(
+                    parts=["tourn", "name"],
+                    alias="tournamentName"
+                ),
+                Column(
+                    parts=["league", StoreConstants.ID],
+                    alias="leagueId"
+                ),
+                Column(
+                    parts=["league", "name"],
+                    alias="leagueName"
+                ),
+                Column(
+                    parts=["league", "groupCount"]
+                ),
+                Column(
+                    parts=["league", "teamsPerGroup"]
+                ),
+                Column(
+                    parts=["league", "homeAndAway"]
+                ),
+                Column(
+                    parts=["knock", StoreConstants.ID],
+                    alias="knockoutId"
+                ),
+                Column(
+                    parts=["knock", "name"],
+                    alias="knockoutName"
+                ),
+                Column(
+                    parts=["knock", "rounds"]
+                )
+            ],
+            table=Table(
+                schema=PredictorConstants.PREDICTOR_SCHEMA,
+                table=TournamentTemplate.TARGET_TABLE,
+                alias="tourn"
+            ),
+            tableJoins=[
+                TableJoin(
+                    table=Table(
+                        schema=PredictorConstants.PREDICTOR_SCHEMA,
+                        table=LeagueTemplate.TARGET_TABLE,
+                        alias="league"
+                    ),
+                    joinCondition=QueryCondition(
+                        column=Column(
+                            parts=["tourn", "leagueTemplateId"]
+                        ),
+                        operator=ConditionOperator.EQUAL,
+                        value=Column(
+                            parts=["league", StoreConstants.ID]
+                        )
+                    ),
+                    joinType=TableJoinType.LEFT
+                ),
+                TableJoin(
+                    table=Table(
+                        schema=PredictorConstants.PREDICTOR_SCHEMA,
+                        table=KnockoutTemplate.TARGET_TABLE,
+                        alias="knock"
+                    ),
+                    joinCondition=QueryCondition(
+                        column=Column(
+                            parts=["tourn", "knockoutTemplateId"]
+                        ),
+                        operator=ConditionOperator.EQUAL,
+                        value=Column(
+                            parts=["knock", StoreConstants.ID]
+                        )
+                    ),
+                    joinType=TableJoinType.LEFT
+                )
+            ],
+            conditionGroup=QueryConditionGroup(
+                conditions=[
+                    QueryCondition(
+                        column=Column(
+                            parts=["tourn", StoreConstants.ID]
+                        ),
+                        operator=ConditionOperator.EQUAL,
+                        value=tournament_template_id
+                    )
+                ]
+            )
+        )
+
+        query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
+
+        if len(query_response.records) == 0:
+            raise HTTPException(status_code=404, detail="No tournament templates found with a matching id.")
+
+        return list(map(lambda record: self.__build_tournament_template(record), query_response.records))[0]
+
     def delete_tournament_template_by_id(self, tournament_template_id: UUID):
-        print("DELETED")
+        query_request: QueryRequest = QueryRequest(
+            table=Table(
+                schema=PredictorConstants.PREDICTOR_SCHEMA,
+                table=Tournament.TARGET_TABLE
+            ),
+            conditionGroup=QueryConditionGroup(
+                conditions=[
+                    QueryCondition(
+                        column=Column(
+                            parts=["templateId"]
+                        ),
+                        operator=ConditionOperator.EQUAL,
+                        value=tournament_template_id
+                    )
+                ]
+            )
+        )
+
+        query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
+
+        if query_response.recordCount > 0:
+            raise HTTPException(
+                status_code=409,
+                detail="Cannot delete tournament template as it is part of an existing tournament."
+            )
+
+        update_request: UpdateRequest = UpdateRequest(
+            operation=SqlOperator.DELETE,
+            table=Table(
+                schema=PredictorConstants.PREDICTOR_SCHEMA,
+                table=TournamentTemplate.TARGET_TABLE
+            ),
+            conditionGroup=QueryConditionGroup(
+                conditions=[
+                    QueryCondition(
+                        column=Column(
+                            parts=[StoreConstants.ID]
+                        ),
+                        operator=ConditionOperator.EQUAL,
+                        value=tournament_template_id
+                    )
+                ]
+            )
+        )
+
+        self.__database_query_service.update_records(update_request)
+
+    @staticmethod
+    def __build_tournament_template(record: dict[str, Any]) -> TournamentTemplate:
+        template: TournamentTemplate = TournamentTemplate(
+            id=record[StoreConstants.ID],
+            name=record["tournamentName"]
+        )
+
+        if "leagueId" in record and record["leagueId"] is not None:
+            template = template.copy(update={
+                "league": LeagueTemplate(
+                    id=record["leagueId"],
+                    name=record["leagueName"],
+                    groupCount=record["groupCount"],
+                    teamsPerGroup=record["teamsPerGroup"],
+                    homeAndAway=record["homeAndAway"]
+                )
+            })
+
+        if "knockoutId" in record and record["knockoutId"] is not None:
+            template = template.copy(update={
+                "knockout": KnockoutTemplate(
+                    id=record["knockoutId"],
+                    name=record["knockoutName"],
+                    rounds=list(map(lambda record_round: KnockoutRound.model_validate(record_round), record["rounds"]))
+                )
+            })
+
+        return template

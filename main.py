@@ -1,4 +1,8 @@
+from typing import Any
+
 from fastapi import FastAPI
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
 
 from db_handler.db_handler.function.query_builder_function import QueryBuilderFunction
 from db_handler.db_handler.function.record_builder_function import RecordBuilderFunction
@@ -15,7 +19,12 @@ from predictor_api.predictor_api.service.tournament_service import TournamentSer
 from predictor_api.predictor_api.service.tournament_template_service import TournamentTemplateService
 from predictor_api.predictor_api.util.predictor_constants import PredictorConstants
 
-app = FastAPI()
+class ExcludeNoneJSONResponse(JSONResponse):
+    def render(self, content: Any) -> bytes:
+        # Automatically exclude None values from all responses
+        return super().render(jsonable_encoder(content, exclude_none=True))
+
+app = FastAPI(default_response_class=ExcludeNoneJSONResponse)
 
 database_initializer_service: DatabaseInitializerService = DatabaseInitializerService(DatabaseUtils.DATABASE_CONNECTION, PredictorConstants.PREDICTOR_SCHEMA)
 database_initializer_service.initialize_tables()

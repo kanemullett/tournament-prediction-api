@@ -256,6 +256,9 @@ class QueryBuilderFunction:
         if value == "NULL":
             return value
 
+        if value is None:
+            return "NULL"
+
         if isinstance(value, str) or isinstance(value, UUID) or isinstance(value, datetime):
             return f"'{value}'"
 
