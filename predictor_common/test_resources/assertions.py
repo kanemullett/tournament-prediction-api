@@ -16,7 +16,7 @@ class Assertions:
         assert condition is False
 
     @staticmethod
-    def assert_null(actual: Any) -> None:
+    def assert_none(actual: Any) -> None:
         assert actual is None
 
     @staticmethod

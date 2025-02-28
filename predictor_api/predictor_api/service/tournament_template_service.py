@@ -389,7 +389,7 @@ class TournamentTemplateService:
         )
 
         if "leagueId" in record and record["leagueId"] is not None:
-            template = template.copy(update={
+            template = template.model_copy(update={
                 "league": LeagueTemplate(
                     id=record["leagueId"],
                     name=record["leagueName"],
@@ -400,7 +400,7 @@ class TournamentTemplateService:
             })
 
         if "knockoutId" in record and record["knockoutId"] is not None:
-            template = template.copy(update={
+            template = template.model_copy(update={
                 "knockout": KnockoutTemplate(
                     id=record["knockoutId"],
                     name=record["knockoutName"],

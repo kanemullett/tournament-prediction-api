@@ -137,7 +137,7 @@ class TestDatabaseQueryService:
         # Then
         Assertions.assert_type(UUID, query_response.referenceId)
         Assertions.assert_equals(2, query_response.recordCount)
-        Assertions.assert_null(query_response.records)
+        Assertions.assert_none(query_response.records)
 
         captured_args_query, captured_kwargs = cursor.execute.call_args
         Assertions.assert_equals(query, captured_args_query[0])
@@ -178,7 +178,7 @@ class TestDatabaseQueryService:
         # Then
         Assertions.assert_type(UUID, query_response.referenceId)
         Assertions.assert_equals(1, query_response.recordCount)
-        Assertions.assert_null(query_response.records)
+        Assertions.assert_none(query_response.records)
 
         captured_args_query, captured_kwargs = cursor.execute.call_args
         Assertions.assert_equals(query, captured_args_query[0])
@@ -230,7 +230,7 @@ class TestDatabaseQueryService:
         # Then
         Assertions.assert_type(UUID, query_response.referenceId)
         Assertions.assert_equals(1, query_response.recordCount)
-        Assertions.assert_null(query_response.records)
+        Assertions.assert_none(query_response.records)
 
         captured_args_query, captured_kwargs = cursor.execute.call_args
         Assertions.assert_equals(query, captured_args_query[0])
