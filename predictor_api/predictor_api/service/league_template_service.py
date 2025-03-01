@@ -95,11 +95,7 @@ class LeagueTemplateService:
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
                 table=LeagueTemplate.TARGET_TABLE
             ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition.of(Column.of(StoreConstants.ID), league_template_id)
-                ]
-            )
+            conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of(StoreConstants.ID), league_template_id))
         )
 
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
@@ -121,11 +117,7 @@ class LeagueTemplateService:
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
                 table=TournamentTemplate.TARGET_TABLE
             ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition.of(Column.of("leagueTemplateId"), league_template_id)
-                ]
-            )
+            conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of("leagueTemplateId"), league_template_id))
         )
 
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
@@ -142,11 +134,7 @@ class LeagueTemplateService:
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
                 table=LeagueTemplate.TARGET_TABLE
             ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition.of(Column.of(StoreConstants.ID), league_template_id)
-                ]
-            )
+            conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of(StoreConstants.ID), league_template_id))
         )
 
         self.__database_query_service.update_records(update_request)

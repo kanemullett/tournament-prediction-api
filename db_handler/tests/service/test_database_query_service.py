@@ -35,15 +35,13 @@ class TestDatabaseQueryService:
                 Column.of("column1"),
                 Column.of("column2")
             ],
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column.of("column1"),
-                        operator=ConditionOperator.LESS_THAN,
-                        value=23
-                    ),
-                    QueryCondition.of(Column.of("column2"), "hello")
-                ]
+            conditionGroup=QueryConditionGroup.of(
+                QueryCondition(
+                    column=Column.of("column1"),
+                    operator=ConditionOperator.LESS_THAN,
+                    value=23
+                ),
+                QueryCondition.of(Column.of("column2"), "hello")
             )
         )
 
@@ -182,15 +180,13 @@ class TestDatabaseQueryService:
                 schema="test_schema",
                 table="test_table"
             ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column.of("column1"),
-                        operator=ConditionOperator.LESS_THAN,
-                        value=23
-                    ),
-                    QueryCondition.of(Column.of("column2"), "hello")
-                ]
+            conditionGroup=QueryConditionGroup.of(
+                QueryCondition(
+                    column=Column.of("column1"),
+                    operator=ConditionOperator.LESS_THAN,
+                    value=23
+                ),
+                QueryCondition.of(Column.of("column2"), "hello")
             )
         )
 

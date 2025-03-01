@@ -86,11 +86,7 @@ class TestQueryBuilderFunction:
                 schema="test_schema",
                 table="test_table"
             ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition.of(Column.of("column1"), "test_value")
-                ]
-            )
+            conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of("column1"), "test_value"))
         )
 
         # When
@@ -434,11 +430,7 @@ class TestQueryBuilderFunction:
                 schema="test_schema",
                 table="test_table"
             ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition.of(Column.of("column1"), "test_value")
-                ]
-            )
+            conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of("column1"), "test_value"))
         )
 
         # When
@@ -484,14 +476,12 @@ class TestQueryBuilderFunction:
                 schema="test_schema",
                 table="test_table"
             ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column.of("column1"),
-                        operator=ConditionOperator.IN,
-                        value=["val", 23]
-                    )
-                ]
+            conditionGroup=QueryConditionGroup.of(
+                QueryCondition(
+                    column=Column.of("column1"),
+                    operator=ConditionOperator.IN,
+                    value=["val", 23]
+                )
             )
         )
 

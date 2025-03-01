@@ -109,14 +109,12 @@ class TournamentService:
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
                 table="tournaments"
             ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column.of(StoreConstants.ID),
-                        operator=ConditionOperator.IN,
-                        value=included_ids
-                    )
-                ]
+            conditionGroup=QueryConditionGroup.of(
+                QueryCondition(
+                    column=Column.of(StoreConstants.ID),
+                    operator=ConditionOperator.IN,
+                    value=included_ids
+                )
             )
         )).records
 
@@ -137,11 +135,7 @@ class TournamentService:
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
                 table=Tournament.TARGET_TABLE
             ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition.of(Column.of(StoreConstants.ID), tournament_id)
-                ]
-            )
+            conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of(StoreConstants.ID), tournament_id))
         )
 
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
@@ -164,11 +158,7 @@ class TournamentService:
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
                 table=Tournament.TARGET_TABLE
             ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition.of(Column.of(StoreConstants.ID), tournament_id)
-                ]
-            )
+            conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of(StoreConstants.ID), tournament_id))
         )
 
         self.__database_query_service.update_records(update_request)

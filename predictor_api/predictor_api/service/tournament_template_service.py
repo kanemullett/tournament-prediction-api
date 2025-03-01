@@ -203,14 +203,12 @@ class TournamentTemplateService:
                     joinType=TableJoinType.LEFT
                 )
             ],
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column.of("tourn", StoreConstants.ID),
-                        operator=ConditionOperator.IN,
-                        value=included_tournaments
-                    )
-                ]
+            conditionGroup=QueryConditionGroup.of(
+                QueryCondition(
+                    column=Column.of("tourn", StoreConstants.ID),
+                    operator=ConditionOperator.IN,
+                    value=included_tournaments
+                )
             )
         )
 
@@ -287,13 +285,8 @@ class TournamentTemplateService:
                     joinType=TableJoinType.LEFT
                 )
             ],
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition.of(
-                        Column.of("tourn", StoreConstants.ID),
-                        tournament_template_id
-                    )
-                ]
+            conditionGroup=QueryConditionGroup.of(
+                QueryCondition.of(Column.of("tourn", StoreConstants.ID), tournament_template_id)
             )
         )
 
@@ -316,14 +309,7 @@ class TournamentTemplateService:
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
                 table=Tournament.TARGET_TABLE
             ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition.of(
-                        Column.of("templateId"),
-                        tournament_template_id
-                    )
-                ]
-            )
+            conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of("templateId"), tournament_template_id))
         )
 
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
@@ -340,10 +326,8 @@ class TournamentTemplateService:
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
                 table=TournamentTemplate.TARGET_TABLE
             ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition.of(Column.of(StoreConstants.ID), tournament_template_id)
-                ]
+            conditionGroup=QueryConditionGroup.of(
+                QueryCondition.of(Column.of(StoreConstants.ID), tournament_template_id)
             )
         )
 
