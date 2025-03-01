@@ -24,11 +24,48 @@ class TournamentController:
         self.router: APIRouter = APIRouter(prefix="/tournaments", tags=["Tournaments"])
         self.__tournament_service = tournament_service
 
-        self.router.add_api_route("/", self.get_tournaments, methods=["GET"])
-        self.router.add_api_route("/", self.create_tournaments, methods=["POST"])
-        self.router.add_api_route("/", self.update_tournaments, methods=["PUT"])
-        self.router.add_api_route("/{tournament_id}", self.get_tournament_by_id, methods=["GET"])
-        self.router.add_api_route("/{tournament_id}", self.delete_tournament_by_id, methods=["DELETE"])
+        self.router.add_api_route(
+            "/",
+            self.get_tournaments,
+            methods=["GET"]
+        )
+        self.router.add_api_route(
+            "/",
+            self.create_tournaments,
+            methods=["POST"]
+        )
+        self.router.add_api_route(
+            "/",
+            self.update_tournaments,
+            methods=["PUT"]
+        )
+        self.router.add_api_route(
+            "/{tournament_id}",
+            self.get_tournament_by_id,
+            methods=["GET"],
+            responses={
+                404: {
+                    "description": "Not Found - No tournaments found with a matching id.",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "detail": "No tournaments found with a matching id."
+                            }
+                        }
+                    }
+                }
+            }
+        )
+        self.router.add_api_route(
+            "/{tournament_id}",
+            self.delete_tournament_by_id,
+            methods=["DELETE"],
+            responses={
+                204: {
+                    "description": "No Content - The league template was successfully deleted."
+                }
+            }
+        )
 
     async def get_tournaments(self) -> list[Tournament]:
         """

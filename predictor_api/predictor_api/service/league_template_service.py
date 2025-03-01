@@ -14,130 +14,87 @@ from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.update_request import UpdateRequest
 from db_handler.db_handler.service.database_query_service import DatabaseQueryService
 from db_handler.db_handler.util.store_constants import StoreConstants
-from predictor_api.predictor_api.model.tournament import Tournament
+from predictor_api.predictor_api.model.league_template import LeagueTemplate
+from predictor_api.predictor_api.model.tournament_template import TournamentTemplate
 from predictor_api.predictor_api.util.predictor_constants import PredictorConstants
 
 
-class TournamentService:
+class LeagueTemplateService:
     """
-    Service for performing tournament-related actions.
+    Service for performing league template-related actions.
 
     Attributes:
         __database_query_service (DatabaseQueryService): The database query service.
     """
 
-    def __init__(self, database_query_service: DatabaseQueryService) -> None:
+    def __init__(self, database_query_service: DatabaseQueryService):
         """
-        Initialise the TournamentService.
+        Initialise the LeagueTemplateService.
 
         Args:
             database_query_service (DatabaseQueryService): The database query service.
         """
         self.__database_query_service = database_query_service
 
-    def get_tournaments(self) -> list[Tournament]:
+    def get_league_templates(self) -> list[LeagueTemplate]:
         """
-        Retrieve stored tournaments.
+        Retrieve stored league templates.
 
         Returns:
-            list[Tournament]: The stored tournaments.
+            list[LeagueTemplate]: The stored league templates.
         """
         query_request: QueryRequest = QueryRequest(
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=Tournament.TARGET_TABLE
+                table=LeagueTemplate.TARGET_TABLE
             )
         )
 
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
 
-        return list(map(lambda record: Tournament.model_validate(record), query_response.records))
+        return list(map(lambda record: LeagueTemplate.model_validate(record), query_response.records))
 
-    def create_tournaments(self, tournaments: list[Tournament]) -> list[Tournament]:
+    def create_league_templates(self, league_templates: list[LeagueTemplate]) -> list[LeagueTemplate]:
         """
-        Create new tournaments.
+        Create new league templates.
 
         Args:
-            tournaments (list[Tournament]): The new tournaments to create.
+            league_templates (list[LeagueTemplate]): The new league templates to create.
 
         Returns:
-            list[Tournament]: The newly created tournaments.
+            list[LeagueTemplate]: The newly created league templates.
         """
-        records: list[dict[str, Any]] = list(map(lambda tournament: tournament.model_dump(), tournaments))
+        records: list[dict[str, Any]] = list(
+            map(lambda league_template: league_template.model_dump(), league_templates)
+        )
 
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.INSERT,
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=Tournament.TARGET_TABLE
+                table=LeagueTemplate.TARGET_TABLE
             ),
             records=records
         )
 
         self.__database_query_service.update_records(update_request)
 
-        return tournaments
+        return league_templates
 
-    def update_tournaments(self, tournaments: list[Tournament]) -> list[Tournament]:
+    def get_league_template_by_id(self, league_template_id: UUID) -> LeagueTemplate:
         """
-        Update existing tournaments.
+        Retrieve a single stored league template by its id.
 
         Args:
-            tournaments (list[Tournament]): The tournaments to update.
+            league_template_id (UUID): The id of the league template to retrieve.
 
         Returns:
-            list[Tournament]: The newly updated tournaments.
-        """
-        records: list[dict[str, Any]] = list(
-            map(lambda tournament: tournament.model_dump(exclude_none=True), tournaments)
-        )
-
-        update_request: UpdateRequest = UpdateRequest(
-            operation=SqlOperator.UPDATE,
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=Tournament.TARGET_TABLE
-            ),
-            records=records
-        )
-
-        self.__database_query_service.update_records(update_request)
-
-        included_ids: list[UUID] = list(map(lambda tournament: tournament.id, tournaments))
-        included_records: list[dict[str, Any]] = self.__database_query_service.retrieve_records(QueryRequest(
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table="tournaments"
-            ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=[StoreConstants.ID]
-                        ),
-                        operator=ConditionOperator.IN,
-                        value=included_ids
-                    )
-                ]
-            )
-        )).records
-
-        return list(map(lambda record: Tournament.model_validate(record), included_records))
-
-    def get_tournament_by_id(self, tournament_id: UUID) -> Tournament:
-        """
-        Retrieve a single stored tournament by its id.
-
-        Args:
-            tournament_id (UUID): The id of the tournament to retrieve.
-
-        Returns:
-            Tournament: The retrieved tournament.
+            LeagueTemplate: The retrieved league template.
         """
         query_request: QueryRequest = QueryRequest(
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=Tournament.TARGET_TABLE
+                table=LeagueTemplate.TARGET_TABLE
             ),
             conditionGroup=QueryConditionGroup(
                 conditions=[
@@ -146,7 +103,7 @@ class TournamentService:
                             parts=[StoreConstants.ID]
                         ),
                         operator=ConditionOperator.EQUAL,
-                        value=tournament_id
+                        value=league_template_id
                     )
                 ]
             )
@@ -155,22 +112,48 @@ class TournamentService:
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
 
         if len(query_response.records) == 0:
-            raise HTTPException(status_code=404, detail="No tournaments found with a matching id.")
+            raise HTTPException(status_code=404, detail="No league templates found with a matching id.")
 
-        return list(map(lambda record: Tournament.model_validate(record), query_response.records))[0]
+        return list(map(lambda record: LeagueTemplate.model_validate(record), query_response.records))[0]
 
-    def delete_tournament_by_id(self, tournament_id: UUID) -> None:
+    def delete_league_template_by_id(self, league_template_id: UUID):
         """
-        Delete a single stored tournament by its id.
+        Delete a single stored league template by its id.
 
         Args:
-            tournament_id (UUID): The id of the tournament to delete.
+            league_template_id (UUID): The id of the league template to delete.
         """
+        query_request: QueryRequest = QueryRequest(
+            table=Table(
+                schema=PredictorConstants.PREDICTOR_SCHEMA,
+                table=TournamentTemplate.TARGET_TABLE
+            ),
+            conditionGroup=QueryConditionGroup(
+                conditions=[
+                    QueryCondition(
+                        column=Column(
+                            parts=["leagueTemplateId"]
+                        ),
+                        operator=ConditionOperator.EQUAL,
+                        value=league_template_id
+                    )
+                ]
+            )
+        )
+
+        query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
+
+        if query_response.recordCount > 0:
+            raise HTTPException(
+                status_code=409,
+                detail="Cannot delete league template as it is part of an existing tournament template."
+            )
+
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.DELETE,
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=Tournament.TARGET_TABLE
+                table=LeagueTemplate.TARGET_TABLE
             ),
             conditionGroup=QueryConditionGroup(
                 conditions=[
@@ -179,7 +162,7 @@ class TournamentService:
                             parts=[StoreConstants.ID]
                         ),
                         operator=ConditionOperator.EQUAL,
-                        value=tournament_id
+                        value=league_template_id
                     )
                 ]
             )

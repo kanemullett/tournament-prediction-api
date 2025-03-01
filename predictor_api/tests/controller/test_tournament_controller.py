@@ -153,7 +153,9 @@ class TestTournamentController:
         )
 
         # When
-        tournament: Tournament = await self.__tournament_controller.get_tournament_by_id(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"))
+        tournament: Tournament = await self.__tournament_controller.get_tournament_by_id(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+        )
 
         # Then
         Assertions.assert_equals(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"), tournament.id)
@@ -163,7 +165,10 @@ class TestTournamentController:
     @pytest.mark.asyncio
     async def test_should_pass_error_if_tournament_not_found(self):
         # Given
-        self.__tournament_service.get_tournament_by_id.side_effect = HTTPException(status_code=404, detail="No tournaments found with a matching id.")
+        self.__tournament_service.get_tournament_by_id.side_effect = HTTPException(
+            status_code=404,
+            detail="No tournaments found with a matching id."
+        )
 
         # When
         with raises(HTTPException) as httpe:

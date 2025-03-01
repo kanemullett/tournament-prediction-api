@@ -14,130 +14,87 @@ from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.update_request import UpdateRequest
 from db_handler.db_handler.service.database_query_service import DatabaseQueryService
 from db_handler.db_handler.util.store_constants import StoreConstants
-from predictor_api.predictor_api.model.tournament import Tournament
+from predictor_api.predictor_api.model.knockout_template import KnockoutTemplate
+from predictor_api.predictor_api.model.tournament_template import TournamentTemplate
 from predictor_api.predictor_api.util.predictor_constants import PredictorConstants
 
 
-class TournamentService:
+class KnockoutTemplateService:
     """
-    Service for performing tournament-related actions.
+    Service for performing knockout template-related actions.
 
     Attributes:
         __database_query_service (DatabaseQueryService): The database query service.
     """
 
-    def __init__(self, database_query_service: DatabaseQueryService) -> None:
+    def __init__(self, database_query_service: DatabaseQueryService):
         """
-        Initialise the TournamentService.
+        Initialise the KnockoutTemplateService.
 
         Args:
             database_query_service (DatabaseQueryService): The database query service.
         """
         self.__database_query_service = database_query_service
 
-    def get_tournaments(self) -> list[Tournament]:
+    def get_knockout_templates(self) -> list[KnockoutTemplate]:
         """
-        Retrieve stored tournaments.
+        Retrieve stored knockout templates.
 
         Returns:
-            list[Tournament]: The stored tournaments.
+            list[KnockoutTemplate]: The stored knockout templates.
         """
         query_request: QueryRequest = QueryRequest(
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=Tournament.TARGET_TABLE
+                table=KnockoutTemplate.TARGET_TABLE
             )
         )
 
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
 
-        return list(map(lambda record: Tournament.model_validate(record), query_response.records))
+        return list(map(lambda record: KnockoutTemplate.model_validate(record), query_response.records))
 
-    def create_tournaments(self, tournaments: list[Tournament]) -> list[Tournament]:
+    def create_knockout_templates(self, knockout_templates: list[KnockoutTemplate]) -> list[KnockoutTemplate]:
         """
-        Create new tournaments.
+        Create new knockout templates.
 
         Args:
-            tournaments (list[Tournament]): The new tournaments to create.
+            knockout_templates (list[KnockoutTemplate]): The new knockout templates to create.
 
         Returns:
-            list[Tournament]: The newly created tournaments.
+            list[KnockoutTemplate]: The newly created knockout templates.
         """
-        records: list[dict[str, Any]] = list(map(lambda tournament: tournament.model_dump(), tournaments))
+        records: list[dict[str, Any]] = list(
+            map(lambda knockout_template: knockout_template.model_dump(), knockout_templates)
+        )
 
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.INSERT,
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=Tournament.TARGET_TABLE
+                table=KnockoutTemplate.TARGET_TABLE
             ),
             records=records
         )
 
         self.__database_query_service.update_records(update_request)
 
-        return tournaments
+        return knockout_templates
 
-    def update_tournaments(self, tournaments: list[Tournament]) -> list[Tournament]:
+    def get_knockout_template_by_id(self, knockout_template_id: UUID) -> KnockoutTemplate:
         """
-        Update existing tournaments.
+        Retrieve a single stored knockout template by its id.
 
         Args:
-            tournaments (list[Tournament]): The tournaments to update.
+            knockout_template_id (UUID): The id of the knockout template to retrieve.
 
         Returns:
-            list[Tournament]: The newly updated tournaments.
-        """
-        records: list[dict[str, Any]] = list(
-            map(lambda tournament: tournament.model_dump(exclude_none=True), tournaments)
-        )
-
-        update_request: UpdateRequest = UpdateRequest(
-            operation=SqlOperator.UPDATE,
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=Tournament.TARGET_TABLE
-            ),
-            records=records
-        )
-
-        self.__database_query_service.update_records(update_request)
-
-        included_ids: list[UUID] = list(map(lambda tournament: tournament.id, tournaments))
-        included_records: list[dict[str, Any]] = self.__database_query_service.retrieve_records(QueryRequest(
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table="tournaments"
-            ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=[StoreConstants.ID]
-                        ),
-                        operator=ConditionOperator.IN,
-                        value=included_ids
-                    )
-                ]
-            )
-        )).records
-
-        return list(map(lambda record: Tournament.model_validate(record), included_records))
-
-    def get_tournament_by_id(self, tournament_id: UUID) -> Tournament:
-        """
-        Retrieve a single stored tournament by its id.
-
-        Args:
-            tournament_id (UUID): The id of the tournament to retrieve.
-
-        Returns:
-            Tournament: The retrieved tournament.
+            KnockoutTemplate: The retrieved knockout template.
         """
         query_request: QueryRequest = QueryRequest(
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=Tournament.TARGET_TABLE
+                table=KnockoutTemplate.TARGET_TABLE
             ),
             conditionGroup=QueryConditionGroup(
                 conditions=[
@@ -146,7 +103,7 @@ class TournamentService:
                             parts=[StoreConstants.ID]
                         ),
                         operator=ConditionOperator.EQUAL,
-                        value=tournament_id
+                        value=knockout_template_id
                     )
                 ]
             )
@@ -155,22 +112,48 @@ class TournamentService:
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
 
         if len(query_response.records) == 0:
-            raise HTTPException(status_code=404, detail="No tournaments found with a matching id.")
+            raise HTTPException(status_code=404, detail="No knockout templates found with a matching id.")
 
-        return list(map(lambda record: Tournament.model_validate(record), query_response.records))[0]
+        return list(map(lambda record: KnockoutTemplate.model_validate(record), query_response.records))[0]
 
-    def delete_tournament_by_id(self, tournament_id: UUID) -> None:
+    def delete_knockout_template_by_id(self, knockout_template_id: UUID):
         """
-        Delete a single stored tournament by its id.
+        Delete a single stored knockout template by its id.
 
         Args:
-            tournament_id (UUID): The id of the tournament to delete.
+            knockout_template_id (UUID): The id of the knockout template to delete.
         """
+        query_request: QueryRequest = QueryRequest(
+            table=Table(
+                schema=PredictorConstants.PREDICTOR_SCHEMA,
+                table=TournamentTemplate.TARGET_TABLE
+            ),
+            conditionGroup=QueryConditionGroup(
+                conditions=[
+                    QueryCondition(
+                        column=Column(
+                            parts=["knockoutTemplateId"]
+                        ),
+                        operator=ConditionOperator.EQUAL,
+                        value=knockout_template_id
+                    )
+                ]
+            )
+        )
+
+        query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
+
+        if query_response.recordCount > 0:
+            raise HTTPException(
+                status_code=409,
+                detail="Cannot delete knockout template as it is part of an existing tournament template."
+            )
+
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.DELETE,
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=Tournament.TARGET_TABLE
+                table=KnockoutTemplate.TARGET_TABLE
             ),
             conditionGroup=QueryConditionGroup(
                 conditions=[
@@ -179,7 +162,7 @@ class TournamentService:
                             parts=[StoreConstants.ID]
                         ),
                         operator=ConditionOperator.EQUAL,
-                        value=tournament_id
+                        value=knockout_template_id
                     )
                 ]
             )
