@@ -79,21 +79,21 @@ class TournamentTemplateService:
             ],
             table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, TournamentTemplate.TARGET_TABLE, "tourn"),
             tableJoins=[
-                TableJoin(
-                    table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, LeagueTemplate.TARGET_TABLE, "league"),
-                    joinCondition=QueryCondition.of(
+                TableJoin.of(
+                    Table.of(PredictorConstants.PREDICTOR_SCHEMA, LeagueTemplate.TARGET_TABLE, "league"),
+                    QueryCondition.of(
                         Column.of("tourn", "leagueTemplateId"),
                         Column.of("league", StoreConstants.ID)
                     ),
-                    joinType=TableJoinType.LEFT
+                    TableJoinType.LEFT
                 ),
-                TableJoin(
-                    table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, KnockoutTemplate.TARGET_TABLE, "knock"),
-                    joinCondition=QueryCondition.of(
+                TableJoin.of(
+                    Table.of(PredictorConstants.PREDICTOR_SCHEMA, KnockoutTemplate.TARGET_TABLE, "knock"),
+                    QueryCondition.of(
                         Column.of("tourn", "knockoutTemplateId"),
                         Column.of("knock", StoreConstants.ID)
                     ),
-                    joinType=TableJoinType.LEFT
+                    TableJoinType.LEFT
                 )
             ]
         )
@@ -159,21 +159,21 @@ class TournamentTemplateService:
             ],
             table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, TournamentTemplate.TARGET_TABLE, "tourn"),
             tableJoins=[
-                TableJoin(
-                    table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, LeagueTemplate.TARGET_TABLE, "league"),
-                    joinCondition=QueryCondition.of(
+                TableJoin.of(
+                    Table.of(PredictorConstants.PREDICTOR_SCHEMA, LeagueTemplate.TARGET_TABLE, "league"),
+                    QueryCondition.of(
                         Column.of("tourn", "leagueTemplateId"),
                         Column.of("league", StoreConstants.ID)
                     ),
-                    joinType=TableJoinType.LEFT
+                    TableJoinType.LEFT
                 ),
-                TableJoin(
-                    table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, KnockoutTemplate.TARGET_TABLE, "knock"),
-                    joinCondition=QueryCondition.of(
+                TableJoin.of(
+                    Table.of(PredictorConstants.PREDICTOR_SCHEMA, KnockoutTemplate.TARGET_TABLE, "knock"),
+                    QueryCondition.of(
                         Column.of("tourn", "knockoutTemplateId"),
                         Column.of("knock", StoreConstants.ID)
                     ),
-                    joinType=TableJoinType.LEFT
+                    TableJoinType.LEFT
                 )
             ],
             conditionGroup=QueryConditionGroup.of(
@@ -229,21 +229,21 @@ class TournamentTemplateService:
             ],
             table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, TournamentTemplate.TARGET_TABLE, "tourn"),
             tableJoins=[
-                TableJoin(
-                    table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, LeagueTemplate.TARGET_TABLE, "league"),
-                    joinCondition=QueryCondition.of(
+                TableJoin.of(
+                    Table.of(PredictorConstants.PREDICTOR_SCHEMA, LeagueTemplate.TARGET_TABLE, "league"),
+                    QueryCondition.of(
                         Column.of("tourn", "leagueTemplateId"),
                         Column.of("league", StoreConstants.ID)
                     ),
-                    joinType=TableJoinType.LEFT
+                    TableJoinType.LEFT
                 ),
-                TableJoin(
-                    table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, KnockoutTemplate.TARGET_TABLE, "knock"),
-                    joinCondition=QueryCondition.of(
+                TableJoin.of(
+                    Table.of(PredictorConstants.PREDICTOR_SCHEMA, KnockoutTemplate.TARGET_TABLE, "knock"),
+                    QueryCondition.of(
                         Column.of("tourn", "knockoutTemplateId"),
                         Column.of("knock", StoreConstants.ID)
                     ),
-                    joinType=TableJoinType.LEFT
+                    TableJoinType.LEFT
                 )
             ],
             conditionGroup=QueryConditionGroup.of(

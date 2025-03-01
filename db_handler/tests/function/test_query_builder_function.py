@@ -165,21 +165,21 @@ class TestQueryBuilderFunction:
                 )
             ],
             tableJoins=[
-                TableJoin(
-                    table=Table.of("test_schema", "join_table_one", "first_joiner"),
-                    joinCondition=QueryCondition.of(
+                TableJoin.of(
+                    Table.of("test_schema", "join_table_one", "first_joiner"),
+                    QueryCondition.of(
                         Column.of("my_table", "id"),
                         Column.of("first_joiner", "baseId")
                     ),
-                    joinType=TableJoinType.INNER
+                    TableJoinType.INNER
                 ),
-                TableJoin(
-                    table=Table.of("test_schema", "join_table_two", "second_joiner"),
-                    joinCondition=QueryCondition.of(
+                TableJoin.of(
+                    Table.of("test_schema", "join_table_two", "second_joiner"),
+                    QueryCondition.of(
                         Column.of("my_table", "id"),
                         Column.of("second_joiner", "baseId")
                     ),
-                    joinType=TableJoinType.LEFT
+                    TableJoinType.LEFT
                 )
             ],
             conditionGroup=QueryConditionGroup(

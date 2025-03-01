@@ -17,3 +17,11 @@ class TableJoin(BaseModel):
     table: Table
     joinCondition: QueryCondition
     joinType: TableJoinType
+
+    @classmethod
+    def of(cls, table: Table, join_condition: QueryCondition, join_type: TableJoinType):
+        return TableJoin(
+            table=table,
+            joinCondition=join_condition,
+            joinType=join_type
+        )
