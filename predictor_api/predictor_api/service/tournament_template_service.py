@@ -26,11 +26,29 @@ from predictor_api.predictor_api.util.predictor_constants import PredictorConsta
 
 
 class TournamentTemplateService:
+    """
+    Service for performing tournament template-related actions.
+
+    Attributes:
+        __database_query_service (DatabaseQueryService): The database query service.
+    """
 
     def __init__(self, database_query_service: DatabaseQueryService):
+        """
+        Initialise the TournamentTemplateService.
+
+        Args:
+            database_query_service (DatabaseQueryService): The database query service.
+        """
         self.__database_query_service = database_query_service
 
     def get_tournament_templates(self) -> list[TournamentTemplate]:
+        """
+        Retrieve stored tournament templates.
+
+        Returns:
+            list[TournamentTemplate]: The stored tournament templates.
+        """
         query_request: QueryRequest = QueryRequest(
             columns=[
                 Column(
@@ -120,6 +138,15 @@ class TournamentTemplateService:
             self,
             tournament_templates: list[TournamentTemplateRequest]
     ) -> list[TournamentTemplate]:
+        """
+        Create new tournament templates.
+
+        Args:
+            tournament_templates (list[TournamentTemplateRequest]): The new tournament templates to create.
+
+        Returns:
+            list[TournamentTemplate]: The newly created tournament templates.
+        """
         records: list[dict[str, Any]] = list(
             map(lambda tournament_template: tournament_template.model_dump(), tournament_templates)
         )
@@ -234,6 +261,15 @@ class TournamentTemplateService:
         return list(map(lambda record: self.__build_tournament_template(record), query_response.records))
 
     def get_tournament_template_by_id(self, tournament_template_id: UUID) -> TournamentTemplate:
+        """
+        Retrieve a single stored tournament template by its id.
+
+        Args:
+            tournament_template_id (UUID): The id of the tournament template to retrieve.
+
+        Returns:
+            TournamentTemplate: The retrieved tournament template.
+        """
         query_request: QueryRequest = QueryRequest(
             columns=[
                 Column(
@@ -334,6 +370,12 @@ class TournamentTemplateService:
         return list(map(lambda record: self.__build_tournament_template(record), query_response.records))[0]
 
     def delete_tournament_template_by_id(self, tournament_template_id: UUID):
+        """
+        Delete a single stored tournament template by its id.
+
+        Args:
+            tournament_template_id (UUID): The id of the tournament template to delete.
+        """
         query_request: QueryRequest = QueryRequest(
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
@@ -383,6 +425,15 @@ class TournamentTemplateService:
 
     @staticmethod
     def __build_tournament_template(record: dict[str, Any]) -> TournamentTemplate:
+        """
+        Build a TournamentTemplate object with child LeagueTemplate and KnockoutTemplate objects from a database record.
+
+        Args:
+            record (dict[str, Any]): The database record.
+
+        Returns:
+            TournamentTemplate: The newly created TournamentTemplate object.
+        """
         template: TournamentTemplate = TournamentTemplate(
             id=record[StoreConstants.ID],
             name=record["tournamentName"]

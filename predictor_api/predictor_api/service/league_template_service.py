@@ -20,11 +20,29 @@ from predictor_api.predictor_api.util.predictor_constants import PredictorConsta
 
 
 class LeagueTemplateService:
+    """
+    Service for performing league template-related actions.
+
+    Attributes:
+        __database_query_service (DatabaseQueryService): The database query service.
+    """
 
     def __init__(self, database_query_service: DatabaseQueryService):
+        """
+        Initialise the LeagueTemplateService.
+
+        Args:
+            database_query_service (DatabaseQueryService): The database query service.
+        """
         self.__database_query_service = database_query_service
 
     def get_league_templates(self) -> list[LeagueTemplate]:
+        """
+        Retrieve stored league templates.
+
+        Returns:
+            list[LeagueTemplate]: The stored league templates.
+        """
         query_request: QueryRequest = QueryRequest(
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
@@ -37,6 +55,15 @@ class LeagueTemplateService:
         return list(map(lambda record: LeagueTemplate.model_validate(record), query_response.records))
 
     def create_league_templates(self, league_templates: list[LeagueTemplate]) -> list[LeagueTemplate]:
+        """
+        Create new league templates.
+
+        Args:
+            league_templates (list[LeagueTemplate]): The new league templates to create.
+
+        Returns:
+            list[LeagueTemplate]: The newly created league templates.
+        """
         records: list[dict[str, Any]] = list(
             map(lambda league_template: league_template.model_dump(), league_templates)
         )
@@ -55,6 +82,15 @@ class LeagueTemplateService:
         return league_templates
 
     def get_league_template_by_id(self, league_template_id: UUID) -> LeagueTemplate:
+        """
+        Retrieve a single stored league template by its id.
+
+        Args:
+            league_template_id (UUID): The id of the league template to retrieve.
+
+        Returns:
+            LeagueTemplate: The retrieved league template.
+        """
         query_request: QueryRequest = QueryRequest(
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
@@ -81,6 +117,12 @@ class LeagueTemplateService:
         return list(map(lambda record: LeagueTemplate.model_validate(record), query_response.records))[0]
 
     def delete_league_template_by_id(self, league_template_id: UUID):
+        """
+        Delete a single stored league template by its id.
+
+        Args:
+            league_template_id (UUID): The id of the league template to delete.
+        """
         query_request: QueryRequest = QueryRequest(
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,

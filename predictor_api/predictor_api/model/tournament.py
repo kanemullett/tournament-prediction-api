@@ -12,6 +12,7 @@ class Tournament(DatabaseRecord):
     Attributes:
         year (Optional[int]): The year of the tournament.
         competition (Optional[Competition]): The type of competition.
+        templateId (Optional[UUID]): The id of the tournament's template.
     """
     year: Optional[int] = None
     competition: Optional[Competition] = None

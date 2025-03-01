@@ -6,6 +6,13 @@ from predictor_api.predictor_api.model.tournament_template_base import Tournamen
 
 
 class TournamentTemplate(TournamentTemplateBase):
+    """
+    Object representing a tournament template.
+
+    Attributes:
+        league (Optional[LeagueTemplate]): The template of the tournament's league phase.
+        knockout (Optional[KnockoutTemplate]): The template of the tournament's knockout phase.
+    """
     league: Optional[LeagueTemplate] = None
     knockout: Optional[KnockoutTemplate] = None
 

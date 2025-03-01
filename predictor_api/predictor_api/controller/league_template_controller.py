@@ -7,8 +7,22 @@ from predictor_api.predictor_api.service.league_template_service import LeagueTe
 
 
 class LeagueTemplateController:
+    """
+    Controller containing endpoints to perform league template-related actions.
+
+    Attributes:
+        __league_template_service (LeagueTemplateService): The league template service containing league template-based
+            logic.
+    """
 
     def __init__(self, league_template_service: LeagueTemplateService) -> None:
+        """
+        Initialise the LeagueTemplateController.
+
+        Attributes:
+            league_template_service (LeagueTemplateService): The league template service containing league
+                template-based logic.
+        """
         self.router: APIRouter = APIRouter(prefix="/league-templates", tags=["League Templates"])
         self.__league_template_service = league_template_service
 

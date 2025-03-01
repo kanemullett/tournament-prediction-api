@@ -7,8 +7,22 @@ from predictor_api.predictor_api.service.knockout_template_service import Knocko
 
 
 class KnockoutTemplateController:
+    """
+    Controller containing endpoints to perform knockout template-related actions.
+
+    Attributes:
+        __knockout_template_service (KnockoutTemplateService): The knockout template service containing knockout
+            template-based logic.
+    """
 
     def __init__(self, knockout_template_service: KnockoutTemplateService) -> None:
+        """
+        Initialise the KnockoutTemplateController.
+
+        Attributes:
+            knockout_template_service (KnockoutTemplateService): The knockout template service containing knockout
+                template-based logic.
+        """
         self.router: APIRouter = APIRouter(prefix="/knockout-templates", tags=["Knockout Templates"])
         self.__knockout_template_service = knockout_template_service
 
