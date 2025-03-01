@@ -51,9 +51,7 @@ class TournamentTemplateService:
         """
         query_request: QueryRequest = QueryRequest(
             columns=[
-                Column(
-                    parts=["tourn", StoreConstants.ID]
-                ),
+                Column.of("tourn", StoreConstants.ID),
                 Column(
                     parts=["tourn", "name"],
                     alias="tournamentName"
@@ -66,15 +64,9 @@ class TournamentTemplateService:
                     parts=["league", "name"],
                     alias="leagueName"
                 ),
-                Column(
-                    parts=["league", "groupCount"]
-                ),
-                Column(
-                    parts=["league", "teamsPerGroup"]
-                ),
-                Column(
-                    parts=["league", "homeAndAway"]
-                ),
+                Column.of("league", "groupCount"),
+                Column.of("league", "teamsPerGroup"),
+                Column.of("league", "homeAndAway"),
                 Column(
                     parts=["knock", StoreConstants.ID],
                     alias="knockoutId"
@@ -83,49 +75,25 @@ class TournamentTemplateService:
                     parts=["knock", "name"],
                     alias="knockoutName"
                 ),
-                Column(
-                    parts=["knock", "rounds"]
-                )
+                Column.of("knock", "rounds")
             ],
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=TournamentTemplate.TARGET_TABLE,
-                alias="tourn"
-            ),
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, TournamentTemplate.TARGET_TABLE, "tourn"),
             tableJoins=[
-                TableJoin(
-                    table=Table(
-                        schema=PredictorConstants.PREDICTOR_SCHEMA,
-                        table=LeagueTemplate.TARGET_TABLE,
-                        alias="league"
+                TableJoin.of(
+                    Table.of(PredictorConstants.PREDICTOR_SCHEMA, LeagueTemplate.TARGET_TABLE, "league"),
+                    QueryCondition.of(
+                        Column.of("tourn", "leagueTemplateId"),
+                        Column.of("league", StoreConstants.ID)
                     ),
-                    joinCondition=QueryCondition(
-                        column=Column(
-                            parts=["tourn", "leagueTemplateId"]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=Column(
-                            parts=["league", StoreConstants.ID]
-                        )
-                    ),
-                    joinType=TableJoinType.LEFT
+                    TableJoinType.LEFT
                 ),
-                TableJoin(
-                    table=Table(
-                        schema=PredictorConstants.PREDICTOR_SCHEMA,
-                        table=KnockoutTemplate.TARGET_TABLE,
-                        alias="knock"
+                TableJoin.of(
+                    Table.of(PredictorConstants.PREDICTOR_SCHEMA, KnockoutTemplate.TARGET_TABLE, "knock"),
+                    QueryCondition.of(
+                        Column.of("tourn", "knockoutTemplateId"),
+                        Column.of("knock", StoreConstants.ID)
                     ),
-                    joinCondition=QueryCondition(
-                        column=Column(
-                            parts=["tourn", "knockoutTemplateId"]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=Column(
-                            parts=["knock", StoreConstants.ID]
-                        )
-                    ),
-                    joinType=TableJoinType.LEFT
+                    TableJoinType.LEFT
                 )
             ]
         )
@@ -153,10 +121,7 @@ class TournamentTemplateService:
 
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.INSERT,
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=TournamentTemplate.TARGET_TABLE
-            ),
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, TournamentTemplate.TARGET_TABLE),
             records=records
         )
 
@@ -166,9 +131,7 @@ class TournamentTemplateService:
 
         query_request: QueryRequest = QueryRequest(
             columns=[
-                Column(
-                    parts=["tourn", StoreConstants.ID]
-                ),
+                Column.of("tourn", StoreConstants.ID),
                 Column(
                     parts=["tourn", "name"],
                     alias="tournamentName"
@@ -181,15 +144,9 @@ class TournamentTemplateService:
                     parts=["league", "name"],
                     alias="leagueName"
                 ),
-                Column(
-                    parts=["league", "groupCount"]
-                ),
-                Column(
-                    parts=["league", "teamsPerGroup"]
-                ),
-                Column(
-                    parts=["league", "homeAndAway"]
-                ),
+                Column.of("league", "groupCount"),
+                Column.of("league", "teamsPerGroup"),
+                Column.of("league", "homeAndAway"),
                 Column(
                     parts=["knock", StoreConstants.ID],
                     alias="knockoutId"
@@ -198,61 +155,33 @@ class TournamentTemplateService:
                     parts=["knock", "name"],
                     alias="knockoutName"
                 ),
-                Column(
-                    parts=["knock", "rounds"]
-                )
+                Column.of("knock", "rounds")
             ],
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=TournamentTemplate.TARGET_TABLE,
-                alias="tourn"
-            ),
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, TournamentTemplate.TARGET_TABLE, "tourn"),
             tableJoins=[
-                TableJoin(
-                    table=Table(
-                        schema=PredictorConstants.PREDICTOR_SCHEMA,
-                        table=LeagueTemplate.TARGET_TABLE,
-                        alias="league"
+                TableJoin.of(
+                    Table.of(PredictorConstants.PREDICTOR_SCHEMA, LeagueTemplate.TARGET_TABLE, "league"),
+                    QueryCondition.of(
+                        Column.of("tourn", "leagueTemplateId"),
+                        Column.of("league", StoreConstants.ID)
                     ),
-                    joinCondition=QueryCondition(
-                        column=Column(
-                            parts=["tourn", "leagueTemplateId"]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=Column(
-                            parts=["league", StoreConstants.ID]
-                        )
-                    ),
-                    joinType=TableJoinType.LEFT
+                    TableJoinType.LEFT
                 ),
-                TableJoin(
-                    table=Table(
-                        schema=PredictorConstants.PREDICTOR_SCHEMA,
-                        table=KnockoutTemplate.TARGET_TABLE,
-                        alias="knock"
+                TableJoin.of(
+                    Table.of(PredictorConstants.PREDICTOR_SCHEMA, KnockoutTemplate.TARGET_TABLE, "knock"),
+                    QueryCondition.of(
+                        Column.of("tourn", "knockoutTemplateId"),
+                        Column.of("knock", StoreConstants.ID)
                     ),
-                    joinCondition=QueryCondition(
-                        column=Column(
-                            parts=["tourn", "knockoutTemplateId"]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=Column(
-                            parts=["knock", StoreConstants.ID]
-                        )
-                    ),
-                    joinType=TableJoinType.LEFT
+                    TableJoinType.LEFT
                 )
             ],
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=["tourn", StoreConstants.ID]
-                        ),
-                        operator=ConditionOperator.IN,
-                        value=included_tournaments
-                    )
-                ]
+            conditionGroup=QueryConditionGroup.of(
+                QueryCondition(
+                    column=Column.of("tourn", StoreConstants.ID),
+                    operator=ConditionOperator.IN,
+                    value=included_tournaments
+                )
             )
         )
 
@@ -272,9 +201,7 @@ class TournamentTemplateService:
         """
         query_request: QueryRequest = QueryRequest(
             columns=[
-                Column(
-                    parts=["tourn", StoreConstants.ID]
-                ),
+                Column.of("tourn", StoreConstants.ID),
                 Column(
                     parts=["tourn", "name"],
                     alias="tournamentName"
@@ -287,15 +214,9 @@ class TournamentTemplateService:
                     parts=["league", "name"],
                     alias="leagueName"
                 ),
-                Column(
-                    parts=["league", "groupCount"]
-                ),
-                Column(
-                    parts=["league", "teamsPerGroup"]
-                ),
-                Column(
-                    parts=["league", "homeAndAway"]
-                ),
+                Column.of("league", "groupCount"),
+                Column.of("league", "teamsPerGroup"),
+                Column.of("league", "homeAndAway"),
                 Column(
                     parts=["knock", StoreConstants.ID],
                     alias="knockoutId"
@@ -304,61 +225,29 @@ class TournamentTemplateService:
                     parts=["knock", "name"],
                     alias="knockoutName"
                 ),
-                Column(
-                    parts=["knock", "rounds"]
-                )
+                Column.of("knock", "rounds")
             ],
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=TournamentTemplate.TARGET_TABLE,
-                alias="tourn"
-            ),
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, TournamentTemplate.TARGET_TABLE, "tourn"),
             tableJoins=[
-                TableJoin(
-                    table=Table(
-                        schema=PredictorConstants.PREDICTOR_SCHEMA,
-                        table=LeagueTemplate.TARGET_TABLE,
-                        alias="league"
+                TableJoin.of(
+                    Table.of(PredictorConstants.PREDICTOR_SCHEMA, LeagueTemplate.TARGET_TABLE, "league"),
+                    QueryCondition.of(
+                        Column.of("tourn", "leagueTemplateId"),
+                        Column.of("league", StoreConstants.ID)
                     ),
-                    joinCondition=QueryCondition(
-                        column=Column(
-                            parts=["tourn", "leagueTemplateId"]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=Column(
-                            parts=["league", StoreConstants.ID]
-                        )
-                    ),
-                    joinType=TableJoinType.LEFT
+                    TableJoinType.LEFT
                 ),
-                TableJoin(
-                    table=Table(
-                        schema=PredictorConstants.PREDICTOR_SCHEMA,
-                        table=KnockoutTemplate.TARGET_TABLE,
-                        alias="knock"
+                TableJoin.of(
+                    Table.of(PredictorConstants.PREDICTOR_SCHEMA, KnockoutTemplate.TARGET_TABLE, "knock"),
+                    QueryCondition.of(
+                        Column.of("tourn", "knockoutTemplateId"),
+                        Column.of("knock", StoreConstants.ID)
                     ),
-                    joinCondition=QueryCondition(
-                        column=Column(
-                            parts=["tourn", "knockoutTemplateId"]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=Column(
-                            parts=["knock", StoreConstants.ID]
-                        )
-                    ),
-                    joinType=TableJoinType.LEFT
+                    TableJoinType.LEFT
                 )
             ],
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=["tourn", StoreConstants.ID]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=tournament_template_id
-                    )
-                ]
+            conditionGroup=QueryConditionGroup.of(
+                QueryCondition.of(Column.of("tourn", StoreConstants.ID), tournament_template_id)
             )
         )
 
@@ -377,21 +266,8 @@ class TournamentTemplateService:
             tournament_template_id (UUID): The id of the tournament template to delete.
         """
         query_request: QueryRequest = QueryRequest(
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=Tournament.TARGET_TABLE
-            ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=["templateId"]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=tournament_template_id
-                    )
-                ]
-            )
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, Tournament.TARGET_TABLE),
+            conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of("templateId"), tournament_template_id))
         )
 
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
@@ -404,20 +280,9 @@ class TournamentTemplateService:
 
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.DELETE,
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=TournamentTemplate.TARGET_TABLE
-            ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=[StoreConstants.ID]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=tournament_template_id
-                    )
-                ]
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, TournamentTemplate.TARGET_TABLE),
+            conditionGroup=QueryConditionGroup.of(
+                QueryCondition.of(Column.of(StoreConstants.ID), tournament_template_id)
             )
         )
 

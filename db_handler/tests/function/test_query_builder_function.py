@@ -23,10 +23,7 @@ class TestQueryBuilderFunction:
         # Given
         sql_query: SqlQuery = SqlQuery(
             operator=SqlOperator.SELECT,
-            table=Table(
-                schema="test_schema",
-                table="test_table"
-            )
+            table=Table.of("test_schema", "test_table")
         )
 
         # When
@@ -39,14 +36,9 @@ class TestQueryBuilderFunction:
         # Given
         sql_query: SqlQuery = SqlQuery(
             operator=SqlOperator.SELECT,
-            table=Table(
-                schema="test_schema",
-                table="test_table"
-            ),
+            table=Table.of("test_schema", "test_table"),
             columns=[
-                Column(
-                    parts=["column1"]
-                )
+                Column.of("column1")
             ]
         )
 
@@ -60,20 +52,11 @@ class TestQueryBuilderFunction:
         # Given
         sql_query: SqlQuery = SqlQuery(
             operator=SqlOperator.SELECT,
-            table=Table(
-                schema="test_schema",
-                table="test_table"
-            ),
+            table=Table.of("test_schema", "test_table"),
             columns=[
-                Column(
-                    parts=["column1"]
-                ),
-                Column(
-                    parts=["column2"]
-                ),
-                Column(
-                    parts=["column3"]
-                )
+                Column.of("column1"),
+                Column.of("column2"),
+                Column.of("column3")
             ]
         )
 
@@ -90,21 +73,8 @@ class TestQueryBuilderFunction:
         # Given
         sql_query: SqlQuery = SqlQuery(
             operator=SqlOperator.SELECT,
-            table=Table(
-                schema="test_schema",
-                table="test_table"
-            ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=["column1"]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value="test_value"
-                    )
-                ]
-            )
+            table=Table.of("test_schema", "test_table"),
+            conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of("column1"), "test_value"))
         )
 
         # When
@@ -120,26 +90,11 @@ class TestQueryBuilderFunction:
         # Given
         sql_query: SqlQuery = SqlQuery(
             operator=SqlOperator.SELECT,
-            table=Table(
-                schema="test_schema",
-                table="test_table"
-            ),
+            table=Table.of("test_schema", "test_table"),
             conditionGroup=QueryConditionGroup(
                 conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=["column1"]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value="test_value"
-                    ),
-                    QueryCondition(
-                        column=Column(
-                            parts=["column2"]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=23
-                    )
+                    QueryCondition.of(Column.of("column1"), "test_value"),
+                    QueryCondition.of(Column.of("column2"), 23)
                 ],
                 join=ConditionJoin.OR
             )
@@ -159,11 +114,7 @@ class TestQueryBuilderFunction:
         # Given
         sql_query: SqlQuery = SqlQuery(
             operator=SqlOperator.SELECT,
-            table=Table(
-                schema="test_schema",
-                table="test_table",
-                alias="my_table"
-            ),
+            table=Table.of("test_schema", "test_table", "my_table"),
             columns=[
                 Column(
                     parts=["my_table", "name"],
@@ -172,21 +123,19 @@ class TestQueryBuilderFunction:
             ],
             conditionGroup=QueryConditionGroup(
                 conditions=[
-                    QueryCondition(
-                        column=Column(
+                    QueryCondition.of(
+                        Column(
                             parts=["my_table", "column1"],
                             alias="should_ignore"
                         ),
-                        operator=ConditionOperator.EQUAL,
-                        value="test_value"
+                        "test_value"
                     ),
-                    QueryCondition(
-                        column=Column(
+                    QueryCondition.of(
+                        Column(
                             parts=["my_table", "column2"],
                             alias="should_ignore"
                         ),
-                        operator=ConditionOperator.EQUAL,
-                        value=23
+                        23
                     )
                 ],
                 join=ConditionJoin.OR
@@ -208,11 +157,7 @@ class TestQueryBuilderFunction:
         # Given
         sql_query: SqlQuery = SqlQuery(
             operator=SqlOperator.SELECT,
-            table=Table(
-                schema="test_schema",
-                table="test_table",
-                alias="my_table"
-            ),
+            table=Table.of("test_schema", "test_table", "my_table"),
             columns=[
                 Column(
                     parts=["my_table", "name"],
@@ -220,58 +165,38 @@ class TestQueryBuilderFunction:
                 )
             ],
             tableJoins=[
-                TableJoin(
-                    table=Table(
-                        schema="test_schema",
-                        table="join_table_one",
-                        alias="first_joiner"
+                TableJoin.of(
+                    Table.of("test_schema", "join_table_one", "first_joiner"),
+                    QueryCondition.of(
+                        Column.of("my_table", "id"),
+                        Column.of("first_joiner", "baseId")
                     ),
-                    joinCondition=QueryCondition(
-                        column=Column(
-                            parts=["my_table", "id"]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=Column(
-                            parts=["first_joiner", "baseId"]
-                        )
-                    ),
-                    joinType=TableJoinType.INNER
+                    TableJoinType.INNER
                 ),
-                TableJoin(
-                    table=Table(
-                        schema="test_schema",
-                        table="join_table_two",
-                        alias="second_joiner"
+                TableJoin.of(
+                    Table.of("test_schema", "join_table_two", "second_joiner"),
+                    QueryCondition.of(
+                        Column.of("my_table", "id"),
+                        Column.of("second_joiner", "baseId")
                     ),
-                    joinCondition=QueryCondition(
-                        column=Column(
-                            parts=["my_table", "id"]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=Column(
-                            parts=["second_joiner", "baseId"]
-                        )
-                    ),
-                    joinType=TableJoinType.LEFT
+                    TableJoinType.LEFT
                 )
             ],
             conditionGroup=QueryConditionGroup(
                 conditions=[
-                    QueryCondition(
-                        column=Column(
+                    QueryCondition.of(
+                        Column(
                             parts=["my_table", "column1"],
                             alias="should_ignore"
                         ),
-                        operator=ConditionOperator.EQUAL,
-                        value="test_value"
+                        "test_value"
                     ),
-                    QueryCondition(
-                        column=Column(
+                    QueryCondition.of(
+                        Column(
                             parts=["my_table", "column2"],
                             alias="should_ignore"
                         ),
-                        operator=ConditionOperator.EQUAL,
-                        value=23
+                        23
                     )
                 ],
                 join=ConditionJoin.OR
@@ -296,10 +221,7 @@ class TestQueryBuilderFunction:
         # Given
         sql_query: SqlQuery = SqlQuery(
             operator=SqlOperator.INSERT,
-            table=Table(
-                schema="test_schema",
-                table="test_table"
-            ),
+            table=Table.of("test_schema", "test_table"),
             records=[
                 {
                     "col1": "val1",
@@ -321,10 +243,7 @@ class TestQueryBuilderFunction:
         # Given
         sql_query: SqlQuery = SqlQuery(
             operator=SqlOperator.INSERT,
-            table=Table(
-                schema="test_schema",
-                table="test_table"
-            ),
+            table=Table.of("test_schema", "test_table"),
             records=[
                 {
                     "col1": "val1",
@@ -350,10 +269,7 @@ class TestQueryBuilderFunction:
         # Given
         sql_query: SqlQuery = SqlQuery(
             operator=SqlOperator.INSERT,
-            table=Table(
-                schema="test_schema",
-                table="test_table"
-            ),
+            table=Table.of("test_schema", "test_table"),
             records=[
                 {
                     "col2": 2
@@ -378,10 +294,7 @@ class TestQueryBuilderFunction:
         # Given
         sql_query: SqlQuery = SqlQuery(
             operator=SqlOperator.UPDATE,
-            table=Table(
-                schema="test_schema",
-                table="test_table"
-            ),
+            table=Table.of("test_schema", "test_table"),
             records=[
                 {
                     "id": "id1",
@@ -405,10 +318,7 @@ class TestQueryBuilderFunction:
         # Given
         sql_query: SqlQuery = SqlQuery(
             operator=SqlOperator.UPDATE,
-            table=Table(
-                schema="test_schema",
-                table="test_table"
-            ),
+            table=Table.of("test_schema", "test_table"),
             records=[
                 {
                     "id": "id1",
@@ -441,10 +351,7 @@ class TestQueryBuilderFunction:
         # Given
         sql_query: SqlQuery = SqlQuery(
             operator=SqlOperator.UPDATE,
-            table=Table(
-                schema="test_schema",
-                table="test_table"
-            ),
+            table=Table.of("test_schema", "test_table"),
             records=[
                 {
                     "id": "id1",
@@ -470,21 +377,8 @@ class TestQueryBuilderFunction:
         # Given
         sql_query: SqlQuery = SqlQuery(
             operator=SqlOperator.DELETE,
-            table=Table(
-                schema="test_schema",
-                table="test_table"
-            ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=["column1"]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value="test_value"
-                    )
-                ]
-            )
+            table=Table.of("test_schema", "test_table"),
+            conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of("column1"), "test_value"))
         )
 
         # When
@@ -500,26 +394,11 @@ class TestQueryBuilderFunction:
         # Given
         sql_query: SqlQuery = SqlQuery(
             operator=SqlOperator.DELETE,
-            table=Table(
-                schema="test_schema",
-                table="test_table"
-            ),
+            table=Table.of("test_schema", "test_table"),
             conditionGroup=QueryConditionGroup(
                 conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=["column1"]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value="test_value"
-                    ),
-                    QueryCondition(
-                        column=Column(
-                            parts=["column2"]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=23
-                    )
+                    QueryCondition.of(Column.of("column1"), "test_value"),
+                    QueryCondition.of(Column.of("column2"), 23)
                 ],
                 join=ConditionJoin.OR
             )
@@ -538,20 +417,13 @@ class TestQueryBuilderFunction:
         # Given
         sql_query: SqlQuery = SqlQuery(
             operator=SqlOperator.SELECT,
-            table=Table(
-                schema="test_schema",
-                table="test_table"
-            ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=["column1"]
-                        ),
-                        operator=ConditionOperator.IN,
-                        value=["val", 23]
-                    )
-                ]
+            table=Table.of("test_schema", "test_table"),
+            conditionGroup=QueryConditionGroup.of(
+                QueryCondition(
+                    column=Column.of("column1"),
+                    operator=ConditionOperator.IN,
+                    value=["val", 23]
+                )
             )
         )
 

@@ -11,3 +11,9 @@ class Column(BaseModel):
     """
     parts: list[str]
     alias: str = None
+
+    @classmethod
+    def of(cls, *parts: str):
+        return Column(
+            parts=list(parts)
+        )

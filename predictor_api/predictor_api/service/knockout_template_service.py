@@ -9,7 +9,6 @@ from db_handler.db_handler.model.query_condition_group import QueryConditionGrou
 from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_response import QueryResponse
 from db_handler.db_handler.model.table import Table
-from db_handler.db_handler.model.type.condition_operator import ConditionOperator
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.update_request import UpdateRequest
 from db_handler.db_handler.service.database_query_service import DatabaseQueryService
@@ -44,10 +43,7 @@ class KnockoutTemplateService:
             list[KnockoutTemplate]: The stored knockout templates.
         """
         query_request: QueryRequest = QueryRequest(
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=KnockoutTemplate.TARGET_TABLE
-            )
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, KnockoutTemplate.TARGET_TABLE)
         )
 
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
@@ -70,10 +66,7 @@ class KnockoutTemplateService:
 
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.INSERT,
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=KnockoutTemplate.TARGET_TABLE
-            ),
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, KnockoutTemplate.TARGET_TABLE),
             records=records
         )
 
@@ -92,21 +85,8 @@ class KnockoutTemplateService:
             KnockoutTemplate: The retrieved knockout template.
         """
         query_request: QueryRequest = QueryRequest(
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=KnockoutTemplate.TARGET_TABLE
-            ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=[StoreConstants.ID]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=knockout_template_id
-                    )
-                ]
-            )
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, KnockoutTemplate.TARGET_TABLE),
+            conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of(StoreConstants.ID), knockout_template_id))
         )
 
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
@@ -124,20 +104,9 @@ class KnockoutTemplateService:
             knockout_template_id (UUID): The id of the knockout template to delete.
         """
         query_request: QueryRequest = QueryRequest(
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=TournamentTemplate.TARGET_TABLE
-            ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=["knockoutTemplateId"]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=knockout_template_id
-                    )
-                ]
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, TournamentTemplate.TARGET_TABLE),
+            conditionGroup=QueryConditionGroup.of(
+                QueryCondition.of(Column.of("knockoutTemplateId"), knockout_template_id)
             )
         )
 
@@ -151,21 +120,8 @@ class KnockoutTemplateService:
 
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.DELETE,
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=KnockoutTemplate.TARGET_TABLE
-            ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=[StoreConstants.ID]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=knockout_template_id
-                    )
-                ]
-            )
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, KnockoutTemplate.TARGET_TABLE),
+            conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of(StoreConstants.ID), knockout_template_id))
         )
 
         self.__database_query_service.update_records(update_request)

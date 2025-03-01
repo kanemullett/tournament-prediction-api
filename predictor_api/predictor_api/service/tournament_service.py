@@ -43,10 +43,7 @@ class TournamentService:
             list[Tournament]: The stored tournaments.
         """
         query_request: QueryRequest = QueryRequest(
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=Tournament.TARGET_TABLE
-            )
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, Tournament.TARGET_TABLE)
         )
 
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
@@ -67,10 +64,7 @@ class TournamentService:
 
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.INSERT,
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=Tournament.TARGET_TABLE
-            ),
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, Tournament.TARGET_TABLE),
             records=records
         )
 
@@ -94,10 +88,7 @@ class TournamentService:
 
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.UPDATE,
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=Tournament.TARGET_TABLE
-            ),
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, Tournament.TARGET_TABLE),
             records=records
         )
 
@@ -105,20 +96,13 @@ class TournamentService:
 
         included_ids: list[UUID] = list(map(lambda tournament: tournament.id, tournaments))
         included_records: list[dict[str, Any]] = self.__database_query_service.retrieve_records(QueryRequest(
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table="tournaments"
-            ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=[StoreConstants.ID]
-                        ),
-                        operator=ConditionOperator.IN,
-                        value=included_ids
-                    )
-                ]
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, Tournament.TARGET_TABLE),
+            conditionGroup=QueryConditionGroup.of(
+                QueryCondition(
+                    column=Column.of(StoreConstants.ID),
+                    operator=ConditionOperator.IN,
+                    value=included_ids
+                )
             )
         )).records
 
@@ -135,21 +119,8 @@ class TournamentService:
             Tournament: The retrieved tournament.
         """
         query_request: QueryRequest = QueryRequest(
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=Tournament.TARGET_TABLE
-            ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=[StoreConstants.ID]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=tournament_id
-                    )
-                ]
-            )
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, Tournament.TARGET_TABLE),
+            conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of(StoreConstants.ID), tournament_id))
         )
 
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
@@ -168,21 +139,8 @@ class TournamentService:
         """
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.DELETE,
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=Tournament.TARGET_TABLE
-            ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=[StoreConstants.ID]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=tournament_id
-                    )
-                ]
-            )
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, Tournament.TARGET_TABLE),
+            conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of(StoreConstants.ID), tournament_id))
         )
 
         self.__database_query_service.update_records(update_request)

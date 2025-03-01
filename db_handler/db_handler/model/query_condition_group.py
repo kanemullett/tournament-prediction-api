@@ -14,3 +14,10 @@ class QueryConditionGroup(BaseModel):
     """
     conditions: list[QueryCondition]
     join: ConditionJoin = ConditionJoin.AND
+
+    @classmethod
+    def of(cls, *conditions: QueryCondition):
+        return QueryConditionGroup(
+            conditions=list(conditions),
+            join=ConditionJoin.AND
+        )

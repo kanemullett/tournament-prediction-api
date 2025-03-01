@@ -9,7 +9,6 @@ from db_handler.db_handler.model.query_condition_group import QueryConditionGrou
 from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_response import QueryResponse
 from db_handler.db_handler.model.table import Table
-from db_handler.db_handler.model.type.condition_operator import ConditionOperator
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.update_request import UpdateRequest
 from db_handler.db_handler.service.database_query_service import DatabaseQueryService
@@ -44,10 +43,7 @@ class LeagueTemplateService:
             list[LeagueTemplate]: The stored league templates.
         """
         query_request: QueryRequest = QueryRequest(
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=LeagueTemplate.TARGET_TABLE
-            )
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, LeagueTemplate.TARGET_TABLE)
         )
 
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
@@ -70,10 +66,7 @@ class LeagueTemplateService:
 
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.INSERT,
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=LeagueTemplate.TARGET_TABLE
-            ),
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, LeagueTemplate.TARGET_TABLE),
             records=records
         )
 
@@ -92,21 +85,8 @@ class LeagueTemplateService:
             LeagueTemplate: The retrieved league template.
         """
         query_request: QueryRequest = QueryRequest(
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=LeagueTemplate.TARGET_TABLE
-            ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=[StoreConstants.ID]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=league_template_id
-                    )
-                ]
-            )
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, LeagueTemplate.TARGET_TABLE),
+            conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of(StoreConstants.ID), league_template_id))
         )
 
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
@@ -124,21 +104,8 @@ class LeagueTemplateService:
             league_template_id (UUID): The id of the league template to delete.
         """
         query_request: QueryRequest = QueryRequest(
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=TournamentTemplate.TARGET_TABLE
-            ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=["leagueTemplateId"]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=league_template_id
-                    )
-                ]
-            )
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, TournamentTemplate.TARGET_TABLE),
+            conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of("leagueTemplateId"), league_template_id))
         )
 
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
@@ -151,21 +118,8 @@ class LeagueTemplateService:
 
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.DELETE,
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=LeagueTemplate.TARGET_TABLE
-            ),
-            conditionGroup=QueryConditionGroup(
-                conditions=[
-                    QueryCondition(
-                        column=Column(
-                            parts=[StoreConstants.ID]
-                        ),
-                        operator=ConditionOperator.EQUAL,
-                        value=league_template_id
-                    )
-                ]
-            )
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, LeagueTemplate.TARGET_TABLE),
+            conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of(StoreConstants.ID), league_template_id))
         )
 
         self.__database_query_service.update_records(update_request)
