@@ -43,10 +43,7 @@ class LeagueTemplateService:
             list[LeagueTemplate]: The stored league templates.
         """
         query_request: QueryRequest = QueryRequest(
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=LeagueTemplate.TARGET_TABLE
-            )
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, LeagueTemplate.TARGET_TABLE)
         )
 
         query_response: QueryResponse = self.__database_query_service.retrieve_records(query_request)
@@ -69,10 +66,7 @@ class LeagueTemplateService:
 
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.INSERT,
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=LeagueTemplate.TARGET_TABLE
-            ),
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, LeagueTemplate.TARGET_TABLE),
             records=records
         )
 
@@ -91,10 +85,7 @@ class LeagueTemplateService:
             LeagueTemplate: The retrieved league template.
         """
         query_request: QueryRequest = QueryRequest(
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=LeagueTemplate.TARGET_TABLE
-            ),
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, LeagueTemplate.TARGET_TABLE),
             conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of(StoreConstants.ID), league_template_id))
         )
 
@@ -113,10 +104,7 @@ class LeagueTemplateService:
             league_template_id (UUID): The id of the league template to delete.
         """
         query_request: QueryRequest = QueryRequest(
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=TournamentTemplate.TARGET_TABLE
-            ),
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, TournamentTemplate.TARGET_TABLE),
             conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of("leagueTemplateId"), league_template_id))
         )
 
@@ -130,10 +118,7 @@ class LeagueTemplateService:
 
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.DELETE,
-            table=Table(
-                schema=PredictorConstants.PREDICTOR_SCHEMA,
-                table=LeagueTemplate.TARGET_TABLE
-            ),
+            table=Table.of(PredictorConstants.PREDICTOR_SCHEMA, LeagueTemplate.TARGET_TABLE),
             conditionGroup=QueryConditionGroup.of(QueryCondition.of(Column.of(StoreConstants.ID), league_template_id))
         )
 

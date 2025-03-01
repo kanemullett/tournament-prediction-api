@@ -26,10 +26,7 @@ class TestDatabaseQueryService:
     def test_should_build_and_send_select_query(self):
         # Given
         query_request: QueryRequest = QueryRequest(
-            table=Table(
-                schema="test_schema",
-                table="test_table"
-            ),
+            table=Table.of("test_schema", "test_table"),
             columns=[
                 Column.of("id"),
                 Column.of("column1"),
@@ -88,10 +85,7 @@ class TestDatabaseQueryService:
         # Given
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.INSERT,
-            table=Table(
-                schema="test_schema",
-                table="test_table"
-            ),
+            table=Table.of("test_schema", "test_table"),
             records=[
                 {
                     "column1": "value1",
@@ -135,10 +129,7 @@ class TestDatabaseQueryService:
         # Given
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.UPDATE,
-            table=Table(
-                schema="test_schema",
-                table="test_table"
-            ),
+            table=Table.of("test_schema", "test_table"),
             records=[
                 {
                     "id": "id1",
@@ -176,10 +167,7 @@ class TestDatabaseQueryService:
         # Given
         update_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.DELETE,
-            table=Table(
-                schema="test_schema",
-                table="test_table"
-            ),
+            table=Table.of("test_schema", "test_table"),
             conditionGroup=QueryConditionGroup.of(
                 QueryCondition(
                     column=Column.of("column1"),
