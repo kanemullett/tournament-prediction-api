@@ -42,11 +42,7 @@ class TestDatabaseQueryService:
                         operator=ConditionOperator.LESS_THAN,
                         value=23
                     ),
-                    QueryCondition(
-                        column=Column.of("column2"),
-                        operator=ConditionOperator.EQUAL,
-                        value="hello"
-                    )
+                    QueryCondition.of(Column.of("column2"), "hello")
                 ]
             )
         )
@@ -193,11 +189,7 @@ class TestDatabaseQueryService:
                         operator=ConditionOperator.LESS_THAN,
                         value=23
                     ),
-                    QueryCondition(
-                        column=Column.of("column2"),
-                        operator=ConditionOperator.EQUAL,
-                        value="hello"
-                    )
+                    QueryCondition.of(Column.of("column2"), "hello")
                 ]
             )
         )

@@ -139,11 +139,7 @@ class TournamentService:
             ),
             conditionGroup=QueryConditionGroup(
                 conditions=[
-                    QueryCondition(
-                        column=Column.of(StoreConstants.ID),
-                        operator=ConditionOperator.EQUAL,
-                        value=tournament_id
-                    )
+                    QueryCondition.of(Column.of(StoreConstants.ID), tournament_id)
                 ]
             )
         )
@@ -170,11 +166,7 @@ class TournamentService:
             ),
             conditionGroup=QueryConditionGroup(
                 conditions=[
-                    QueryCondition(
-                        column=Column.of(StoreConstants.ID),
-                        operator=ConditionOperator.EQUAL,
-                        value=tournament_id
-                    )
+                    QueryCondition.of(Column.of(StoreConstants.ID), tournament_id)
                 ]
             )
         )

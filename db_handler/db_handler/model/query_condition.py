@@ -17,3 +17,11 @@ class QueryCondition(BaseModel):
     column: Column
     operator: ConditionOperator
     value: Any = None
+
+    @classmethod
+    def of(cls, column: Column, value: Any):
+        return QueryCondition(
+            column=column,
+            operator=ConditionOperator.EQUAL,
+            value=value
+        )

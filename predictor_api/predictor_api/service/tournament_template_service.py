@@ -89,10 +89,9 @@ class TournamentTemplateService:
                         table=LeagueTemplate.TARGET_TABLE,
                         alias="league"
                     ),
-                    joinCondition=QueryCondition(
-                        column=Column.of("tourn", "leagueTemplateId"),
-                        operator=ConditionOperator.EQUAL,
-                        value=Column.of("league", StoreConstants.ID)
+                    joinCondition=QueryCondition.of(
+                        Column.of("tourn", "leagueTemplateId"),
+                        Column.of("league", StoreConstants.ID)
                     ),
                     joinType=TableJoinType.LEFT
                 ),
@@ -102,10 +101,9 @@ class TournamentTemplateService:
                         table=KnockoutTemplate.TARGET_TABLE,
                         alias="knock"
                     ),
-                    joinCondition=QueryCondition(
-                        column=Column.of("tourn", "knockoutTemplateId"),
-                        operator=ConditionOperator.EQUAL,
-                        value=Column.of("knock", StoreConstants.ID)
+                    joinCondition=QueryCondition.of(
+                        Column.of("tourn", "knockoutTemplateId"),
+                        Column.of("knock", StoreConstants.ID)
                     ),
                     joinType=TableJoinType.LEFT
                 )
@@ -186,10 +184,9 @@ class TournamentTemplateService:
                         table=LeagueTemplate.TARGET_TABLE,
                         alias="league"
                     ),
-                    joinCondition=QueryCondition(
-                        column=Column.of("tourn", "leagueTemplateId"),
-                        operator=ConditionOperator.EQUAL,
-                        value=Column.of("league", StoreConstants.ID)
+                    joinCondition=QueryCondition.of(
+                        Column.of("tourn", "leagueTemplateId"),
+                        Column.of("league", StoreConstants.ID)
                     ),
                     joinType=TableJoinType.LEFT
                 ),
@@ -199,10 +196,9 @@ class TournamentTemplateService:
                         table=KnockoutTemplate.TARGET_TABLE,
                         alias="knock"
                     ),
-                    joinCondition=QueryCondition(
-                        column=Column.of("tourn", "knockoutTemplateId"),
-                        operator=ConditionOperator.EQUAL,
-                        value=Column.of("knock", StoreConstants.ID)
+                    joinCondition=QueryCondition.of(
+                        Column.of("tourn", "knockoutTemplateId"),
+                        Column.of("knock", StoreConstants.ID)
                     ),
                     joinType=TableJoinType.LEFT
                 )
@@ -272,10 +268,9 @@ class TournamentTemplateService:
                         table=LeagueTemplate.TARGET_TABLE,
                         alias="league"
                     ),
-                    joinCondition=QueryCondition(
-                        column=Column.of("tourn", "leagueTemplateId"),
-                        operator=ConditionOperator.EQUAL,
-                        value=Column.of("league", StoreConstants.ID)
+                    joinCondition=QueryCondition.of(
+                        Column.of("tourn", "leagueTemplateId"),
+                        Column.of("league", StoreConstants.ID)
                     ),
                     joinType=TableJoinType.LEFT
                 ),
@@ -285,20 +280,18 @@ class TournamentTemplateService:
                         table=KnockoutTemplate.TARGET_TABLE,
                         alias="knock"
                     ),
-                    joinCondition=QueryCondition(
-                        column=Column.of("tourn", "knockoutTemplateId"),
-                        operator=ConditionOperator.EQUAL,
-                        value=Column.of("knock", StoreConstants.ID)
+                    joinCondition=QueryCondition.of(
+                        Column.of("tourn", "knockoutTemplateId"),
+                        Column.of("knock", StoreConstants.ID)
                     ),
                     joinType=TableJoinType.LEFT
                 )
             ],
             conditionGroup=QueryConditionGroup(
                 conditions=[
-                    QueryCondition(
-                        column=Column.of("tourn", StoreConstants.ID),
-                        operator=ConditionOperator.EQUAL,
-                        value=tournament_template_id
+                    QueryCondition.of(
+                        Column.of("tourn", StoreConstants.ID),
+                        tournament_template_id
                     )
                 ]
             )
@@ -325,10 +318,9 @@ class TournamentTemplateService:
             ),
             conditionGroup=QueryConditionGroup(
                 conditions=[
-                    QueryCondition(
-                        column=Column.of("templateId"),
-                        operator=ConditionOperator.EQUAL,
-                        value=tournament_template_id
+                    QueryCondition.of(
+                        Column.of("templateId"),
+                        tournament_template_id
                     )
                 ]
             )
@@ -350,11 +342,7 @@ class TournamentTemplateService:
             ),
             conditionGroup=QueryConditionGroup(
                 conditions=[
-                    QueryCondition(
-                        column=Column.of(StoreConstants.ID),
-                        operator=ConditionOperator.EQUAL,
-                        value=tournament_template_id
-                    )
+                    QueryCondition.of(Column.of(StoreConstants.ID), tournament_template_id)
                 ]
             )
         )

@@ -9,7 +9,6 @@ from db_handler.db_handler.model.query_condition_group import QueryConditionGrou
 from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_response import QueryResponse
 from db_handler.db_handler.model.table import Table
-from db_handler.db_handler.model.type.condition_operator import ConditionOperator
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.update_request import UpdateRequest
 from db_handler.db_handler.service.database_query_service import DatabaseQueryService
@@ -98,11 +97,7 @@ class KnockoutTemplateService:
             ),
             conditionGroup=QueryConditionGroup(
                 conditions=[
-                    QueryCondition(
-                        column=Column.of(StoreConstants.ID),
-                        operator=ConditionOperator.EQUAL,
-                        value=knockout_template_id
-                    )
+                    QueryCondition.of(Column.of(StoreConstants.ID), knockout_template_id)
                 ]
             )
         )
@@ -128,11 +123,7 @@ class KnockoutTemplateService:
             ),
             conditionGroup=QueryConditionGroup(
                 conditions=[
-                    QueryCondition(
-                        column=Column.of("knockoutTemplateId"),
-                        operator=ConditionOperator.EQUAL,
-                        value=knockout_template_id
-                    )
+                    QueryCondition.of(Column.of("knockoutTemplateId"), knockout_template_id)
                 ]
             )
         )
@@ -153,11 +144,7 @@ class KnockoutTemplateService:
             ),
             conditionGroup=QueryConditionGroup(
                 conditions=[
-                    QueryCondition(
-                        column=Column.of(StoreConstants.ID),
-                        operator=ConditionOperator.EQUAL,
-                        value=knockout_template_id
-                    )
+                    QueryCondition.of(Column.of(StoreConstants.ID), knockout_template_id)
                 ]
             )
         )
