@@ -51,9 +51,7 @@ class TournamentTemplateService:
         """
         query_request: QueryRequest = QueryRequest(
             columns=[
-                Column(
-                    parts=["tourn", StoreConstants.ID]
-                ),
+                Column.of("tourn", StoreConstants.ID),
                 Column(
                     parts=["tourn", "name"],
                     alias="tournamentName"
@@ -66,15 +64,9 @@ class TournamentTemplateService:
                     parts=["league", "name"],
                     alias="leagueName"
                 ),
-                Column(
-                    parts=["league", "groupCount"]
-                ),
-                Column(
-                    parts=["league", "teamsPerGroup"]
-                ),
-                Column(
-                    parts=["league", "homeAndAway"]
-                ),
+                Column.of("league", "groupCount"),
+                Column.of("league", "teamsPerGroup"),
+                Column.of("league", "homeAndAway"),
                 Column(
                     parts=["knock", StoreConstants.ID],
                     alias="knockoutId"
@@ -83,9 +75,7 @@ class TournamentTemplateService:
                     parts=["knock", "name"],
                     alias="knockoutName"
                 ),
-                Column(
-                    parts=["knock", "rounds"]
-                )
+                Column.of("knock", "rounds")
             ],
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
@@ -100,13 +90,9 @@ class TournamentTemplateService:
                         alias="league"
                     ),
                     joinCondition=QueryCondition(
-                        column=Column(
-                            parts=["tourn", "leagueTemplateId"]
-                        ),
+                        column=Column.of("tourn", "leagueTemplateId"),
                         operator=ConditionOperator.EQUAL,
-                        value=Column(
-                            parts=["league", StoreConstants.ID]
-                        )
+                        value=Column.of("league", StoreConstants.ID)
                     ),
                     joinType=TableJoinType.LEFT
                 ),
@@ -117,13 +103,9 @@ class TournamentTemplateService:
                         alias="knock"
                     ),
                     joinCondition=QueryCondition(
-                        column=Column(
-                            parts=["tourn", "knockoutTemplateId"]
-                        ),
+                        column=Column.of("tourn", "knockoutTemplateId"),
                         operator=ConditionOperator.EQUAL,
-                        value=Column(
-                            parts=["knock", StoreConstants.ID]
-                        )
+                        value=Column.of("knock", StoreConstants.ID)
                     ),
                     joinType=TableJoinType.LEFT
                 )
@@ -166,9 +148,7 @@ class TournamentTemplateService:
 
         query_request: QueryRequest = QueryRequest(
             columns=[
-                Column(
-                    parts=["tourn", StoreConstants.ID]
-                ),
+                Column.of("tourn", StoreConstants.ID),
                 Column(
                     parts=["tourn", "name"],
                     alias="tournamentName"
@@ -181,15 +161,9 @@ class TournamentTemplateService:
                     parts=["league", "name"],
                     alias="leagueName"
                 ),
-                Column(
-                    parts=["league", "groupCount"]
-                ),
-                Column(
-                    parts=["league", "teamsPerGroup"]
-                ),
-                Column(
-                    parts=["league", "homeAndAway"]
-                ),
+                Column.of("league", "groupCount"),
+                Column.of("league", "teamsPerGroup"),
+                Column.of("league", "homeAndAway"),
                 Column(
                     parts=["knock", StoreConstants.ID],
                     alias="knockoutId"
@@ -198,9 +172,7 @@ class TournamentTemplateService:
                     parts=["knock", "name"],
                     alias="knockoutName"
                 ),
-                Column(
-                    parts=["knock", "rounds"]
-                )
+                Column.of("knock", "rounds")
             ],
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
@@ -215,13 +187,9 @@ class TournamentTemplateService:
                         alias="league"
                     ),
                     joinCondition=QueryCondition(
-                        column=Column(
-                            parts=["tourn", "leagueTemplateId"]
-                        ),
+                        column=Column.of("tourn", "leagueTemplateId"),
                         operator=ConditionOperator.EQUAL,
-                        value=Column(
-                            parts=["league", StoreConstants.ID]
-                        )
+                        value=Column.of("league", StoreConstants.ID)
                     ),
                     joinType=TableJoinType.LEFT
                 ),
@@ -232,13 +200,9 @@ class TournamentTemplateService:
                         alias="knock"
                     ),
                     joinCondition=QueryCondition(
-                        column=Column(
-                            parts=["tourn", "knockoutTemplateId"]
-                        ),
+                        column=Column.of("tourn", "knockoutTemplateId"),
                         operator=ConditionOperator.EQUAL,
-                        value=Column(
-                            parts=["knock", StoreConstants.ID]
-                        )
+                        value=Column.of("knock", StoreConstants.ID)
                     ),
                     joinType=TableJoinType.LEFT
                 )
@@ -246,9 +210,7 @@ class TournamentTemplateService:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=["tourn", StoreConstants.ID]
-                        ),
+                        column=Column.of("tourn", StoreConstants.ID),
                         operator=ConditionOperator.IN,
                         value=included_tournaments
                     )
@@ -272,9 +234,7 @@ class TournamentTemplateService:
         """
         query_request: QueryRequest = QueryRequest(
             columns=[
-                Column(
-                    parts=["tourn", StoreConstants.ID]
-                ),
+                Column.of("tourn", StoreConstants.ID),
                 Column(
                     parts=["tourn", "name"],
                     alias="tournamentName"
@@ -287,15 +247,9 @@ class TournamentTemplateService:
                     parts=["league", "name"],
                     alias="leagueName"
                 ),
-                Column(
-                    parts=["league", "groupCount"]
-                ),
-                Column(
-                    parts=["league", "teamsPerGroup"]
-                ),
-                Column(
-                    parts=["league", "homeAndAway"]
-                ),
+                Column.of("league", "groupCount"),
+                Column.of("league", "teamsPerGroup"),
+                Column.of("league", "homeAndAway"),
                 Column(
                     parts=["knock", StoreConstants.ID],
                     alias="knockoutId"
@@ -304,9 +258,7 @@ class TournamentTemplateService:
                     parts=["knock", "name"],
                     alias="knockoutName"
                 ),
-                Column(
-                    parts=["knock", "rounds"]
-                )
+                Column.of("knock", "rounds")
             ],
             table=Table(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
@@ -321,13 +273,9 @@ class TournamentTemplateService:
                         alias="league"
                     ),
                     joinCondition=QueryCondition(
-                        column=Column(
-                            parts=["tourn", "leagueTemplateId"]
-                        ),
+                        column=Column.of("tourn", "leagueTemplateId"),
                         operator=ConditionOperator.EQUAL,
-                        value=Column(
-                            parts=["league", StoreConstants.ID]
-                        )
+                        value=Column.of("league", StoreConstants.ID)
                     ),
                     joinType=TableJoinType.LEFT
                 ),
@@ -338,13 +286,9 @@ class TournamentTemplateService:
                         alias="knock"
                     ),
                     joinCondition=QueryCondition(
-                        column=Column(
-                            parts=["tourn", "knockoutTemplateId"]
-                        ),
+                        column=Column.of("tourn", "knockoutTemplateId"),
                         operator=ConditionOperator.EQUAL,
-                        value=Column(
-                            parts=["knock", StoreConstants.ID]
-                        )
+                        value=Column.of("knock", StoreConstants.ID)
                     ),
                     joinType=TableJoinType.LEFT
                 )
@@ -352,9 +296,7 @@ class TournamentTemplateService:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=["tourn", StoreConstants.ID]
-                        ),
+                        column=Column.of("tourn", StoreConstants.ID),
                         operator=ConditionOperator.EQUAL,
                         value=tournament_template_id
                     )
@@ -384,9 +326,7 @@ class TournamentTemplateService:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=["templateId"]
-                        ),
+                        column=Column.of("templateId"),
                         operator=ConditionOperator.EQUAL,
                         value=tournament_template_id
                     )
@@ -411,9 +351,7 @@ class TournamentTemplateService:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=[StoreConstants.ID]
-                        ),
+                        column=Column.of(StoreConstants.ID),
                         operator=ConditionOperator.EQUAL,
                         value=tournament_template_id
                     )

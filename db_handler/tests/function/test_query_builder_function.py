@@ -44,9 +44,7 @@ class TestQueryBuilderFunction:
                 table="test_table"
             ),
             columns=[
-                Column(
-                    parts=["column1"]
-                )
+                Column.of("column1")
             ]
         )
 
@@ -65,15 +63,9 @@ class TestQueryBuilderFunction:
                 table="test_table"
             ),
             columns=[
-                Column(
-                    parts=["column1"]
-                ),
-                Column(
-                    parts=["column2"]
-                ),
-                Column(
-                    parts=["column3"]
-                )
+                Column.of("column1"),
+                Column.of("column2"),
+                Column.of("column3")
             ]
         )
 
@@ -97,9 +89,7 @@ class TestQueryBuilderFunction:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=["column1"]
-                        ),
+                        column=Column.of("column1"),
                         operator=ConditionOperator.EQUAL,
                         value="test_value"
                     )
@@ -127,16 +117,12 @@ class TestQueryBuilderFunction:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=["column1"]
-                        ),
+                        column=Column.of("column1"),
                         operator=ConditionOperator.EQUAL,
                         value="test_value"
                     ),
                     QueryCondition(
-                        column=Column(
-                            parts=["column2"]
-                        ),
+                        column=Column.of("column2"),
                         operator=ConditionOperator.EQUAL,
                         value=23
                     )
@@ -227,13 +213,9 @@ class TestQueryBuilderFunction:
                         alias="first_joiner"
                     ),
                     joinCondition=QueryCondition(
-                        column=Column(
-                            parts=["my_table", "id"]
-                        ),
+                        column=Column.of("my_table", "id"),
                         operator=ConditionOperator.EQUAL,
-                        value=Column(
-                            parts=["first_joiner", "baseId"]
-                        )
+                        value=Column.of("first_joiner", "baseId")
                     ),
                     joinType=TableJoinType.INNER
                 ),
@@ -244,13 +226,9 @@ class TestQueryBuilderFunction:
                         alias="second_joiner"
                     ),
                     joinCondition=QueryCondition(
-                        column=Column(
-                            parts=["my_table", "id"]
-                        ),
+                        column=Column.of("my_table", "id"),
                         operator=ConditionOperator.EQUAL,
-                        value=Column(
-                            parts=["second_joiner", "baseId"]
-                        )
+                        value=Column.of("second_joiner", "baseId")
                     ),
                     joinType=TableJoinType.LEFT
                 )
@@ -477,9 +455,7 @@ class TestQueryBuilderFunction:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=["column1"]
-                        ),
+                        column=Column.of("column1"),
                         operator=ConditionOperator.EQUAL,
                         value="test_value"
                     )
@@ -507,16 +483,12 @@ class TestQueryBuilderFunction:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=["column1"]
-                        ),
+                        column=Column.of("column1"),
                         operator=ConditionOperator.EQUAL,
                         value="test_value"
                     ),
                     QueryCondition(
-                        column=Column(
-                            parts=["column2"]
-                        ),
+                        column=Column.of("column2"),
                         operator=ConditionOperator.EQUAL,
                         value=23
                     )
@@ -545,9 +517,7 @@ class TestQueryBuilderFunction:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=["column1"]
-                        ),
+                        column=Column.of("column1"),
                         operator=ConditionOperator.IN,
                         value=["val", 23]
                     )

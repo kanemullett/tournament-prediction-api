@@ -99,9 +99,7 @@ class KnockoutTemplateService:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=[StoreConstants.ID]
-                        ),
+                        column=Column.of(StoreConstants.ID),
                         operator=ConditionOperator.EQUAL,
                         value=knockout_template_id
                     )
@@ -131,9 +129,7 @@ class KnockoutTemplateService:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=["knockoutTemplateId"]
-                        ),
+                        column=Column.of("knockoutTemplateId"),
                         operator=ConditionOperator.EQUAL,
                         value=knockout_template_id
                     )
@@ -158,9 +154,7 @@ class KnockoutTemplateService:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=[StoreConstants.ID]
-                        ),
+                        column=Column.of(StoreConstants.ID),
                         operator=ConditionOperator.EQUAL,
                         value=knockout_template_id
                     )

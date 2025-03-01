@@ -31,29 +31,19 @@ class TestDatabaseQueryService:
                 table="test_table"
             ),
             columns=[
-                Column(
-                    parts=["id"]
-                ),
-                Column(
-                    parts=["column1"]
-                ),
-                Column(
-                    parts=["column2"]
-                )
+                Column.of("id"),
+                Column.of("column1"),
+                Column.of("column2")
             ],
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=["column1"]
-                        ),
+                        column=Column.of("column1"),
                         operator=ConditionOperator.LESS_THAN,
                         value=23
                     ),
                     QueryCondition(
-                        column=Column(
-                            parts=["column2"]
-                        ),
+                        column=Column.of("column2"),
                         operator=ConditionOperator.EQUAL,
                         value="hello"
                     )
@@ -199,16 +189,12 @@ class TestDatabaseQueryService:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=["column1"]
-                        ),
+                        column=Column.of("column1"),
                         operator=ConditionOperator.LESS_THAN,
                         value=23
                     ),
                     QueryCondition(
-                        column=Column(
-                            parts=["column2"]
-                        ),
+                        column=Column.of("column2"),
                         operator=ConditionOperator.EQUAL,
                         value="hello"
                     )

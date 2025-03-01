@@ -353,9 +353,7 @@ class QueryBuilderFunction:
 
         case_clauses: list[str] = list(map(lambda column: self.__build_case_clause(column, records), columns))
         where_condition: str = self.__build_condition(QueryCondition(
-            column=Column(
-                parts=[StoreConstants.ID]
-            ),
+            column=Column.of(StoreConstants.ID),
             operator=ConditionOperator.IN,
             value=list({item[StoreConstants.ID] for item in records})
         ))

@@ -112,9 +112,7 @@ class TournamentService:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=[StoreConstants.ID]
-                        ),
+                        column=Column.of(StoreConstants.ID),
                         operator=ConditionOperator.IN,
                         value=included_ids
                     )
@@ -142,9 +140,7 @@ class TournamentService:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=[StoreConstants.ID]
-                        ),
+                        column=Column.of(StoreConstants.ID),
                         operator=ConditionOperator.EQUAL,
                         value=tournament_id
                     )
@@ -175,9 +171,7 @@ class TournamentService:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=[StoreConstants.ID]
-                        ),
+                        column=Column.of(StoreConstants.ID),
                         operator=ConditionOperator.EQUAL,
                         value=tournament_id
                     )

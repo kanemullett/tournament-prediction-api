@@ -99,9 +99,7 @@ class LeagueTemplateService:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=[StoreConstants.ID]
-                        ),
+                        column=Column.of(StoreConstants.ID),
                         operator=ConditionOperator.EQUAL,
                         value=league_template_id
                     )
@@ -131,9 +129,7 @@ class LeagueTemplateService:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=["leagueTemplateId"]
-                        ),
+                        column=Column.of("leagueTemplateId"),
                         operator=ConditionOperator.EQUAL,
                         value=league_template_id
                     )
@@ -158,9 +154,7 @@ class LeagueTemplateService:
             conditionGroup=QueryConditionGroup(
                 conditions=[
                     QueryCondition(
-                        column=Column(
-                            parts=[StoreConstants.ID]
-                        ),
+                        column=Column.of(StoreConstants.ID),
                         operator=ConditionOperator.EQUAL,
                         value=league_template_id
                     )
