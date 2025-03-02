@@ -9,7 +9,8 @@ class QueryConditionGroup(BaseModel):
     Object representing a group of query conditions.
 
     Attributes:
-        conditions (list[QueryCondition]): The conditions to validate the returning data by.
+        conditions (list[QueryCondition]): The conditions to validate the
+            returning data by.
         join (ConditionJoin): The join to apply to the conditions.
     """
     conditions: list[QueryCondition]

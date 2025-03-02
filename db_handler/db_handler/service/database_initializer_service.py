@@ -11,9 +11,12 @@ class DatabaseInitializerService:
         __database_connection (connection): The database connection.
         __application_schema (str): The schema of the application.
     """
-    __sql_folder: str = f"sql/"
+    __sql_folder: str = "sql/"
 
-    def __init__(self, database_connection: connection, application_schema: str) -> None:
+    def __init__(
+            self,
+            database_connection: connection,
+            application_schema: str) -> None:
         """
         Initialise the DatabaseInitializerService.
 
@@ -37,16 +40,21 @@ class DatabaseInitializerService:
         """
         Create the database schema for the application.
         """
-        self.__execute_database_action(f"CREATE SCHEMA IF NOT EXISTS {self.__application_schema};")
+        self.__execute_database_action(
+            f"CREATE SCHEMA IF NOT EXISTS {self.__application_schema};"
+        )
 
     def __get_tables_to_create(self) -> list[str]:
         """
-        Retrieve the names of the template files to create database tables from.
+        Retrieve the names of the template files to create database tables
+        from.
 
         Returns:
             list[str]: List of table template filenames.
         """
-        folder_path = Path(f"{self.__sql_folder}{self.__application_schema}/tables/")
+        folder_path = Path(
+            f"{self.__sql_folder}{self.__application_schema}/tables/"
+        )
 
         return [file.name for file in folder_path.iterdir() if file.is_file()]
 
@@ -57,7 +65,11 @@ class DatabaseInitializerService:
         Args:
             table (str): The filename of the table's template.
         """
-        with open(f"{self.__sql_folder}{self.__application_schema}/tables/{table}", "r") as file:
+        with open(
+                f"{self.__sql_folder}{self.__application_schema}/tables/"
+                f"{table}",
+                "r"
+        ) as file:
             sql_string = file.read()
 
         self.__execute_database_action(sql_string)

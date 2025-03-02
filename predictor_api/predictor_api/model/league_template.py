@@ -11,8 +11,8 @@ class LeagueTemplate(DatabaseRecord):
         name (str): The name of the league template.
         groupCount (int): The number of groups that make up the league phase.
         teamsPerGroup (int): The number of teams competing in each group.
-        homeAndAway (bool): True if each team should play against each of their fellow league-phase teams both home and
-            away.
+        homeAndAway (bool): True if each team should play against each of
+            their fellow league-phase teams both home and away.
     """
     name: str
     groupCount: int

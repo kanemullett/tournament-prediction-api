@@ -9,25 +9,35 @@ from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_response import QueryResponse
 from db_handler.db_handler.model.table import Table
-from db_handler.db_handler.model.type.condition_operator import ConditionOperator
+from db_handler.db_handler.model.type.condition_operator import (
+    ConditionOperator
+)
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.update_request import UpdateRequest
 from predictor_api.predictor_api.model.knockout_round import KnockoutRound
-from predictor_api.predictor_api.model.knockout_template import KnockoutTemplate
-from predictor_api.predictor_api.service.knockout_template_service import KnockoutTemplateService
-from predictor_api.predictor_api.util.predictor_constants import PredictorConstants
+from predictor_api.predictor_api.model.knockout_template import (
+    KnockoutTemplate
+)
+from predictor_api.predictor_api.service.knockout_template_service import (
+    KnockoutTemplateService
+)
+from predictor_api.predictor_api.util.predictor_constants import (
+    PredictorConstants
+)
 from predictor_common.test_resources.assertions import Assertions
 
 
 class TestKnockoutTemplateService:
 
-    __database_query_service: MagicMock = MagicMock()
+    __query_service: MagicMock = MagicMock()
 
-    __knockout_template_service: KnockoutTemplateService = KnockoutTemplateService(__database_query_service)
+    __service: KnockoutTemplateService = (
+        KnockoutTemplateService(__query_service)
+    )
 
     def test_should_return_knockout_templates(self):
         # Given
-        self.__database_query_service.retrieve_records.return_value = QueryResponse(
+        self.__query_service.retrieve_records.return_value = QueryResponse(
             referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
             recordCount=2,
             records=[
@@ -111,15 +121,22 @@ class TestKnockoutTemplateService:
         )
 
         # When
-        knockout_templates: list[KnockoutTemplate] = self.__knockout_template_service.get_knockout_templates()
+        knockout_templates: list[KnockoutTemplate] = (
+            self.__service.get_knockout_templates()
+        )
 
         # Then
-        captured_args_retrieve_records, captured_kwargs = self.__database_query_service.retrieve_records.call_args
+        captured_args_retrieve_records, captured_kwargs = (
+            self.__query_service.retrieve_records.call_args
+        )
         Assertions.assert_type(QueryRequest, captured_args_retrieve_records[0])
 
         query_request: QueryRequest = captured_args_retrieve_records[0]
         table: Table = query_request.table
-        Assertions.assert_equals(PredictorConstants.PREDICTOR_SCHEMA, table.schema_)
+        Assertions.assert_equals(
+            PredictorConstants.PREDICTOR_SCHEMA,
+            table.schema_
+        )
         Assertions.assert_equals("knockout-templates", table.table)
 
         Assertions.assert_equals(2, len(knockout_templates))
@@ -178,7 +195,10 @@ class TestKnockoutTemplateService:
         template2 = knockout_templates[1]
         Assertions.assert_type(KnockoutTemplate, template2)
         Assertions.assert_type(UUID, template2.id)
-        Assertions.assert_equals("8-Team Double-Leg Away Goals", template2.name)
+        Assertions.assert_equals(
+            "8-Team Double-Leg Away Goals",
+            template2.name
+        )
         Assertions.assert_equals(3, len(template2.rounds))
 
         template2_round1 = template2.rounds[0]
@@ -288,17 +308,27 @@ class TestKnockoutTemplateService:
         ]
 
         # When
-        created: list[KnockoutTemplate] = self.__knockout_template_service.create_knockout_templates(created)
+        created: list[KnockoutTemplate] = (
+            self.__service.create_knockout_templates(created)
+        )
 
         # Then
-        captured_args_retrieve_records, captured_kwargs = self.__database_query_service.update_records.call_args
-        Assertions.assert_type(UpdateRequest, captured_args_retrieve_records[0])
+        captured_args_retrieve_records, captured_kwargs = (
+            self.__query_service.update_records.call_args
+        )
+        Assertions.assert_type(
+            UpdateRequest,
+            captured_args_retrieve_records[0]
+        )
 
         update_request: UpdateRequest = captured_args_retrieve_records[0]
         Assertions.assert_equals(SqlOperator.INSERT, update_request.operation)
 
         table: Table = update_request.table
-        Assertions.assert_equals(PredictorConstants.PREDICTOR_SCHEMA, table.schema_)
+        Assertions.assert_equals(
+            PredictorConstants.PREDICTOR_SCHEMA,
+            table.schema_
+        )
         Assertions.assert_equals("knockout-templates", table.table)
 
         record1: dict[str, Any] = update_request.records[0]
@@ -332,7 +362,10 @@ class TestKnockoutTemplateService:
         Assertions.assert_false(record1_round3["awayGoals"])
 
         record1_round4: dict[str, Any] = record1["rounds"][3]
-        Assertions.assert_equals("Third-Place Play-Off", record1_round4["name"])
+        Assertions.assert_equals(
+            "Third-Place Play-Off",
+            record1_round4["name"]
+        )
         Assertions.assert_equals(2, record1_round4["teamCount"])
         Assertions.assert_equals(4, record1_round4["roundOrder"])
         Assertions.assert_false(record1_round4["twoLegs"])
@@ -349,7 +382,10 @@ class TestKnockoutTemplateService:
 
         record2: dict[str, Any] = update_request.records[1]
         Assertions.assert_type(UUID, record2["id"])
-        Assertions.assert_equals("8-Team Double-Leg Away Goals", record2["name"])
+        Assertions.assert_equals(
+            "8-Team Double-Leg Away Goals",
+            record2["name"]
+        )
 
         Assertions.assert_equals(3, len(record2["rounds"]))
 
@@ -465,7 +501,7 @@ class TestKnockoutTemplateService:
 
     def test_should_return_knockout_template_by_id(self):
         # Given
-        self.__database_query_service.retrieve_records.return_value = QueryResponse(
+        self.__query_service.retrieve_records.return_value = QueryResponse(
             referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
             recordCount=1,
             records=[
@@ -519,26 +555,39 @@ class TestKnockoutTemplateService:
         )
 
         # When
-        knockout_template: KnockoutTemplate = self.__knockout_template_service.get_knockout_template_by_id(
-            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+        knockout_template: KnockoutTemplate = (
+            self.__service.get_knockout_template_by_id(
+                UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+            )
         )
 
         # Then
-        captured_args_retrieve_records, captured_kwargs = self.__database_query_service.retrieve_records.call_args
+        captured_args_retrieve_records, captured_kwargs = (
+            self.__query_service.retrieve_records.call_args
+        )
         Assertions.assert_type(QueryRequest, captured_args_retrieve_records[0])
 
         query_request: QueryRequest = captured_args_retrieve_records[0]
         table: Table = query_request.table
-        Assertions.assert_equals(PredictorConstants.PREDICTOR_SCHEMA, table.schema_)
+        Assertions.assert_equals(
+            PredictorConstants.PREDICTOR_SCHEMA,
+            table.schema_
+        )
         Assertions.assert_equals("knockout-templates", table.table)
 
         condition: QueryCondition = query_request.conditionGroup.conditions[0]
         Assertions.assert_equals("id", condition.column.parts[0])
         Assertions.assert_equals(ConditionOperator.EQUAL, condition.operator)
-        Assertions.assert_equals(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"), condition.value)
+        Assertions.assert_equals(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+            condition.value
+        )
 
         Assertions.assert_type(KnockoutTemplate, knockout_template)
-        Assertions.assert_equals(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"), knockout_template.id)
+        Assertions.assert_equals(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+            knockout_template.id
+        )
         Assertions.assert_equals("16-Team Single-Leg", knockout_template.name)
         Assertions.assert_equals(5, len(knockout_template.rounds))
 
@@ -589,7 +638,7 @@ class TestKnockoutTemplateService:
 
     def test_should_raise_exception_if_knockout_template_not_found(self):
         # Given
-        self.__database_query_service.retrieve_records.return_value = QueryResponse(
+        self.__query_service.retrieve_records.return_value = QueryResponse(
             referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
             recordCount=0,
             records=[]
@@ -597,95 +646,114 @@ class TestKnockoutTemplateService:
 
         # When
         with raises(HTTPException) as httpe:
-            self.__knockout_template_service.get_knockout_template_by_id(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"))
+            self.__service.get_knockout_template_by_id(
+                UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+            )
 
         # Then
         Assertions.assert_equals(404, httpe.value.status_code)
-        Assertions.assert_equals("No knockout templates found with a matching id.", httpe.value.detail)
+        Assertions.assert_equals(
+            "No knockout templates found with a matching id.",
+            httpe.value.detail
+        )
 
     def test_should_delete_knockout_template_by_id(self):
         # When
-        self.__knockout_template_service.delete_knockout_template_by_id(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"))
+        self.__service.delete_knockout_template_by_id(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+        )
 
         # Then
-        captured_args_update_records, captured_kwargs = self.__database_query_service.update_records.call_args
+        captured_args_update_records, captured_kwargs = (
+            self.__query_service.update_records.call_args
+        )
         Assertions.assert_type(UpdateRequest, captured_args_update_records[0])
 
         update_request: UpdateRequest = captured_args_update_records[0]
         Assertions.assert_equals(SqlOperator.DELETE, update_request.operation)
 
         table: Table = update_request.table
-        Assertions.assert_equals(PredictorConstants.PREDICTOR_SCHEMA, table.schema_)
+        Assertions.assert_equals(
+            PredictorConstants.PREDICTOR_SCHEMA,
+            table.schema_
+        )
         Assertions.assert_equals("knockout-templates", table.table)
 
         condition: QueryCondition = update_request.conditionGroup.conditions[0]
         Assertions.assert_equals("id", condition.column.parts[0])
         Assertions.assert_equals(ConditionOperator.EQUAL, condition.operator)
-        Assertions.assert_equals(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"), condition.value)
+        Assertions.assert_equals(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+            condition.value
+        )
 
-    def test_should_not_delete_knockout_template_if_used_by_tournament_template(self):
+    def test_no_knockout_template_delete_if_used_by_tournament_template(self):
         # Given
-        self.__database_query_service.retrieve_records.return_value = QueryResponse(
-            referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
-            recordCount=1,
-            records=[
-                {
-                    "id": "c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
-                    "name": "16-Team Single-Leg",
-                    "rounds": [
-                        {
-                            "name": "Round of 16",
-                            "teamCount": 16,
-                            "roundOrder": 1,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        },
-                        {
-                            "name": "Quarter-Finals",
-                            "teamCount": 8,
-                            "roundOrder": 2,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        },
-                        {
-                            "name": "Semi-Finals",
-                            "teamCount": 4,
-                            "roundOrder": 3,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        },
-                        {
-                            "name": "Third-Place Play-Off",
-                            "teamCount": 2,
-                            "roundOrder": 4,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        },
-                        {
-                            "name": "Final",
-                            "teamCount": 2,
-                            "roundOrder": 5,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        }
-                    ]
-                }
-            ]
+        self.__query_service.retrieve_records.return_value = (
+            QueryResponse(
+                referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
+                recordCount=1,
+                records=[
+                    {
+                        "id": "c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
+                        "name": "16-Team Single-Leg",
+                        "rounds": [
+                            {
+                                "name": "Round of 16",
+                                "teamCount": 16,
+                                "roundOrder": 1,
+                                "twoLegs": False,
+                                "extraTime": True,
+                                "awayGoals": False
+                            },
+                            {
+                                "name": "Quarter-Finals",
+                                "teamCount": 8,
+                                "roundOrder": 2,
+                                "twoLegs": False,
+                                "extraTime": True,
+                                "awayGoals": False
+                            },
+                            {
+                                "name": "Semi-Finals",
+                                "teamCount": 4,
+                                "roundOrder": 3,
+                                "twoLegs": False,
+                                "extraTime": True,
+                                "awayGoals": False
+                            },
+                            {
+                                "name": "Third-Place Play-Off",
+                                "teamCount": 2,
+                                "roundOrder": 4,
+                                "twoLegs": False,
+                                "extraTime": True,
+                                "awayGoals": False
+                            },
+                            {
+                                "name": "Final",
+                                "teamCount": 2,
+                                "roundOrder": 5,
+                                "twoLegs": False,
+                                "extraTime": True,
+                                "awayGoals": False
+                            }
+                        ]
+                    }
+                ]
+            )
         )
 
         # When
         with raises(HTTPException) as httpe:
-            self.__knockout_template_service.delete_knockout_template_by_id(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"))
+            self.__service.delete_knockout_template_by_id(
+                UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+            )
 
         # Then
         Assertions.assert_equals(409, httpe.value.status_code)
         Assertions.assert_equals(
-            "Cannot delete knockout template as it is part of an existing tournament template.",
+            "Cannot delete knockout template as it is part of an existing "
+            "tournament template.",
             httpe.value.detail
         )
-
