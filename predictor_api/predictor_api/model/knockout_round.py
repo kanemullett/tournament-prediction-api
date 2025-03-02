@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from db_handler.db_handler.model.database_record import DatabaseRecord
 
 
-class KnockoutRound(BaseModel):
+class KnockoutRound(DatabaseRecord):
     """
     Object representing a knockout round.
 
