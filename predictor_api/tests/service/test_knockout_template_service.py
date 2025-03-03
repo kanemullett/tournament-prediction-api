@@ -35,90 +35,127 @@ class TestKnockoutTemplateService:
         KnockoutTemplateService(__query_service)
     )
 
+    def setup_method(self):
+        self.__query_service.retrieve_records.reset_mock()
+        self.__query_service.retrieve_records.return_value = None
+        self.__query_service.retrieve_records.side_effect = None
+
+        self.__query_service.update_records.reset_mock()
+        self.__query_service.update_records.return_value = None
+        self.__query_service.update_records.side_effect = None
+
     def test_should_return_knockout_templates(self):
         # Given
-        self.__query_service.retrieve_records.return_value = QueryResponse(
-            referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
-            recordCount=2,
-            records=[
-                {
-                    "id": "c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
-                    "name": "16-Team Single-Leg",
-                    "rounds": [
-                        {
-                            "name": "Round of 16",
-                            "teamCount": 16,
-                            "roundOrder": 1,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        },
-                        {
-                            "name": "Quarter-Finals",
-                            "teamCount": 8,
-                            "roundOrder": 2,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        },
-                        {
-                            "name": "Semi-Finals",
-                            "teamCount": 4,
-                            "roundOrder": 3,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        },
-                        {
-                            "name": "Third-Place Play-Off",
-                            "teamCount": 2,
-                            "roundOrder": 4,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        },
-                        {
-                            "name": "Final",
-                            "teamCount": 2,
-                            "roundOrder": 5,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        }
-                    ]
-                },
-                {
-                    "id": "6ee28143-1286-4618-a8b9-ad86d348ead1",
-                    "name": "8-Team Double-Leg Away Goals",
-                    "rounds": [
-                        {
-                            "name": "Quarter-Finals",
-                            "teamCount": 8,
-                            "roundOrder": 1,
-                            "twoLegs": True,
-                            "extraTime": True,
-                            "awayGoals": True
-                        },
-                        {
-                            "name": "Semi-Finals",
-                            "teamCount": 4,
-                            "roundOrder": 2,
-                            "twoLegs": True,
-                            "extraTime": True,
-                            "awayGoals": True
-                        },
-                        {
-                            "name": "Final",
-                            "teamCount": 2,
-                            "roundOrder": 3,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        }
-                    ]
-                }
-            ]
-        )
+        self.__query_service.retrieve_records.side_effect = [
+            QueryResponse(
+                referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
+                recordCount=2,
+                records=[
+                    {
+                        "id": "c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
+                        "name": "16-Team Single-Leg"
+                    },
+                    {
+                        "id": "6ee28143-1286-4618-a8b9-ad86d348ead1",
+                        "name": "8-Team Double-Leg Away Goals"
+                    }
+                ]
+            ),
+            QueryResponse(
+                referenceId="79de70fd-1556-4dec-b2ca-1cef5178007e",
+                recordCount=8,
+                records=[
+                    {
+                        "id": "a8a25e02-f5a4-4aaf-9524-f8a6ca9ea527",
+                        "name": "Semi-Finals",
+                        "teamCount": 4,
+                        "roundOrder": 2,
+                        "twoLegs": True,
+                        "extraTime": True,
+                        "awayGoals": True,
+                        "knockoutTemplateId": "6ee28143-1286-4618-a8b9-"
+                                              "ad86d348ead1"
+                    },
+                    {
+                        "id": "57faec18-532a-4317-83c3-da57cf08d902",
+                        "name": "Quarter-Finals",
+                        "teamCount": 8,
+                        "roundOrder": 2,
+                        "twoLegs": False,
+                        "extraTime": True,
+                        "awayGoals": False,
+                        "knockoutTemplateId": "c08fd796-7fea-40d9-9a0a-"
+                                              "cb3a49cce2e4"
+                    },
+                    {
+                        "id": "af7aee58-7eeb-4b1d-8063-13e608129f8c",
+                        "name": "Quarter-Finals",
+                        "teamCount": 8,
+                        "roundOrder": 1,
+                        "twoLegs": True,
+                        "extraTime": True,
+                        "awayGoals": True,
+                        "knockoutTemplateId": "6ee28143-1286-4618-a8b9-"
+                                              "ad86d348ead1"
+                    },
+                    {
+                        "id": "bfa4f1be-d00a-48c8-b14f-7d04ca6a54b4",
+                        "name": "Third-Place Play-Off",
+                        "teamCount": 2,
+                        "roundOrder": 4,
+                        "twoLegs": False,
+                        "extraTime": True,
+                        "awayGoals": False,
+                        "knockoutTemplateId": "c08fd796-7fea-40d9-9a0a-"
+                                              "cb3a49cce2e4"
+                    },
+                    {
+                        "id": "0bf8c559-0d02-4072-afaa-a153a6178204",
+                        "name": "Final",
+                        "teamCount": 2,
+                        "roundOrder": 5,
+                        "twoLegs": False,
+                        "extraTime": True,
+                        "awayGoals": False,
+                        "knockoutTemplateId": "c08fd796-7fea-40d9-9a0a-"
+                                              "cb3a49cce2e4"
+                    },
+                    {
+                        "id": "ac408de9-a65f-448d-8ad4-cc36f52d3392",
+                        "name": "Semi-Finals",
+                        "teamCount": 4,
+                        "roundOrder": 3,
+                        "twoLegs": False,
+                        "extraTime": True,
+                        "awayGoals": False,
+                        "knockoutTemplateId": "c08fd796-7fea-40d9-9a0a-"
+                                              "cb3a49cce2e4"
+                    },
+                    {
+                        "id": "98732577-0ba1-4540-a758-9c33be004c13",
+                        "name": "Round of 16",
+                        "teamCount": 16,
+                        "roundOrder": 1,
+                        "twoLegs": False,
+                        "extraTime": True,
+                        "awayGoals": False,
+                        "knockoutTemplateId": "c08fd796-7fea-40d9-9a0a-"
+                                              "cb3a49cce2e4"
+                    },
+                    {
+                        "id": "262148f4-02bd-48f6-a009-b01195654ce7",
+                        "name": "Final",
+                        "teamCount": 2,
+                        "roundOrder": 3,
+                        "twoLegs": False,
+                        "extraTime": True,
+                        "awayGoals": False,
+                        "knockoutTemplateId": "6ee28143-1286-4618-a8b9-"
+                                              "ad86d348ead1"
+                    }
+                ]
+            )
+        ]
 
         # When
         knockout_templates: list[KnockoutTemplate] = (
@@ -126,18 +163,47 @@ class TestKnockoutTemplateService:
         )
 
         # Then
-        captured_args_retrieve_records, captured_kwargs = (
-            self.__query_service.retrieve_records.call_args
-        )
-        Assertions.assert_type(QueryRequest, captured_args_retrieve_records[0])
+        templates_args, templates_kwargs = (
+            self.__query_service.retrieve_records.call_args_list
+        )[0]
+        Assertions.assert_type(QueryRequest, templates_args[0])
 
-        query_request: QueryRequest = captured_args_retrieve_records[0]
-        table: Table = query_request.table
+        templates_request: QueryRequest = templates_args[0]
+        tr_table: Table = templates_request.table
         Assertions.assert_equals(
             PredictorConstants.PREDICTOR_SCHEMA,
-            table.schema_
+            tr_table.schema_
         )
-        Assertions.assert_equals("knockout-templates", table.table)
+        Assertions.assert_equals("knockout-templates", tr_table.table)
+
+        rounds_args, rounds_kwargs = (
+            self.__query_service.retrieve_records.call_args_list
+        )[1]
+        Assertions.assert_type(QueryRequest, rounds_args[0])
+
+        rounds_request: QueryRequest = rounds_args[0]
+        rr_table: Table = rounds_request.table
+        Assertions.assert_equals(
+            PredictorConstants.PREDICTOR_SCHEMA,
+            rr_table.schema_
+        )
+        Assertions.assert_equals("rounds", rr_table.table)
+
+        rr_condition: QueryCondition = (
+            rounds_request.conditionGroup.conditions
+        )[0]
+        Assertions.assert_equals(
+            ["knockoutTemplateId"],
+            rr_condition.column.parts
+        )
+        Assertions.assert_equals(ConditionOperator.IN, rr_condition.operator)
+        Assertions.assert_equals(
+            [
+                UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+                UUID("6ee28143-1286-4618-a8b9-ad86d348ead1")
+            ],
+            rr_condition.value
+        )
 
         Assertions.assert_equals(2, len(knockout_templates))
 
@@ -149,6 +215,7 @@ class TestKnockoutTemplateService:
 
         template1_round1 = template1.rounds[0]
         Assertions.assert_type(KnockoutRound, template1_round1)
+        Assertions.assert_type(UUID, template1_round1.id)
         Assertions.assert_equals("Round of 16", template1_round1.name)
         Assertions.assert_equals(16, template1_round1.teamCount)
         Assertions.assert_equals(1, template1_round1.roundOrder)
@@ -158,6 +225,7 @@ class TestKnockoutTemplateService:
 
         template1_round2 = template1.rounds[1]
         Assertions.assert_type(KnockoutRound, template1_round2)
+        Assertions.assert_type(UUID, template1_round2.id)
         Assertions.assert_equals("Quarter-Finals", template1_round2.name)
         Assertions.assert_equals(8, template1_round2.teamCount)
         Assertions.assert_equals(2, template1_round2.roundOrder)
@@ -167,6 +235,7 @@ class TestKnockoutTemplateService:
 
         template1_round3 = template1.rounds[2]
         Assertions.assert_type(KnockoutRound, template1_round3)
+        Assertions.assert_type(UUID, template1_round3.id)
         Assertions.assert_equals("Semi-Finals", template1_round3.name)
         Assertions.assert_equals(4, template1_round3.teamCount)
         Assertions.assert_equals(3, template1_round3.roundOrder)
@@ -176,6 +245,7 @@ class TestKnockoutTemplateService:
 
         template1_round4 = template1.rounds[3]
         Assertions.assert_type(KnockoutRound, template1_round4)
+        Assertions.assert_type(UUID, template1_round4.id)
         Assertions.assert_equals("Third-Place Play-Off", template1_round4.name)
         Assertions.assert_equals(2, template1_round4.teamCount)
         Assertions.assert_equals(4, template1_round4.roundOrder)
@@ -185,6 +255,7 @@ class TestKnockoutTemplateService:
 
         template1_round5 = template1.rounds[4]
         Assertions.assert_type(KnockoutRound, template1_round5)
+        Assertions.assert_type(UUID, template1_round5.id)
         Assertions.assert_equals("Final", template1_round5.name)
         Assertions.assert_equals(2, template1_round5.teamCount)
         Assertions.assert_equals(5, template1_round5.roundOrder)
@@ -203,6 +274,7 @@ class TestKnockoutTemplateService:
 
         template2_round1 = template2.rounds[0]
         Assertions.assert_type(KnockoutRound, template2_round1)
+        Assertions.assert_type(UUID, template2_round1.id)
         Assertions.assert_equals("Quarter-Finals", template2_round1.name)
         Assertions.assert_equals(8, template2_round1.teamCount)
         Assertions.assert_equals(1, template2_round1.roundOrder)
@@ -212,6 +284,7 @@ class TestKnockoutTemplateService:
 
         template2_round2 = template2.rounds[1]
         Assertions.assert_type(KnockoutRound, template2_round2)
+        Assertions.assert_type(UUID, template2_round2.id)
         Assertions.assert_equals("Semi-Finals", template2_round2.name)
         Assertions.assert_equals(4, template2_round2.teamCount)
         Assertions.assert_equals(2, template2_round2.roundOrder)
@@ -221,6 +294,7 @@ class TestKnockoutTemplateService:
 
         template2_round3 = template2.rounds[2]
         Assertions.assert_type(KnockoutRound, template2_round3)
+        Assertions.assert_type(UUID, template2_round3.id)
         Assertions.assert_equals("Final", template2_round3.name)
         Assertions.assert_equals(2, template2_round3.teamCount)
         Assertions.assert_equals(3, template2_round3.roundOrder)
@@ -313,105 +387,164 @@ class TestKnockoutTemplateService:
         )
 
         # Then
-        captured_args_retrieve_records, captured_kwargs = (
-            self.__query_service.update_records.call_args
-        )
+        templates_args, templates_kwargs = (
+            self.__query_service.update_records.call_args_list
+        )[0]
         Assertions.assert_type(
             UpdateRequest,
-            captured_args_retrieve_records[0]
+            templates_args[0]
         )
 
-        update_request: UpdateRequest = captured_args_retrieve_records[0]
-        Assertions.assert_equals(SqlOperator.INSERT, update_request.operation)
+        templates_request: UpdateRequest = templates_args[0]
+        Assertions.assert_equals(
+            SqlOperator.INSERT,
+            templates_request.operation
+        )
 
-        table: Table = update_request.table
+        templates_table: Table = templates_request.table
         Assertions.assert_equals(
             PredictorConstants.PREDICTOR_SCHEMA,
-            table.schema_
+            templates_table.schema_
         )
-        Assertions.assert_equals("knockout-templates", table.table)
+        Assertions.assert_equals("knockout-templates", templates_table.table)
 
-        record1: dict[str, Any] = update_request.records[0]
-        Assertions.assert_type(UUID, record1["id"])
-        Assertions.assert_equals("16-Team Single-Leg", record1["name"])
-
-        Assertions.assert_equals(5, len(record1["rounds"]))
-
-        record1_round1: dict[str, Any] = record1["rounds"][0]
-        Assertions.assert_equals("Round of 16", record1_round1["name"])
-        Assertions.assert_equals(16, record1_round1["teamCount"])
-        Assertions.assert_equals(1, record1_round1["roundOrder"])
-        Assertions.assert_false(record1_round1["twoLegs"])
-        Assertions.assert_true(record1_round1["extraTime"])
-        Assertions.assert_false(record1_round1["awayGoals"])
-
-        record1_round2: dict[str, Any] = record1["rounds"][1]
-        Assertions.assert_equals("Quarter-Finals", record1_round2["name"])
-        Assertions.assert_equals(8, record1_round2["teamCount"])
-        Assertions.assert_equals(2, record1_round2["roundOrder"])
-        Assertions.assert_false(record1_round2["twoLegs"])
-        Assertions.assert_true(record1_round2["extraTime"])
-        Assertions.assert_false(record1_round2["awayGoals"])
-
-        record1_round3: dict[str, Any] = record1["rounds"][2]
-        Assertions.assert_equals("Semi-Finals", record1_round3["name"])
-        Assertions.assert_equals(4, record1_round3["teamCount"])
-        Assertions.assert_equals(3, record1_round3["roundOrder"])
-        Assertions.assert_false(record1_round3["twoLegs"])
-        Assertions.assert_true(record1_round3["extraTime"])
-        Assertions.assert_false(record1_round3["awayGoals"])
-
-        record1_round4: dict[str, Any] = record1["rounds"][3]
+        template_record1: dict[str, Any] = templates_request.records[0]
+        Assertions.assert_type(UUID, template_record1["id"])
         Assertions.assert_equals(
-            "Third-Place Play-Off",
-            record1_round4["name"]
+            "16-Team Single-Leg",
+            template_record1["name"]
         )
-        Assertions.assert_equals(2, record1_round4["teamCount"])
-        Assertions.assert_equals(4, record1_round4["roundOrder"])
-        Assertions.assert_false(record1_round4["twoLegs"])
-        Assertions.assert_true(record1_round4["extraTime"])
-        Assertions.assert_false(record1_round4["awayGoals"])
+        Assertions.assert_false("rounds" in template_record1)
 
-        record1_round5: dict[str, Any] = record1["rounds"][4]
-        Assertions.assert_equals("Final", record1_round5["name"])
-        Assertions.assert_equals(2, record1_round5["teamCount"])
-        Assertions.assert_equals(5, record1_round5["roundOrder"])
-        Assertions.assert_false(record1_round5["twoLegs"])
-        Assertions.assert_true(record1_round5["extraTime"])
-        Assertions.assert_false(record1_round5["awayGoals"])
-
-        record2: dict[str, Any] = update_request.records[1]
-        Assertions.assert_type(UUID, record2["id"])
+        template_record2: dict[str, Any] = templates_request.records[1]
+        Assertions.assert_type(UUID, template_record2["id"])
         Assertions.assert_equals(
             "8-Team Double-Leg Away Goals",
-            record2["name"]
+            template_record2["name"]
+        )
+        Assertions.assert_false("rounds" in template_record2)
+
+        rounds_args, rounds_kwargs = (
+            self.__query_service.update_records.call_args_list
+        )[1]
+        Assertions.assert_type(
+            UpdateRequest,
+            rounds_args[0]
         )
 
-        Assertions.assert_equals(3, len(record2["rounds"]))
+        rounds_request: UpdateRequest = rounds_args[0]
+        Assertions.assert_equals(SqlOperator.INSERT, rounds_request.operation)
 
-        record2_round1: dict[str, Any] = record2["rounds"][0]
-        Assertions.assert_equals("Quarter-Finals", record2_round1["name"])
-        Assertions.assert_equals(8, record2_round1["teamCount"])
-        Assertions.assert_equals(1, record2_round1["roundOrder"])
-        Assertions.assert_true(record2_round1["twoLegs"])
-        Assertions.assert_true(record2_round1["extraTime"])
-        Assertions.assert_true(record2_round1["awayGoals"])
+        rounds_table: Table = rounds_request.table
+        Assertions.assert_equals(
+            PredictorConstants.PREDICTOR_SCHEMA,
+            rounds_table.schema_
+        )
+        Assertions.assert_equals("rounds", rounds_table.table)
 
-        record2_round2: dict[str, Any] = record2["rounds"][1]
-        Assertions.assert_equals("Semi-Finals", record2_round2["name"])
-        Assertions.assert_equals(4, record2_round2["teamCount"])
-        Assertions.assert_equals(2, record2_round2["roundOrder"])
-        Assertions.assert_true(record2_round2["twoLegs"])
-        Assertions.assert_true(record2_round2["extraTime"])
-        Assertions.assert_true(record2_round2["awayGoals"])
+        round_record1: dict[str, Any] = rounds_request.records[0]
+        Assertions.assert_type(UUID, round_record1["id"])
+        Assertions.assert_equals("Round of 16", round_record1["name"])
+        Assertions.assert_equals(16, round_record1["teamCount"])
+        Assertions.assert_equals(1, round_record1["roundOrder"])
+        Assertions.assert_false(round_record1["twoLegs"])
+        Assertions.assert_true(round_record1["extraTime"])
+        Assertions.assert_false(round_record1["awayGoals"])
+        Assertions.assert_equals(
+            template_record1["id"],
+            round_record1["knockoutTemplateId"]
+        )
 
-        record2_round3: dict[str, Any] = record2["rounds"][2]
-        Assertions.assert_equals("Final", record2_round3["name"])
-        Assertions.assert_equals(2, record2_round3["teamCount"])
-        Assertions.assert_equals(3, record2_round3["roundOrder"])
-        Assertions.assert_false(record2_round3["twoLegs"])
-        Assertions.assert_true(record2_round3["extraTime"])
-        Assertions.assert_false(record2_round3["awayGoals"])
+        round_record2: dict[str, Any] = rounds_request.records[1]
+        Assertions.assert_type(UUID, round_record2["id"])
+        Assertions.assert_equals("Quarter-Finals", round_record2["name"])
+        Assertions.assert_equals(8, round_record2["teamCount"])
+        Assertions.assert_equals(2, round_record2["roundOrder"])
+        Assertions.assert_false(round_record2["twoLegs"])
+        Assertions.assert_true(round_record2["extraTime"])
+        Assertions.assert_false(round_record2["awayGoals"])
+        Assertions.assert_equals(
+            template_record1["id"],
+            round_record2["knockoutTemplateId"]
+        )
+
+        round_record3: dict[str, Any] = rounds_request.records[2]
+        Assertions.assert_type(UUID, round_record3["id"])
+        Assertions.assert_equals("Semi-Finals", round_record3["name"])
+        Assertions.assert_equals(4, round_record3["teamCount"])
+        Assertions.assert_equals(3, round_record3["roundOrder"])
+        Assertions.assert_false(round_record3["twoLegs"])
+        Assertions.assert_true(round_record3["extraTime"])
+        Assertions.assert_false(round_record3["awayGoals"])
+        Assertions.assert_equals(
+            template_record1["id"],
+            round_record3["knockoutTemplateId"]
+        )
+
+        round_record4: dict[str, Any] = rounds_request.records[3]
+        Assertions.assert_type(UUID, round_record4["id"])
+        Assertions.assert_equals("Third-Place Play-Off", round_record4["name"])
+        Assertions.assert_equals(2, round_record4["teamCount"])
+        Assertions.assert_equals(4, round_record4["roundOrder"])
+        Assertions.assert_false(round_record4["twoLegs"])
+        Assertions.assert_true(round_record4["extraTime"])
+        Assertions.assert_false(round_record4["awayGoals"])
+        Assertions.assert_equals(
+            template_record1["id"],
+            round_record4["knockoutTemplateId"]
+        )
+
+        round_record5: dict[str, Any] = rounds_request.records[4]
+        Assertions.assert_type(UUID, round_record5["id"])
+        Assertions.assert_equals("Final", round_record5["name"])
+        Assertions.assert_equals(2, round_record5["teamCount"])
+        Assertions.assert_equals(5, round_record5["roundOrder"])
+        Assertions.assert_false(round_record5["twoLegs"])
+        Assertions.assert_true(round_record5["extraTime"])
+        Assertions.assert_false(round_record5["awayGoals"])
+        Assertions.assert_equals(
+            template_record1["id"],
+            round_record5["knockoutTemplateId"]
+        )
+
+        round_record6: dict[str, Any] = rounds_request.records[5]
+        Assertions.assert_type(UUID, round_record6["id"])
+        Assertions.assert_equals("Quarter-Finals", round_record6["name"])
+        Assertions.assert_equals(8, round_record6["teamCount"])
+        Assertions.assert_equals(1, round_record6["roundOrder"])
+        Assertions.assert_true(round_record6["twoLegs"])
+        Assertions.assert_true(round_record6["extraTime"])
+        Assertions.assert_true(round_record6["awayGoals"])
+        Assertions.assert_equals(
+            template_record2["id"],
+            round_record6["knockoutTemplateId"]
+        )
+
+        round_record7: dict[str, Any] = rounds_request.records[6]
+        Assertions.assert_type(UUID, round_record7["id"])
+        Assertions.assert_equals("Semi-Finals", round_record7["name"])
+        Assertions.assert_equals(4, round_record7["teamCount"])
+        Assertions.assert_equals(2, round_record7["roundOrder"])
+        Assertions.assert_true(round_record7["twoLegs"])
+        Assertions.assert_true(round_record7["extraTime"])
+        Assertions.assert_true(round_record7["awayGoals"])
+        Assertions.assert_equals(
+            template_record2["id"],
+            round_record7["knockoutTemplateId"]
+        )
+
+        round_record8: dict[str, Any] = rounds_request.records[7]
+        Assertions.assert_type(UUID, round_record8["id"])
+        Assertions.assert_equals("Final", round_record8["name"])
+        Assertions.assert_equals(2, round_record8["teamCount"])
+        Assertions.assert_equals(3, round_record8["roundOrder"])
+        Assertions.assert_false(round_record8["twoLegs"])
+        Assertions.assert_true(round_record8["extraTime"])
+        Assertions.assert_false(round_record8["awayGoals"])
+        Assertions.assert_equals(
+            template_record2["id"],
+            round_record8["knockoutTemplateId"]
+        )
 
         Assertions.assert_equals(2, len(created))
 
@@ -501,58 +634,79 @@ class TestKnockoutTemplateService:
 
     def test_should_return_knockout_template_by_id(self):
         # Given
-        self.__query_service.retrieve_records.return_value = QueryResponse(
-            referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
-            recordCount=1,
-            records=[
-                {
-                    "id": "c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
-                    "name": "16-Team Single-Leg",
-                    "rounds": [
-                        {
-                            "name": "Round of 16",
-                            "teamCount": 16,
-                            "roundOrder": 1,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        },
-                        {
-                            "name": "Quarter-Finals",
-                            "teamCount": 8,
-                            "roundOrder": 2,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        },
-                        {
-                            "name": "Semi-Finals",
-                            "teamCount": 4,
-                            "roundOrder": 3,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        },
-                        {
-                            "name": "Third-Place Play-Off",
-                            "teamCount": 2,
-                            "roundOrder": 4,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        },
-                        {
-                            "name": "Final",
-                            "teamCount": 2,
-                            "roundOrder": 5,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        }
-                    ]
-                }
-            ]
-        )
+        self.__query_service.retrieve_records.side_effect = [
+            QueryResponse(
+                referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
+                recordCount=1,
+                records=[
+                    {
+                        "id": "c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
+                        "name": "16-Team Single-Leg"
+                    }
+                ]
+            ),
+            QueryResponse(
+                referenceId="79de70fd-1556-4dec-b2ca-1cef5178007e",
+                recordCount=5,
+                records=[
+                    {
+                        "id": "57faec18-532a-4317-83c3-da57cf08d902",
+                        "name": "Quarter-Finals",
+                        "teamCount": 8,
+                        "roundOrder": 2,
+                        "twoLegs": False,
+                        "extraTime": True,
+                        "awayGoals": False,
+                        "knockoutTemplateId": "c08fd796-7fea-40d9-9a0a-"
+                                              "cb3a49cce2e4"
+                    },
+                    {
+                        "id": "bfa4f1be-d00a-48c8-b14f-7d04ca6a54b4",
+                        "name": "Third-Place Play-Off",
+                        "teamCount": 2,
+                        "roundOrder": 4,
+                        "twoLegs": False,
+                        "extraTime": True,
+                        "awayGoals": False,
+                        "knockoutTemplateId": "c08fd796-7fea-40d9-9a0a-"
+                                              "cb3a49cce2e4"
+                    },
+                    {
+                        "id": "0bf8c559-0d02-4072-afaa-a153a6178204",
+                        "name": "Final",
+                        "teamCount": 2,
+                        "roundOrder": 5,
+                        "twoLegs": False,
+                        "extraTime": True,
+                        "awayGoals": False,
+                        "knockoutTemplateId": "c08fd796-7fea-40d9-9a0a-"
+                                              "cb3a49cce2e4"
+                    },
+                    {
+                        "id": "ac408de9-a65f-448d-8ad4-cc36f52d3392",
+                        "name": "Semi-Finals",
+                        "teamCount": 4,
+                        "roundOrder": 3,
+                        "twoLegs": False,
+                        "extraTime": True,
+                        "awayGoals": False,
+                        "knockoutTemplateId": "c08fd796-7fea-40d9-9a0a-"
+                                              "cb3a49cce2e4"
+                    },
+                    {
+                        "id": "98732577-0ba1-4540-a758-9c33be004c13",
+                        "name": "Round of 16",
+                        "teamCount": 16,
+                        "roundOrder": 1,
+                        "twoLegs": False,
+                        "extraTime": True,
+                        "awayGoals": False,
+                        "knockoutTemplateId": "c08fd796-7fea-40d9-9a0a-"
+                                              "cb3a49cce2e4"
+                    }
+                ]
+            )
+        ]
 
         # When
         knockout_template: KnockoutTemplate = (
@@ -562,21 +716,47 @@ class TestKnockoutTemplateService:
         )
 
         # Then
-        captured_args_retrieve_records, captured_kwargs = (
-            self.__query_service.retrieve_records.call_args
-        )
-        Assertions.assert_type(QueryRequest, captured_args_retrieve_records[0])
+        templates_args, templates_kwargs = (
+            self.__query_service.retrieve_records.call_args_list
+        )[0]
+        Assertions.assert_type(QueryRequest, templates_args[0])
 
-        query_request: QueryRequest = captured_args_retrieve_records[0]
-        table: Table = query_request.table
+        templates_request: QueryRequest = templates_args[0]
+        table: Table = templates_request.table
         Assertions.assert_equals(
             PredictorConstants.PREDICTOR_SCHEMA,
             table.schema_
         )
         Assertions.assert_equals("knockout-templates", table.table)
 
-        condition: QueryCondition = query_request.conditionGroup.conditions[0]
+        condition: QueryCondition = (
+            templates_request.conditionGroup.conditions
+        )[0]
         Assertions.assert_equals("id", condition.column.parts[0])
+        Assertions.assert_equals(ConditionOperator.EQUAL, condition.operator)
+        Assertions.assert_equals(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+            condition.value
+        )
+
+        rounds_args, rounds_kwargs = (
+            self.__query_service.retrieve_records.call_args_list
+        )[1]
+        Assertions.assert_type(QueryRequest, rounds_args[0])
+
+        rounds_request: QueryRequest = rounds_args[0]
+        table: Table = rounds_request.table
+        Assertions.assert_equals(
+            PredictorConstants.PREDICTOR_SCHEMA,
+            table.schema_
+        )
+        Assertions.assert_equals("rounds", table.table)
+
+        condition: QueryCondition = rounds_request.conditionGroup.conditions[0]
+        Assertions.assert_equals(
+            "knockoutTemplateId",
+            condition.column.parts[0]
+        )
         Assertions.assert_equals(ConditionOperator.EQUAL, condition.operator)
         Assertions.assert_equals(
             UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
@@ -658,28 +838,73 @@ class TestKnockoutTemplateService:
         )
 
     def test_should_delete_knockout_template_by_id(self):
+        # Given
+        self.__query_service.retrieve_records.return_value = (
+            QueryResponse(
+                referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
+                recordCount=0,
+                records=[]
+            )
+        )
+
         # When
         self.__service.delete_knockout_template_by_id(
             UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
         )
 
         # Then
-        captured_args_update_records, captured_kwargs = (
-            self.__query_service.update_records.call_args
+        round_args, round_kwargs = (
+            self.__query_service.update_records.call_args_list
+        )[0]
+        Assertions.assert_type(UpdateRequest, round_args[0])
+
+        round_request: UpdateRequest = round_args[0]
+        Assertions.assert_equals(SqlOperator.DELETE, round_request.operation)
+
+        round_table: Table = round_request.table
+        Assertions.assert_equals(
+            PredictorConstants.PREDICTOR_SCHEMA,
+            round_table.schema_
         )
-        Assertions.assert_type(UpdateRequest, captured_args_update_records[0])
+        Assertions.assert_equals("rounds", round_table.table)
 
-        update_request: UpdateRequest = captured_args_update_records[0]
-        Assertions.assert_equals(SqlOperator.DELETE, update_request.operation)
+        round_condition: QueryCondition = (
+            round_request.conditionGroup.conditions
+        )[0]
+        Assertions.assert_equals(
+            "knockoutTemplateId",
+            round_condition.column.parts[0]
+        )
+        Assertions.assert_equals(
+            ConditionOperator.EQUAL,
+            round_condition.operator
+        )
+        Assertions.assert_equals(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+            round_condition.value
+        )
 
-        table: Table = update_request.table
+        template_args, template_kwargs = (
+            self.__query_service.update_records.call_args_list
+        )[1]
+        Assertions.assert_type(UpdateRequest, template_args[0])
+
+        template_request: UpdateRequest = template_args[0]
+        Assertions.assert_equals(
+            SqlOperator.DELETE,
+            template_request.operation
+        )
+
+        table: Table = template_request.table
         Assertions.assert_equals(
             PredictorConstants.PREDICTOR_SCHEMA,
             table.schema_
         )
         Assertions.assert_equals("knockout-templates", table.table)
 
-        condition: QueryCondition = update_request.conditionGroup.conditions[0]
+        condition: QueryCondition = (
+            template_request.conditionGroup.conditions
+        )[0]
         Assertions.assert_equals("id", condition.column.parts[0])
         Assertions.assert_equals(ConditionOperator.EQUAL, condition.operator)
         Assertions.assert_equals(
@@ -696,49 +921,7 @@ class TestKnockoutTemplateService:
                 records=[
                     {
                         "id": "c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
-                        "name": "16-Team Single-Leg",
-                        "rounds": [
-                            {
-                                "name": "Round of 16",
-                                "teamCount": 16,
-                                "roundOrder": 1,
-                                "twoLegs": False,
-                                "extraTime": True,
-                                "awayGoals": False
-                            },
-                            {
-                                "name": "Quarter-Finals",
-                                "teamCount": 8,
-                                "roundOrder": 2,
-                                "twoLegs": False,
-                                "extraTime": True,
-                                "awayGoals": False
-                            },
-                            {
-                                "name": "Semi-Finals",
-                                "teamCount": 4,
-                                "roundOrder": 3,
-                                "twoLegs": False,
-                                "extraTime": True,
-                                "awayGoals": False
-                            },
-                            {
-                                "name": "Third-Place Play-Off",
-                                "teamCount": 2,
-                                "roundOrder": 4,
-                                "twoLegs": False,
-                                "extraTime": True,
-                                "awayGoals": False
-                            },
-                            {
-                                "name": "Final",
-                                "teamCount": 2,
-                                "roundOrder": 5,
-                                "twoLegs": False,
-                                "extraTime": True,
-                                "awayGoals": False
-                            }
-                        ]
+                        "name": "16-Team Single-Leg"
                     }
                 ]
             )

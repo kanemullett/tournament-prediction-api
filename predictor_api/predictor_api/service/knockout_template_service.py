@@ -11,12 +11,16 @@ from db_handler.db_handler.model.query_condition_group import (
 from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_response import QueryResponse
 from db_handler.db_handler.model.table import Table
+from db_handler.db_handler.model.type.condition_operator import (
+    ConditionOperator
+)
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.update_request import UpdateRequest
 from db_handler.db_handler.service.database_query_service import (
     DatabaseQueryService
 )
 from db_handler.db_handler.util.store_constants import StoreConstants
+from predictor_api.predictor_api.model.knockout_round import KnockoutRound
 from predictor_api.predictor_api.model.knockout_template import (
     KnockoutTemplate
 )
@@ -64,11 +68,53 @@ class KnockoutTemplateService:
             self.__query_service.retrieve_records(query_request)
         )
 
-        return list(
+        knockout_templates: list[KnockoutTemplate] = list(
             map(
                 lambda record:
                 KnockoutTemplate.model_validate(record),
                 query_response.records
+            )
+        )
+
+        template_ids: list[UUID] = list(
+            map(
+                lambda template:
+                template.id,
+                knockout_templates
+            )
+        )
+
+        rounds_request: QueryRequest = QueryRequest(
+            table=Table.of(
+                PredictorConstants.PREDICTOR_SCHEMA,
+                KnockoutRound.TARGET_TABLE
+            ),
+            conditionGroup=QueryConditionGroup.of(
+                QueryCondition(
+                    column=Column.of("knockoutTemplateId"),
+                    operator=ConditionOperator.IN,
+                    value=template_ids
+                )
+            )
+        )
+
+        rounds_response: QueryResponse = (
+            self.__query_service.retrieve_records(rounds_request)
+        )
+
+        rounds: list[KnockoutRound] = list(
+            map(
+                lambda record:
+                KnockoutRound.model_validate(record),
+                rounds_response.records
+            )
+        )
+
+        return list(
+            map(
+                lambda template:
+                self.__add_sorted_knockout_rounds(template, rounds),
+                knockout_templates
             )
         )
 
@@ -86,24 +132,49 @@ class KnockoutTemplateService:
         Returns:
             list[KnockoutTemplate]: The newly created knockout templates.
         """
-        records: list[dict[str, Any]] = list(
+        rounds: list[KnockoutRound] = [
+            item.model_copy(update={"knockoutTemplateId": template.id})
+            for template in knockout_templates
+            for item in template.rounds
+        ]
+
+        template_records: list[dict[str, Any]] = list(
             map(
                 lambda knockout_template:
-                knockout_template.model_dump(),
+                knockout_template.model_dump(exclude={"rounds"}),
                 knockout_templates
             )
         )
 
-        update_request: UpdateRequest = UpdateRequest(
+        template_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.INSERT,
             table=Table.of(
                 PredictorConstants.PREDICTOR_SCHEMA,
                 KnockoutTemplate.TARGET_TABLE
             ),
-            records=records
+            records=template_records
         )
 
-        self.__query_service.update_records(update_request)
+        self.__query_service.update_records(template_request)
+
+        round_records: list[dict[str, Any]] = list(
+            map(
+                lambda round_object:
+                round_object.model_dump(),
+                rounds
+            )
+        )
+
+        round_request: UpdateRequest = UpdateRequest(
+            operation=SqlOperator.INSERT,
+            table=Table.of(
+                PredictorConstants.PREDICTOR_SCHEMA,
+                KnockoutRound.TARGET_TABLE
+            ),
+            records=round_records
+        )
+
+        self.__query_service.update_records(round_request)
 
         return knockout_templates
 
@@ -143,13 +214,36 @@ class KnockoutTemplateService:
                 detail="No knockout templates found with a matching id."
             )
 
-        return list(
+        knockout_template: KnockoutTemplate = KnockoutTemplate.model_validate(
+            query_response.records[0]
+        )
+
+        rounds_request: QueryRequest = QueryRequest(
+            table=Table.of(
+                PredictorConstants.PREDICTOR_SCHEMA,
+                KnockoutRound.TARGET_TABLE
+            ),
+            conditionGroup=QueryConditionGroup.of(
+                QueryCondition.of(
+                    Column.of("knockoutTemplateId"),
+                    knockout_template.id
+                )
+            )
+        )
+
+        rounds_response: QueryResponse = (
+            self.__query_service.retrieve_records(rounds_request)
+        )
+
+        rounds: list[KnockoutRound] = list(
             map(
                 lambda record:
-                KnockoutTemplate.model_validate(record),
-                query_response.records
+                KnockoutRound.model_validate(record),
+                rounds_response.records
             )
-        )[0]
+        )
+
+        return self.__add_sorted_knockout_rounds(knockout_template, rounds)
 
     def delete_knockout_template_by_id(self, knockout_template_id: UUID):
         """
@@ -183,7 +277,23 @@ class KnockoutTemplateService:
                        "existing tournament template."
             )
 
-        update_request: UpdateRequest = UpdateRequest(
+        round_request: UpdateRequest = UpdateRequest(
+            operation=SqlOperator.DELETE,
+            table=Table.of(
+                PredictorConstants.PREDICTOR_SCHEMA,
+                KnockoutRound.TARGET_TABLE
+            ),
+            conditionGroup=QueryConditionGroup.of(
+                QueryCondition.of(
+                    Column.of("knockoutTemplateId"),
+                    knockout_template_id
+                )
+            )
+        )
+
+        self.__query_service.update_records(round_request)
+
+        template_request: UpdateRequest = UpdateRequest(
             operation=SqlOperator.DELETE,
             table=Table.of(
                 PredictorConstants.PREDICTOR_SCHEMA,
@@ -197,4 +307,22 @@ class KnockoutTemplateService:
             )
         )
 
-        self.__query_service.update_records(update_request)
+        self.__query_service.update_records(template_request)
+
+    @staticmethod
+    def __add_sorted_knockout_rounds(
+            knockout_template: KnockoutTemplate,
+            all_rounds: list[KnockoutRound]) -> KnockoutTemplate:
+        return knockout_template.model_copy(update={
+            "rounds": sorted(
+                [
+                    type(filtered_round)(**filtered_round.model_dump(
+                        exclude={"knockoutTemplateId"}
+                    ))
+                    for filtered_round in all_rounds
+                    if filtered_round.knockoutTemplateId ==
+                    knockout_template.id
+                ],
+                key=lambda filtered_round: filtered_round.roundOrder
+            )
+        })
