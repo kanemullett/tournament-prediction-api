@@ -59,6 +59,8 @@ class TournamentTemplateService:
         Args:
             database_query_service (DatabaseQueryService): The database query
                 service.
+            knockout_template_service (KnockoutTemplateService): The knockout
+                template service.
         """
         self.__query_service = database_query_service
         self.__knockout_template_service = knockout_template_service
