@@ -337,13 +337,15 @@ class QueryBuilderFunction:
             return self.__build_column(value, True)
 
         if isinstance(value, list):
-            return f"({', '.join(
-                sorted(
-                    list(
-                        {self.__build_value(item) for item in value}
+            return (
+                    "("
+                    + ", ".join(
+                        sorted(
+                            {self.__build_value(item) for item in value}
+                        )
                     )
-                )
-            )})"
+                    + ")"
+            )
 
         return str(value)
 
@@ -503,16 +505,15 @@ class QueryBuilderFunction:
             )
         )
 
-        return (f"{column} = CASE "
-                f"{' '.join(
-                    list(
-                        map(
-                            lambda record:
-                            self.__build_when_clause(column, record),
-                            filtered
-                        )
-                    )
-                )} ELSE {column} END")
+        when_clauses: str = " ".join(
+            self.__build_when_clause(column, record) for record in filtered
+        )
+
+        return (
+            f"{column} = CASE "
+            f"{when_clauses} "
+            f"ELSE {column} END"
+        )
 
     def __build_when_clause(self, column: str, record: dict[str, Any]) -> str:
         """

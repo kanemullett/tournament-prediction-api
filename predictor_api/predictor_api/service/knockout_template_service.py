@@ -68,6 +68,9 @@ class KnockoutTemplateService:
             self.__query_service.retrieve_records(query_request)
         )
 
+        if query_response.recordCount == 0:
+            return []
+
         knockout_templates: list[KnockoutTemplate] = list(
             map(
                 lambda record:
