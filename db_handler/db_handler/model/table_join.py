@@ -11,7 +11,8 @@ class TableJoin(BaseModel):
 
     Attributes:
         table (Table): The table to join to the base table.
-        joinCondition (QueryCondition): The condition upon which to join the tables.
+        joinCondition (QueryCondition): The condition upon which to join the
+            tables.
         joinType (TableJoinType): The way in which to join the tables.
     """
     table: Table
@@ -19,7 +20,11 @@ class TableJoin(BaseModel):
     joinType: TableJoinType
 
     @classmethod
-    def of(cls, table: Table, join_condition: QueryCondition, join_type: TableJoinType):
+    def of(
+            cls,
+            table: Table,
+            join_condition: QueryCondition,
+            join_type: TableJoinType):
         return TableJoin(
             table=table,
             joinCondition=join_condition,

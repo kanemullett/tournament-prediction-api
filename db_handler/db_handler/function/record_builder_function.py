@@ -7,7 +7,9 @@ class RecordBuilderFunction:
     """
 
     @staticmethod
-    def apply(column_headers: list[str], result: tuple[Any,...]) -> dict[str, Any]:
+    def apply(
+            column_headers: list[str],
+            result: tuple[Any, ...]) -> dict[str, Any]:
         """
         Convert database response objects into a record.
 

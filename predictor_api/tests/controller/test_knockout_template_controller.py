@@ -6,22 +6,28 @@ from uuid import UUID
 from fastapi import HTTPException
 from pytest import raises
 
-from predictor_api.predictor_api.controller.knockout_template_controller import KnockoutTemplateController
+from predictor_api.predictor_api.controller.knockout_template_controller import (  # noqa: E501
+    KnockoutTemplateController
+)
 from predictor_api.predictor_api.model.knockout_round import KnockoutRound
-from predictor_api.predictor_api.model.knockout_template import KnockoutTemplate
+from predictor_api.predictor_api.model.knockout_template import (
+    KnockoutTemplate
+)
 from predictor_common.test_resources.assertions import Assertions
 
 
 class TestKnockoutTemplateController:
 
-    __knockout_template_service: MagicMock = MagicMock()
+    __service: MagicMock = MagicMock()
 
-    __knockout_template_controller: KnockoutTemplateController = KnockoutTemplateController(__knockout_template_service)
+    __controller: KnockoutTemplateController = (
+        KnockoutTemplateController(__service)
+    )
 
     @pytest.mark.asyncio
     async def test_should_pass_knockout_templates_as_response(self):
         # Given
-        self.__knockout_template_service.get_knockout_templates.return_value = [
+        self.__service.get_knockout_templates.return_value = [
             KnockoutTemplate(
                 id="c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
                 name="16-Team Single-Leg",
@@ -101,7 +107,9 @@ class TestKnockoutTemplateController:
         ]
 
         # When
-        knockout_templates: list[KnockoutTemplate] = await self.__knockout_template_controller.get_knockout_templates()
+        knockout_templates: list[KnockoutTemplate] = await (
+            self.__controller.get_knockout_templates()
+        )
 
         # Then
         Assertions.assert_equals(2, len(knockout_templates))
@@ -160,7 +168,10 @@ class TestKnockoutTemplateController:
         template2 = knockout_templates[1]
         Assertions.assert_type(KnockoutTemplate, template2)
         Assertions.assert_type(UUID, template2.id)
-        Assertions.assert_equals("8-Team Double-Leg Away Goals", template2.name)
+        Assertions.assert_equals(
+            "8-Team Double-Leg Away Goals",
+            template2.name
+        )
         Assertions.assert_equals(3, len(template2.rounds))
 
         template2_round1 = template2.rounds[0]
@@ -270,7 +281,7 @@ class TestKnockoutTemplateController:
             )
         ]
 
-        self.__knockout_template_service.create_knockout_templates.return_value = [
+        self.__service.create_knockout_templates.return_value = [
             KnockoutTemplate(
                 id="c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
                 name="16-Team Single-Leg",
@@ -350,8 +361,10 @@ class TestKnockoutTemplateController:
         ]
 
         # When
-        created: list[KnockoutTemplate] = await self.__knockout_template_controller.create_knockout_templates(
-            knockout_templates
+        created: list[KnockoutTemplate] = await (
+            self.__controller.create_knockout_templates(
+                knockout_templates
+            )
         )
 
         # Then
@@ -411,7 +424,10 @@ class TestKnockoutTemplateController:
         template2 = created[1]
         Assertions.assert_type(KnockoutTemplate, template2)
         Assertions.assert_type(UUID, template2.id)
-        Assertions.assert_equals("8-Team Double-Leg Away Goals", template2.name)
+        Assertions.assert_equals(
+            "8-Team Double-Leg Away Goals",
+            template2.name
+        )
         Assertions.assert_equals(3, len(template2.rounds))
 
         template2_round1 = template2.rounds[0]
@@ -444,45 +460,55 @@ class TestKnockoutTemplateController:
     @pytest.mark.asyncio
     async def test_should_pass_found_knockout_template_as_response(self):
         # Given
-        self.__knockout_template_service.get_knockout_template_by_id.return_value = KnockoutTemplate(
-            id="c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
-            name="8-Team Double-Leg Away Goals",
-            rounds=[
-                KnockoutRound(
-                    name="Quarter-Finals",
-                    teamCount=8,
-                    roundOrder=1,
-                    twoLegs=True,
-                    extraTime=True,
-                    awayGoals=True
-                ),
-                KnockoutRound(
-                    name="Semi-Finals",
-                    teamCount=4,
-                    roundOrder=2,
-                    twoLegs=True,
-                    extraTime=True,
-                    awayGoals=True
-                ),
-                KnockoutRound(
-                    name="Final",
-                    teamCount=2,
-                    roundOrder=3,
-                    twoLegs=False,
-                    extraTime=True,
-                    awayGoals=False
-                )
-            ]
+        self.__service.get_knockout_template_by_id.return_value = (
+            KnockoutTemplate(
+                id="c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
+                name="8-Team Double-Leg Away Goals",
+                rounds=[
+                    KnockoutRound(
+                        name="Quarter-Finals",
+                        teamCount=8,
+                        roundOrder=1,
+                        twoLegs=True,
+                        extraTime=True,
+                        awayGoals=True
+                    ),
+                    KnockoutRound(
+                        name="Semi-Finals",
+                        teamCount=4,
+                        roundOrder=2,
+                        twoLegs=True,
+                        extraTime=True,
+                        awayGoals=True
+                    ),
+                    KnockoutRound(
+                        name="Final",
+                        teamCount=2,
+                        roundOrder=3,
+                        twoLegs=False,
+                        extraTime=True,
+                        awayGoals=False
+                    )
+                ]
+            )
         )
 
         # When
-        knockout_template: KnockoutTemplate = await self.__knockout_template_controller.get_knockout_template_by_id(
-            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+        knockout_template: KnockoutTemplate = await (
+            self.__controller.get_knockout_template_by_id(
+                UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+            )
         )
 
         # Then
-        Assertions.assert_equals(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"), knockout_template.id)
-        Assertions.assert_equals("8-Team Double-Leg Away Goals", knockout_template.name)
+        Assertions.assert_equals(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+            knockout_template.id
+        )
+        Assertions.assert_equals(
+            "8-Team Double-Leg Away Goals",
+            knockout_template.name
+        )
         Assertions.assert_equals(3, len(knockout_template.rounds))
 
         template2_round1 = knockout_template.rounds[0]
@@ -515,37 +541,45 @@ class TestKnockoutTemplateController:
     @pytest.mark.asyncio
     async def test_should_pass_error_if_knockout_template_not_found(self):
         # Given
-        self.__knockout_template_service.get_knockout_template_by_id.side_effect = HTTPException(
+        self.__service.get_knockout_template_by_id.side_effect = HTTPException(
             status_code=404,
             detail="No knockout templates found with a matching id."
         )
 
         # When
         with raises(HTTPException) as httpe:
-            await self.__knockout_template_controller.get_knockout_template_by_id(
+            await self.__controller.get_knockout_template_by_id(
                 UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
             )
 
         # Then
         Assertions.assert_equals(404, httpe.value.status_code)
-        Assertions.assert_equals("No knockout templates found with a matching id.", httpe.value.detail)
+        Assertions.assert_equals(
+            "No knockout templates found with a matching id.",
+            httpe.value.detail
+        )
 
     @pytest.mark.asyncio
     async def test_should_pass_error_if_knockout_template_is_being_used(self):
         # Given
-        self.__knockout_template_service.delete_knockout_template_by_id.side_effect = HTTPException(
-            status_code=409,
-            detail="Cannot delete knockout template as it is part of an existing tournament template."
+        self.__service.delete_knockout_template_by_id.side_effect = (
+            HTTPException(
+                status_code=409,
+                detail="Cannot delete knockout template as it is part of an "
+                       "existing tournament template."
+            )
         )
 
         # When
         with raises(HTTPException) as httpe:
-            await self.__knockout_template_controller.delete_knockout_template_by_id(
-                UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"))
+            await self.__controller.delete_knockout_template_by_id(
+                UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+            )
 
         # Then
         Assertions.assert_equals(409, httpe.value.status_code)
         Assertions.assert_equals(
-            "Cannot delete knockout template as it is part of an existing tournament template.",
+            "Cannot delete knockout template as it is part of an existing "
+            "tournament template.",
             httpe.value.detail
         )

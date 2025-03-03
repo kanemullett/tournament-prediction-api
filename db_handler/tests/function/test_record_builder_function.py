@@ -1,6 +1,8 @@
 from typing import Any
 
-from db_handler.db_handler.function.record_builder_function import RecordBuilderFunction
+from db_handler.db_handler.function.record_builder_function import (
+    RecordBuilderFunction
+)
 from predictor_common.test_resources.assertions import Assertions
 
 
@@ -21,7 +23,9 @@ class TestRecordBuilderFunction:
         }
 
         # When
-        record: dict[str, Any] = self.__record_builder_function.apply(headers, response)
+        record: dict[str, Any] = (
+            self.__record_builder_function.apply(headers, response)
+        )
 
         # Then
         Assertions.assert_equals(expected_record, record)

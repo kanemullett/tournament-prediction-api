@@ -10,8 +10,10 @@ class QueryResponse(BaseModel):
 
     Attributes:
         referenceId (UUID): The unique id of the query for referencing.
-        recordCount (int): The number of records retrieved or updated by the query.
-        records (Optional[list[dict[str, Any]]]): The records returned from the query.
+        recordCount (int): The number of records retrieved or updated by the
+            query.
+        records (Optional[list[dict[str, Any]]]): The records returned from
+            the query.
     """
     referenceId: UUID
     recordCount: int

@@ -4,7 +4,9 @@ from uuid import UUID
 from fastapi import HTTPException
 from pytest import raises
 
-from predictor_api.predictor_api.controller.tournament_controller import TournamentController
+from predictor_api.predictor_api.controller.tournament_controller import (
+    TournamentController
+)
 from predictor_api.predictor_api.model.tournament import Tournament
 from predictor_api.predictor_api.model.type.competition import Competition
 
@@ -15,14 +17,14 @@ from predictor_common.test_resources.assertions import Assertions
 
 class TestTournamentController:
 
-    __tournament_service: MagicMock = MagicMock()
+    __service: MagicMock = MagicMock()
 
-    __tournament_controller: TournamentController = TournamentController(__tournament_service)
+    __controller: TournamentController = TournamentController(__service)
 
     @pytest.mark.asyncio
     async def test_should_pass_tournaments_as_response(self):
         # Given
-        self.__tournament_service.get_tournaments.return_value = [
+        self.__service.get_tournaments.return_value = [
             Tournament(
                 id="c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
                 year=2024,
@@ -36,7 +38,9 @@ class TestTournamentController:
         ]
 
         # When
-        tournaments: list[Tournament] = await self.__tournament_controller.get_tournaments()
+        tournaments: list[Tournament] = await (
+            self.__controller.get_tournaments()
+        )
 
         # Then
         Assertions.assert_equals(2, len(tournaments))
@@ -51,7 +55,10 @@ class TestTournamentController:
         Assertions.assert_type(Tournament, tournament2)
         Assertions.assert_type(UUID, tournament2.id)
         Assertions.assert_equals(2026, tournament2.year)
-        Assertions.assert_equals(Competition.WORLD_CUP, tournament2.competition)
+        Assertions.assert_equals(
+            Competition.WORLD_CUP,
+            tournament2.competition
+        )
 
     @pytest.mark.asyncio
     async def test_should_pass_created_tournaments_as_response(self):
@@ -67,7 +74,7 @@ class TestTournamentController:
             )
         ]
 
-        self.__tournament_service.create_tournaments.return_value = [
+        self.__service.create_tournaments.return_value = [
             Tournament(
                 id="c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
                 year=2024,
@@ -81,7 +88,9 @@ class TestTournamentController:
         ]
 
         # When
-        created: list[Tournament] = await self.__tournament_controller.create_tournaments(tournaments)
+        created: list[Tournament] = await (
+            self.__controller.create_tournaments(tournaments)
+        )
 
         # Then
         Assertions.assert_equals(2, len(created))
@@ -96,7 +105,10 @@ class TestTournamentController:
         Assertions.assert_type(Tournament, tournament2)
         Assertions.assert_type(UUID, tournament2.id)
         Assertions.assert_equals(2026, tournament2.year)
-        Assertions.assert_equals(Competition.WORLD_CUP, tournament2.competition)
+        Assertions.assert_equals(
+            Competition.WORLD_CUP,
+            tournament2.competition
+        )
 
     @pytest.mark.asyncio
     async def test_should_pass_updated_tournaments_as_response(self):
@@ -112,7 +124,7 @@ class TestTournamentController:
             )
         ]
 
-        self.__tournament_service.update_tournaments.return_value = [
+        self.__service.update_tournaments.return_value = [
             Tournament(
                 id=UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
                 year=2024,
@@ -126,7 +138,9 @@ class TestTournamentController:
         ]
 
         # When
-        updated: list[Tournament] = await self.__tournament_controller.update_tournaments(tournaments)
+        updated: list[Tournament] = await (
+            self.__controller.update_tournaments(tournaments)
+        )
 
         # Then
         Assertions.assert_equals(2, len(updated))
@@ -141,39 +155,50 @@ class TestTournamentController:
         Assertions.assert_type(Tournament, tournament2)
         Assertions.assert_type(UUID, tournament2.id)
         Assertions.assert_equals(2026, tournament2.year)
-        Assertions.assert_equals(Competition.WORLD_CUP, tournament2.competition)
+        Assertions.assert_equals(
+            Competition.WORLD_CUP,
+            tournament2.competition
+        )
 
     @pytest.mark.asyncio
     async def test_should_pass_found_tournament_as_response(self):
         # Given
-        self.__tournament_service.get_tournament_by_id.return_value = Tournament(
+        self.__service.get_tournament_by_id.return_value = Tournament(
             id="c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
             year=2024,
             competition=Competition.EUROS
         )
 
         # When
-        tournament: Tournament = await self.__tournament_controller.get_tournament_by_id(
+        tournament: Tournament = await self.__controller.get_tournament_by_id(
             UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
         )
 
         # Then
-        Assertions.assert_equals(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"), tournament.id)
+        Assertions.assert_equals(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+            tournament.id
+        )
         Assertions.assert_equals(2024, tournament.year)
         Assertions.assert_equals(Competition.EUROS, tournament.competition)
 
     @pytest.mark.asyncio
     async def test_should_pass_error_if_tournament_not_found(self):
         # Given
-        self.__tournament_service.get_tournament_by_id.side_effect = HTTPException(
+        self.__service.get_tournament_by_id.side_effect = HTTPException(
             status_code=404,
             detail="No tournaments found with a matching id."
         )
 
         # When
         with raises(HTTPException) as httpe:
-            await self.__tournament_controller.get_tournament_by_id(UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"))
+            await self.__controller.get_tournament_by_id(
+                UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+            )
 
         # Then
         Assertions.assert_equals(404, httpe.value.status_code)
-        Assertions.assert_equals("No tournaments found with a matching id.", httpe.value.detail)
+        Assertions.assert_equals(
+            "No tournaments found with a matching id.",
+            httpe.value.detail
+        )

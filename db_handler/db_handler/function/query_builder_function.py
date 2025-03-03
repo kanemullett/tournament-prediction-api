@@ -7,11 +7,15 @@ from fastapi import HTTPException
 
 from db_handler.db_handler.model.column import Column
 from db_handler.db_handler.model.query_condition import QueryCondition
-from db_handler.db_handler.model.query_condition_group import QueryConditionGroup
+from db_handler.db_handler.model.query_condition_group import (
+    QueryConditionGroup
+)
 from db_handler.db_handler.model.sql_query import SqlQuery
 from db_handler.db_handler.model.table import Table
 from db_handler.db_handler.model.table_join import TableJoin
-from db_handler.db_handler.model.type.condition_operator import ConditionOperator
+from db_handler.db_handler.model.type.condition_operator import (
+    ConditionOperator
+)
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.util.store_constants import StoreConstants
 
@@ -34,25 +38,42 @@ class QueryBuilderFunction:
         string_parts: list[str] = [sql_query.operator.value]
 
         if sql_query.operator == SqlOperator.SELECT:
-            string_parts = self.__build_select_statement(sql_query, string_parts)
+            string_parts = self.__build_select_statement(
+                sql_query,
+                string_parts
+            )
         elif sql_query.operator == SqlOperator.INSERT:
-            string_parts = self.__build_insert_statement(sql_query, string_parts)
+            string_parts = self.__build_insert_statement(
+                sql_query,
+                string_parts
+            )
         elif sql_query.operator == SqlOperator.UPDATE:
-            string_parts = self.__build_update_statement(sql_query, string_parts)
+            string_parts = self.__build_update_statement(
+                sql_query,
+                string_parts
+            )
         elif sql_query.operator == SqlOperator.DELETE:
-            string_parts = self.__build_delete_statement(sql_query, string_parts)
+            string_parts = self.__build_delete_statement(
+                sql_query,
+                string_parts
+            )
 
         string_parts.append(";")
 
         return " ".join(string_parts)
 
-    def __build_select_statement(self, sql_query: SqlQuery, string_parts: list[str]) -> list[str]:
+    def __build_select_statement(
+            self,
+            sql_query: SqlQuery,
+            string_parts: list[str]) -> list[str]:
         """
-        Convert a SqlQuery object representing a SELECT query into a SQL query string.
+        Convert a SqlQuery object representing a SELECT query into a SQL
+        query string.
 
         Args:
             sql_query (SqlQuery): The SqlQuery object to be converted.
-            string_parts (list[str]): The component parts of the SQL query string.
+            string_parts (list[str]): The component parts of the SQL query
+                string.
 
         Returns:
             str: The SQL SELECT query string.
@@ -62,7 +83,11 @@ class QueryBuilderFunction:
         """
         string_parts.append("*" if sql_query.columns is None else ", ".join(
             list(
-                map(lambda column: self.__build_column(column, False), sql_query.columns)
+                map(
+                    lambda column:
+                    self.__build_column(column, False),
+                    sql_query.columns
+                )
             )
         ))
         string_parts.append("FROM")
@@ -71,51 +96,70 @@ class QueryBuilderFunction:
         if sql_query.tableJoins is not None and len(sql_query.tableJoins) > 0:
             string_parts.append(self.__build_table_joins(sql_query.tableJoins))
 
-        if sql_query.conditionGroup is not None and len(sql_query.conditionGroup.conditions) > 0:
+        if (sql_query.conditionGroup is not None and
+                len(sql_query.conditionGroup.conditions) > 0):
             string_parts.append("WHERE")
-            string_parts.append(self.__build_conditions(sql_query.conditionGroup))
+            string_parts.append(
+                self.__build_conditions(sql_query.conditionGroup)
+            )
 
         return string_parts
 
-    def __build_insert_statement(self, sql_query: SqlQuery, string_parts: list[str]) -> list[str]:
+    def __build_insert_statement(
+            self,
+            sql_query: SqlQuery,
+            string_parts: list[str]) -> list[str]:
         """
-        Convert a SqlQuery object representing an INSERT query into a SQL query string.
+        Convert a SqlQuery object representing an INSERT query into a SQL
+        query string.
 
         Args:
             sql_query (SqlQuery): The SqlQuery object to be converted.
-            string_parts (list[str]): The component parts of the SQL query string.
+            string_parts (list[str]): The component parts of the SQL query
+                string.
 
         Returns:
             str: The SQL INSERT query string.
 
         Examples:
-            - INSERT INTO example_schema.example_table (col1, col2) VALUES ('val1', 'val2'), (3, 4) ;
+            - INSERT INTO example_schema.example_table (col1, col2) VALUES
+                ('val1', 'val2'), (3, 4) ;
         """
         string_parts.append(self.__build_table(sql_query.table))
 
-        columns: list[str] = sorted({key for rec in sql_query.records for key in rec})
-        formatted_columns = [f'"{col}"' for col in columns]  # Wrap each column name in double quotes
-        column_string = ", ".join(formatted_columns)  # Join columns with a comma
+        columns: list[str] = sorted(
+            {key for rec in sql_query.records for key in rec}
+        )
+        formatted_columns = [f'"{col}"' for col in columns]
+        column_string = ", ".join(formatted_columns)
         string_parts.append(f"({column_string})")
 
         string_parts.append("VALUES")
-        string_parts.append(self.__build_insert_records(sql_query.records, columns))
+        string_parts.append(
+            self.__build_insert_records(sql_query.records, columns)
+        )
 
         return string_parts
 
-    def __build_update_statement(self, sql_query: SqlQuery, string_parts: list[str]) -> list[str]:
+    def __build_update_statement(
+            self,
+            sql_query: SqlQuery,
+            string_parts: list[str]) -> list[str]:
         """
-        Convert a SqlQuery object representing an UPDATE query into a SQL query string.
+        Convert a SqlQuery object representing an UPDATE query into a SQL
+        query string.
 
         Args:
             sql_query (SqlQuery): The SqlQuery object to be converted.
-            string_parts (list[str]): The component parts of the SQL query string.
+            string_parts (list[str]): The component parts of the SQL query
+                string.
 
         Returns:
             str: The SQL UPDATE query string.
 
         Examples:
-            - UPDATE test_schema.test_table SET col1 = CASE WHEN id = 'id1' THEN 'val1' ELSE col1 END WHERE id IN ('id1') ;
+            - UPDATE test_schema.test_table SET col1 = CASE WHEN id = 'id1'
+                THEN 'val1' ELSE col1 END WHERE id IN ('id1') ;
         """
         string_parts.append(self.__build_table(sql_query.table))
 
@@ -124,13 +168,18 @@ class QueryBuilderFunction:
 
         return string_parts
 
-    def __build_delete_statement(self, sql_query: SqlQuery, string_parts: list[str]) -> list[str]:
+    def __build_delete_statement(
+            self,
+            sql_query: SqlQuery,
+            string_parts: list[str]) -> list[str]:
         """
-        Convert a SqlQuery object representing a DELETE query into a SQL query string.
+        Convert a SqlQuery object representing a DELETE query into a SQL
+        query string.
 
         Args:
             sql_query (SqlQuery): The SqlQuery object to be converted.
-            string_parts (list[str]): The component parts of the SQL query string.
+            string_parts (list[str]): The component parts of the SQL query
+                string.
 
         Returns:
             str: The SQL DELETE query string.
@@ -170,12 +219,19 @@ class QueryBuilderFunction:
         Convert a list of TableJoin objects into a SQL string.
 
         Args:
-            table_joins (list[TableJoin]): The list of TableJoin objects to be converted.
+            table_joins (list[TableJoin]): The list of TableJoin objects to
+                be converted.
 
         Returns:
             str: The SQL table joins string.
         """
-        join_strings: list[str] = list(map(lambda join: self.__build_table_join(join), table_joins))
+        join_strings: list[str] = list(
+            map(
+                lambda join:
+                self.__build_table_join(join),
+                table_joins
+            )
+        )
 
         return " ".join(join_strings)
 
@@ -190,17 +246,22 @@ class QueryBuilderFunction:
             str: The SQL table join string.
 
         Examples:
-            - INNER JOIN example_schema.join_table AS joiner ON example.id = joiner.id
+            - INNER JOIN example_schema.join_table AS joiner ON example.id =
+                joiner.id
         """
-        return (f"{table_join.joinType.value} {self.__build_table(table_join.table)} "
-                f"ON {self.__build_condition(table_join.joinCondition)}")
+        return (f"{table_join.joinType.value} "
+                f"{self.__build_table(table_join.table)} ON "
+                f"{self.__build_condition(table_join.joinCondition)}")
 
-    def __build_conditions(self, query_condition_group: QueryConditionGroup) -> str:
+    def __build_conditions(
+            self,
+            query_condition_group: QueryConditionGroup) -> str:
         """
         Convert a QueryConditionGroup object into a SQL string.
 
         Args:
-            query_condition_group (QueryConditionGroup): The QueryConditionGroup object to be converted.
+            query_condition_group (QueryConditionGroup): The
+                QueryConditionGroup object to be converted.
 
         Returns:
             str: The SQL condition group string.
@@ -209,7 +270,11 @@ class QueryBuilderFunction:
             - example.column1 = 'example' AND joiner.column2 < 23
         """
         condition_strings: list[str] = list(
-            map(lambda condition: self.__build_condition(condition), query_condition_group.conditions)
+            map(
+                lambda condition:
+                self.__build_condition(condition),
+                query_condition_group.conditions
+            )
         )
 
         return f" {query_condition_group.join.value} ".join(condition_strings)
@@ -219,7 +284,8 @@ class QueryBuilderFunction:
         Convert a QueryCondition object into a SQL string.
 
         Args:
-            query_condition (QueryCondition): The QueryCondition object to be converted.
+            query_condition (QueryCondition): The QueryCondition object to be
+                converted.
 
         Returns:
             str: The SQL condition string.
@@ -259,7 +325,9 @@ class QueryBuilderFunction:
         if value is None:
             return "NULL"
 
-        if isinstance(value, str) or isinstance(value, UUID) or isinstance(value, datetime):
+        if (isinstance(value, str) or
+                isinstance(value, UUID) or
+                isinstance(value, datetime)):
             return f"'{value}'"
 
         if isinstance(type(value), EnumMeta):
@@ -269,7 +337,15 @@ class QueryBuilderFunction:
             return self.__build_column(value, True)
 
         if isinstance(value, list):
-            return f"({', '.join(sorted(list({self.__build_value(item) for item in value})))})"
+            return (
+                    "("
+                    + ", ".join(
+                        sorted(
+                            {self.__build_value(item) for item in value}
+                        )
+                    )
+                    + ")"
+            )
 
         return str(value)
 
@@ -280,7 +356,8 @@ class QueryBuilderFunction:
 
         Args:
             column (Column): The Column object to be converted.
-            is_condition (bool): True if the column belongs to a condition object.
+            is_condition (bool): True if the column belongs to a condition
+                object.
 
         Returns:
             str: The SQL column string.
@@ -290,11 +367,17 @@ class QueryBuilderFunction:
             - example_table.example_column AS example
         """
         if column.alias is not None and not is_condition:
-            return '{} AS "{}"'.format('.'.join(f'"{part}"' for part in column.parts), column.alias)
+            return '{} AS "{}"'.format(
+                '.'.join(f'"{part}"' for part in column.parts),
+                column.alias
+            )
 
         return '.'.join(f'"{part}"' for part in column.parts)
 
-    def __build_insert_records(self, records: list[dict[str, Any]], columns: list[str]) -> str:
+    def __build_insert_records(
+            self,
+            records: list[dict[str, Any]],
+            columns: list[str]) -> str:
         """
         Convert a list of records and insert columns into a SQL string.
 
@@ -309,9 +392,20 @@ class QueryBuilderFunction:
             - ('val1', 2)
             - ('val3', 4), (5, 'val6')
         """
-        return ", ".join(list(map(lambda record: self.__build_insert_record(record, columns), records)))
+        return ", ".join(
+            list(
+                map(
+                    lambda record:
+                    self.__build_insert_record(record, columns),
+                    records
+                )
+            )
+        )
 
-    def __build_insert_record(self, record: dict[str, Any], columns: list[str]) -> str:
+    def __build_insert_record(
+            self,
+            record: dict[str, Any],
+            columns: list[str]) -> str:
         """
         Convert a record and insert columns into a SQL string.
 
@@ -325,7 +419,10 @@ class QueryBuilderFunction:
         Examples:
             - ('val1', 2)
         """
-        values: list[str] = [self.__build_value(record.get(column, "NULL")) for column in columns]
+        values: list[str] = [
+            self.__build_value(record.get(column, "NULL"))
+            for column in columns
+        ]
 
         return f"({', '.join(values)})"
 
@@ -340,18 +437,41 @@ class QueryBuilderFunction:
             str: The SQL SET clause string.
 
         Examples:
-            - col1 = CASE WHEN id = 'id1' THEN 'val1' ELSE col1 END WHERE id IN ('id1')
-            - col1 = CASE WHEN id = 'id1' THEN 'val1' ELSE col1, col2 = CASE WHEN id = 'id2' THEN 'val2' ELSE col2 END WHERE id IN ('id1', 'id2')
+            - col1 = CASE WHEN id = 'id1' THEN 'val1' ELSE col1 END WHERE id
+                IN ('id1')
+            - col1 = CASE WHEN id = 'id1' THEN 'val1' ELSE col1, col2 = CASE
+                WHEN id = 'id2' THEN 'val2' ELSE col2 END WHERE id IN ('id1',
+                'id2')
         """
-        records_with_id: list[dict[str, Any]] = list(filter(lambda record: StoreConstants.ID in record, records))
+        records_with_id: list[dict[str, Any]] = list(
+            filter(
+                lambda record:
+                StoreConstants.ID in record,
+                records
+            )
+        )
 
         if len(records_with_id) < len(records):
-            raise HTTPException(status_code=400, detail="All records in update requests should contain id field.")
+            raise HTTPException(
+                status_code=400,
+                detail="All records in update requests should contain id "
+                       "field."
+            )
 
-        columns: list[str] = sorted(list({key for rec in records for key in rec}))
+        columns: list[str] = sorted(
+            list(
+                {key for rec in records for key in rec}
+            )
+        )
         columns.remove(StoreConstants.ID)
 
-        case_clauses: list[str] = list(map(lambda column: self.__build_case_clause(column, records), columns))
+        case_clauses: list[str] = list(
+            map(
+                lambda column:
+                self.__build_case_clause(column, records),
+                columns
+            )
+        )
         where_condition: str = self.__build_condition(QueryCondition(
             column=Column.of(StoreConstants.ID),
             operator=ConditionOperator.IN,
@@ -360,7 +480,10 @@ class QueryBuilderFunction:
 
         return f"{', '.join(case_clauses)} WHERE {where_condition}"
 
-    def __build_case_clause(self, column: str, records: list[dict[str, Any]]) -> str:
+    def __build_case_clause(
+            self,
+            column: str,
+            records: list[dict[str, Any]]) -> str:
         """
         Convert a column and list of records into a SQL CASE clause string.
 
@@ -374,11 +497,23 @@ class QueryBuilderFunction:
         Examples:
             - col1 = CASE WHEN id = 'id1' THEN 'val1' ELSE col1 END
         """
-        filtered: list[dict[str, Any]] = list(filter(lambda record: column in record, records))
+        filtered: list[dict[str, Any]] = list(
+            filter(
+                lambda record:
+                column in record,
+                records
+            )
+        )
 
-        return (f"{column} = CASE "
-                f"{' '.join(list(map(lambda record: self.__build_when_clause(column, record), filtered)))} "
-                f"ELSE {column} END")
+        when_clauses: str = " ".join(
+            self.__build_when_clause(column, record) for record in filtered
+        )
+
+        return (
+            f"{column} = CASE "
+            f"{when_clauses} "
+            f"ELSE {column} END"
+        )
 
     def __build_when_clause(self, column: str, record: dict[str, Any]) -> str:
         """
@@ -394,4 +529,5 @@ class QueryBuilderFunction:
         Examples:
             - WHEN id = 'id1' THEN 'val1'
         """
-        return f"WHEN {StoreConstants.ID} = '{record[StoreConstants.ID]}' THEN {self.__build_value(record[column])}"
+        return (f"WHEN {StoreConstants.ID} = '{record[StoreConstants.ID]}' "
+                f"THEN {self.__build_value(record[column])}")

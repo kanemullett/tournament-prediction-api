@@ -2,8 +2,12 @@ from psycopg2._psycopg import connection, cursor
 from typing import Any
 from uuid import uuid4
 
-from db_handler.db_handler.function.query_builder_function import QueryBuilderFunction
-from db_handler.db_handler.function.record_builder_function import RecordBuilderFunction
+from db_handler.db_handler.function.query_builder_function import (
+    QueryBuilderFunction
+)
+from db_handler.db_handler.function.record_builder_function import (
+    RecordBuilderFunction
+)
 from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_response import QueryResponse
 from db_handler.db_handler.model.sql_query import SqlQuery
@@ -17,8 +21,10 @@ class DatabaseQueryService:
 
     Attributes:
         __connection (connection): The database connection.
-        __query_builder (QueryBuilderFunction): The function to build query strings from SqlQuery objects.
-        __record_builder (RecordBuilderFunction): The function to build records from database responses.
+        __query_builder (QueryBuilderFunction): The function to build query
+            strings from SqlQuery objects.
+        __record_builder (RecordBuilderFunction): The function to build
+            records from database responses.
     """
 
     def __init__(
@@ -31,8 +37,10 @@ class DatabaseQueryService:
 
         Args:
             database_connection (connection): The database connection.
-            query_builder (QueryBuilderFunction): The function to build query strings from SqlQuery objects.
-            record_builder (RecordBuilderFunction): The function to build records from database responses.
+            query_builder (QueryBuilderFunction): The function to build query
+                strings from SqlQuery objects.
+            record_builder (RecordBuilderFunction): The function to build
+                records from database responses.
         """
         self.__connection = database_connection
         self.__query_builder = query_builder
@@ -40,7 +48,8 @@ class DatabaseQueryService:
 
     def retrieve_records(self, query_request: QueryRequest) -> QueryResponse:
         """
-        Retrieve records from the database based on a query request specification.
+        Retrieve records from the database based on a query request
+        specification.
 
         Args:
             query_request (QueryRequest): The query request specification.
@@ -60,11 +69,19 @@ class DatabaseQueryService:
 
         this_cursor.execute(self.__query_builder.apply(sql_query))
         rows: list[tuple[Any, ...]] = this_cursor.fetchall()
-        column_headers: list[str] = [desc[0] for desc in this_cursor.description]
+        column_headers: list[str] = [
+            desc[0] for desc in this_cursor.description
+        ]
 
         this_cursor.close()
 
-        records: list[dict[str, Any]] = list(map(lambda row: self.__record_builder.apply(column_headers, row), rows))
+        records: list[dict[str, Any]] = list(
+            map(
+                lambda row:
+                self.__record_builder.apply(column_headers, row),
+                rows
+            )
+        )
 
         return QueryResponse(
             referenceId=uuid4(),
@@ -74,7 +91,8 @@ class DatabaseQueryService:
 
     def update_records(self, update_request: UpdateRequest) -> QueryResponse:
         """
-        Update records in the database based on an update request specification.
+        Update records in the database based on an update request
+        specification.
 
         Args:
             update_request (UpdateRequest): The update request specification.
