@@ -36,10 +36,22 @@ from predictor_common.test_resources.assertions import Assertions
 
 class TestTournamentTemplateService:
     __query_service: MagicMock = MagicMock()
+    __knock_temp_service: MagicMock = MagicMock()
 
     __service: TournamentTemplateService = (
-        TournamentTemplateService(__query_service)
+        TournamentTemplateService(__query_service, __knock_temp_service)
     )
+
+    def setup_method(self):
+        self.__query_service.retrieve_records.reset_mock()
+        self.__query_service.retrieve_records.return_value = None
+        self.__query_service.retrieve_records.side_effect = None
+
+        self.__knock_temp_service.get_knockout_template_by_id.reset_mock()
+        self.__knock_temp_service.get_knockout_template_by_id.return_value = \
+            None
+        self.__knock_temp_service.get_knockout_template_by_id.side_effect = \
+            None
 
     def test_should_return_tournament_templates_with_child_templates(self):
         # Given
@@ -55,26 +67,8 @@ class TestTournamentTemplateService:
                     "groupCount": None,
                     "teamsPerGroup": None,
                     "homeAndAway": None,
-                    "knockoutId": "80e9c164-637d-400f-a3cf-bf922073bc9b",
-                    "knockoutName": "knockout1",
-                    "rounds": [
-                        {
-                            "name": "round1",
-                            "teamCount": 4,
-                            "roundOrder": 1,
-                            "twoLegs": True,
-                            "extraTime": True,
-                            "awayGoals": True
-                        },
-                        {
-                            "name": "round2",
-                            "teamCount": 2,
-                            "roundOrder": 2,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        }
-                    ]
+                    "knockoutTemplateId": "80e9c164-637d-400f-a3cf-"
+                                          "bf922073bc9b"
                 },
                 {
                     "id": "6ee28143-1286-4618-a8b9-ad86d348ead1",
@@ -84,9 +78,7 @@ class TestTournamentTemplateService:
                     "groupCount": 8,
                     "teamsPerGroup": 4,
                     "homeAndAway": True,
-                    "knockoutId": None,
-                    "knockoutName": None,
-                    "rounds": None
+                    "knockoutTemplateId": None
                 },
                 {
                     "id": "d15956ef-d199-40b1-b7d7-850a9add97e7",
@@ -96,29 +88,58 @@ class TestTournamentTemplateService:
                     "groupCount": 6,
                     "teamsPerGroup": 4,
                     "homeAndAway": False,
-                    "knockoutId": "1a4d1cc8-f035-439a-b274-fe739b8fcfa5",
-                    "knockoutName": "knockout2",
-                    "rounds": [
-                        {
-                            "name": "round3",
-                            "teamCount": 4,
-                            "roundOrder": 1,
-                            "twoLegs": True,
-                            "extraTime": True,
-                            "awayGoals": True
-                        },
-                        {
-                            "name": "round4",
-                            "teamCount": 2,
-                            "roundOrder": 2,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        }
-                    ]
+                    "knockoutTemplateId": "1a4d1cc8-f035-439a-b274-"
+                                          "fe739b8fcfa5"
                 }
             ]
         )
+
+        self.__knock_temp_service.get_knockout_template_by_id.side_effect = [
+            KnockoutTemplate(
+                id=UUID("80e9c164-637d-400f-a3cf-bf922073bc9b"),
+                name="knockout1",
+                rounds=[
+                    KnockoutRound(
+                        name="round1",
+                        teamCount=4,
+                        roundOrder=1,
+                        twoLegs=True,
+                        extraTime=True,
+                        awayGoals=True
+                    ),
+                    KnockoutRound(
+                        name="round2",
+                        teamCount=2,
+                        roundOrder=2,
+                        twoLegs=False,
+                        extraTime=True,
+                        awayGoals=False
+                    )
+                ]
+            ),
+            KnockoutTemplate(
+                id=UUID("1a4d1cc8-f035-439a-b274-fe739b8fcfa5"),
+                name="knockout2",
+                rounds=[
+                    KnockoutRound(
+                        name="round3",
+                        teamCount=4,
+                        roundOrder=1,
+                        twoLegs=True,
+                        extraTime=True,
+                        awayGoals=True
+                    ),
+                    KnockoutRound(
+                        name="round4",
+                        teamCount=2,
+                        roundOrder=2,
+                        twoLegs=False,
+                        extraTime=True,
+                        awayGoals=False
+                    )
+                ]
+            )
+        ]
 
         # When
         tournament_templates: list[TournamentTemplate] = (
@@ -134,7 +155,7 @@ class TestTournamentTemplateService:
         query_request: QueryRequest = captured_args_retrieve_records[0]
 
         columns: list[Column] = query_request.columns
-        Assertions.assert_equals(10, len(columns))
+        Assertions.assert_equals(8, len(columns))
 
         column1: Column = columns[0]
         Assertions.assert_equals(["tourn", "id"], column1.parts)
@@ -144,32 +165,27 @@ class TestTournamentTemplateService:
         Assertions.assert_equals("tournamentName", column2.alias)
 
         column3: Column = columns[2]
-        Assertions.assert_equals(["league", "id"], column3.parts)
-        Assertions.assert_equals("leagueId", column3.alias)
+        Assertions.assert_equals(
+            ["tourn", "knockoutTemplateId"],
+            column3.parts
+        )
 
         column4: Column = columns[3]
-        Assertions.assert_equals(["league", "name"], column4.parts)
-        Assertions.assert_equals("leagueName", column4.alias)
+        Assertions.assert_equals(["league", "id"], column4.parts)
+        Assertions.assert_equals("leagueId", column4.alias)
 
         column5: Column = columns[4]
-        Assertions.assert_equals(["league", "groupCount"], column5.parts)
+        Assertions.assert_equals(["league", "name"], column5.parts)
+        Assertions.assert_equals("leagueName", column5.alias)
 
         column6: Column = columns[5]
-        Assertions.assert_equals(["league", "teamsPerGroup"], column6.parts)
+        Assertions.assert_equals(["league", "groupCount"], column6.parts)
 
         column7: Column = columns[6]
-        Assertions.assert_equals(["league", "homeAndAway"], column7.parts)
+        Assertions.assert_equals(["league", "teamsPerGroup"], column7.parts)
 
         column8: Column = columns[7]
-        Assertions.assert_equals(["knock", "id"], column8.parts)
-        Assertions.assert_equals("knockoutId", column8.alias)
-
-        column9: Column = columns[8]
-        Assertions.assert_equals(["knock", "name"], column9.parts)
-        Assertions.assert_equals("knockoutName", column9.alias)
-
-        column10: Column = columns[9]
-        Assertions.assert_equals(["knock", "rounds"], column10.parts)
+        Assertions.assert_equals(["league", "homeAndAway"], column8.parts)
 
         table: Table = query_request.table
         Assertions.assert_equals("predictor", table.schema_)
@@ -177,7 +193,7 @@ class TestTournamentTemplateService:
         Assertions.assert_equals("tourn", table.alias)
 
         table_joins: list[TableJoin] = query_request.tableJoins
-        Assertions.assert_equals(2, len(table_joins))
+        Assertions.assert_equals(1, len(table_joins))
 
         join1: TableJoin = table_joins[0]
         Assertions.assert_equals(TableJoinType.LEFT, join1.joinType)
@@ -201,29 +217,6 @@ class TestTournamentTemplateService:
 
         join1_value: Column = join1_condition.value
         Assertions.assert_equals(["league", "id"], join1_value.parts)
-
-        join2: TableJoin = table_joins[1]
-        Assertions.assert_equals(TableJoinType.LEFT, join2.joinType)
-
-        join2_table: Table = join2.table
-        Assertions.assert_equals("predictor", join2_table.schema_)
-        Assertions.assert_equals("knockout-templates", join2_table.table)
-        Assertions.assert_equals("knock", join2_table.alias)
-
-        join2_condition: QueryCondition = join2.joinCondition
-        Assertions.assert_equals(
-            ConditionOperator.EQUAL,
-            join2_condition.operator
-        )
-
-        join2_column: Column = join2_condition.column
-        Assertions.assert_equals(
-            ["tourn", "knockoutTemplateId"],
-            join2_column.parts
-        )
-
-        join2_value: Column = join2_condition.value
-        Assertions.assert_equals(["knock", "id"], join2_value.parts)
 
         Assertions.assert_equals(3, len(tournament_templates))
 
@@ -341,6 +334,53 @@ class TestTournamentTemplateService:
             )
         ]
 
+        self.__knock_temp_service.get_knockout_template_by_id.side_effect = [
+            KnockoutTemplate(
+                id=UUID("80e9c164-637d-400f-a3cf-bf922073bc9b"),
+                name="knockout1",
+                rounds=[
+                    KnockoutRound(
+                        name="round1",
+                        teamCount=4,
+                        roundOrder=1,
+                        twoLegs=True,
+                        extraTime=True,
+                        awayGoals=True
+                    ),
+                    KnockoutRound(
+                        name="round2",
+                        teamCount=2,
+                        roundOrder=2,
+                        twoLegs=False,
+                        extraTime=True,
+                        awayGoals=False
+                    )
+                ]
+            ),
+            KnockoutTemplate(
+                id=UUID("1a4d1cc8-f035-439a-b274-fe739b8fcfa5"),
+                name="knockout2",
+                rounds=[
+                    KnockoutRound(
+                        name="round3",
+                        teamCount=4,
+                        roundOrder=1,
+                        twoLegs=True,
+                        extraTime=True,
+                        awayGoals=True
+                    ),
+                    KnockoutRound(
+                        name="round4",
+                        teamCount=2,
+                        roundOrder=2,
+                        twoLegs=False,
+                        extraTime=True,
+                        awayGoals=False
+                    )
+                ]
+            )
+        ]
+
         self.__query_service.retrieve_records.return_value = QueryResponse(
             referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
             recordCount=3,
@@ -353,26 +393,8 @@ class TestTournamentTemplateService:
                     "groupCount": None,
                     "teamsPerGroup": None,
                     "homeAndAway": None,
-                    "knockoutId": "80e9c164-637d-400f-a3cf-bf922073bc9b",
-                    "knockoutName": "knockout1",
-                    "rounds": [
-                        {
-                            "name": "round1",
-                            "teamCount": 4,
-                            "roundOrder": 1,
-                            "twoLegs": True,
-                            "extraTime": True,
-                            "awayGoals": True
-                        },
-                        {
-                            "name": "round2",
-                            "teamCount": 2,
-                            "roundOrder": 2,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        }
-                    ]
+                    "knockoutTemplateId": "80e9c164-637d-400f-a3cf-"
+                                          "bf922073bc9b"
                 },
                 {
                     "id": "6ee28143-1286-4618-a8b9-ad86d348ead1",
@@ -382,9 +404,7 @@ class TestTournamentTemplateService:
                     "groupCount": 8,
                     "teamsPerGroup": 4,
                     "homeAndAway": True,
-                    "knockoutId": None,
-                    "knockoutName": None,
-                    "rounds": None
+                    "knockoutTemplateId": None
                 },
                 {
                     "id": "d15956ef-d199-40b1-b7d7-850a9add97e7",
@@ -394,26 +414,8 @@ class TestTournamentTemplateService:
                     "groupCount": 6,
                     "teamsPerGroup": 4,
                     "homeAndAway": False,
-                    "knockoutId": "1a4d1cc8-f035-439a-b274-fe739b8fcfa5",
-                    "knockoutName": "knockout2",
-                    "rounds": [
-                        {
-                            "name": "round3",
-                            "teamCount": 4,
-                            "roundOrder": 1,
-                            "twoLegs": True,
-                            "extraTime": True,
-                            "awayGoals": True
-                        },
-                        {
-                            "name": "round4",
-                            "teamCount": 2,
-                            "roundOrder": 2,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        }
-                    ]
+                    "knockoutTemplateId": "1a4d1cc8-f035-439a-b274-"
+                                          "fe739b8fcfa5"
                 }
             ]
         )
@@ -570,28 +572,35 @@ class TestTournamentTemplateService:
                     "groupCount": 6,
                     "teamsPerGroup": 4,
                     "homeAndAway": False,
-                    "knockoutId": "1a4d1cc8-f035-439a-b274-fe739b8fcfa5",
-                    "knockoutName": "knockout2",
-                    "rounds": [
-                        {
-                            "name": "round3",
-                            "teamCount": 4,
-                            "roundOrder": 1,
-                            "twoLegs": True,
-                            "extraTime": True,
-                            "awayGoals": True
-                        },
-                        {
-                            "name": "round4",
-                            "teamCount": 2,
-                            "roundOrder": 2,
-                            "twoLegs": False,
-                            "extraTime": True,
-                            "awayGoals": False
-                        }
-                    ]
+                    "knockoutTemplateId": "1a4d1cc8-f035-439a-b274-"
+                                          "fe739b8fcfa5"
                 }
             ]
+        )
+
+        self.__knock_temp_service.get_knockout_template_by_id.return_value = (
+            KnockoutTemplate(
+                id=UUID("1a4d1cc8-f035-439a-b274-fe739b8fcfa5"),
+                name="knockout2",
+                rounds=[
+                    KnockoutRound(
+                        name="round3",
+                        teamCount=4,
+                        roundOrder=1,
+                        twoLegs=True,
+                        extraTime=True,
+                        awayGoals=True
+                    ),
+                    KnockoutRound(
+                        name="round4",
+                        teamCount=2,
+                        roundOrder=2,
+                        twoLegs=False,
+                        extraTime=True,
+                        awayGoals=False
+                    )
+                ]
+            )
         )
 
         # When
@@ -610,7 +619,7 @@ class TestTournamentTemplateService:
         query_request: QueryRequest = captured_args_retrieve_records[0]
 
         columns: list[Column] = query_request.columns
-        Assertions.assert_equals(10, len(columns))
+        Assertions.assert_equals(8, len(columns))
 
         column1: Column = columns[0]
         Assertions.assert_equals(["tourn", "id"], column1.parts)
@@ -620,32 +629,27 @@ class TestTournamentTemplateService:
         Assertions.assert_equals("tournamentName", column2.alias)
 
         column3: Column = columns[2]
-        Assertions.assert_equals(["league", "id"], column3.parts)
-        Assertions.assert_equals("leagueId", column3.alias)
+        Assertions.assert_equals(
+            ["tourn", "knockoutTemplateId"],
+            column3.parts
+        )
 
         column4: Column = columns[3]
-        Assertions.assert_equals(["league", "name"], column4.parts)
-        Assertions.assert_equals("leagueName", column4.alias)
+        Assertions.assert_equals(["league", "id"], column4.parts)
+        Assertions.assert_equals("leagueId", column4.alias)
 
         column5: Column = columns[4]
-        Assertions.assert_equals(["league", "groupCount"], column5.parts)
+        Assertions.assert_equals(["league", "name"], column5.parts)
+        Assertions.assert_equals("leagueName", column5.alias)
 
         column6: Column = columns[5]
-        Assertions.assert_equals(["league", "teamsPerGroup"], column6.parts)
+        Assertions.assert_equals(["league", "groupCount"], column6.parts)
 
         column7: Column = columns[6]
-        Assertions.assert_equals(["league", "homeAndAway"], column7.parts)
+        Assertions.assert_equals(["league", "teamsPerGroup"], column7.parts)
 
         column8: Column = columns[7]
-        Assertions.assert_equals(["knock", "id"], column8.parts)
-        Assertions.assert_equals("knockoutId", column8.alias)
-
-        column9: Column = columns[8]
-        Assertions.assert_equals(["knock", "name"], column9.parts)
-        Assertions.assert_equals("knockoutName", column9.alias)
-
-        column10: Column = columns[9]
-        Assertions.assert_equals(["knock", "rounds"], column10.parts)
+        Assertions.assert_equals(["league", "homeAndAway"], column8.parts)
 
         table: Table = query_request.table
         Assertions.assert_equals("predictor", table.schema_)
@@ -653,7 +657,7 @@ class TestTournamentTemplateService:
         Assertions.assert_equals("tourn", table.alias)
 
         table_joins: list[TableJoin] = query_request.tableJoins
-        Assertions.assert_equals(2, len(table_joins))
+        Assertions.assert_equals(1, len(table_joins))
 
         join1: TableJoin = table_joins[0]
         Assertions.assert_equals(TableJoinType.LEFT, join1.joinType)
@@ -677,29 +681,6 @@ class TestTournamentTemplateService:
 
         join1_value: Column = join1_condition.value
         Assertions.assert_equals(["league", "id"], join1_value.parts)
-
-        join2: TableJoin = table_joins[1]
-        Assertions.assert_equals(TableJoinType.LEFT, join2.joinType)
-
-        join2_table: Table = join2.table
-        Assertions.assert_equals("predictor", join2_table.schema_)
-        Assertions.assert_equals("knockout-templates", join2_table.table)
-        Assertions.assert_equals("knock", join2_table.alias)
-
-        join2_condition: QueryCondition = join2.joinCondition
-        Assertions.assert_equals(
-            ConditionOperator.EQUAL,
-            join2_condition.operator
-        )
-
-        join2_column: Column = join2_condition.column
-        Assertions.assert_equals(
-            ["tourn", "knockoutTemplateId"],
-            join2_column.parts
-        )
-
-        join2_value: Column = join2_condition.value
-        Assertions.assert_equals(["knock", "id"], join2_value.parts)
 
         condition: QueryCondition = query_request.conditionGroup.conditions[0]
         Assertions.assert_equals(ConditionOperator.EQUAL, condition.operator)

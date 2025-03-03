@@ -22,7 +22,6 @@ from db_handler.db_handler.service.database_query_service import (
     DatabaseQueryService
 )
 from db_handler.db_handler.util.store_constants import StoreConstants
-from predictor_api.predictor_api.model.knockout_round import KnockoutRound
 from predictor_api.predictor_api.model.knockout_template import (
     KnockoutTemplate
 )
@@ -33,6 +32,9 @@ from predictor_api.predictor_api.model.tournament_template import (
 )
 from predictor_api.predictor_api.model.tournament_template_request import (
     TournamentTemplateRequest
+)
+from predictor_api.predictor_api.service.knockout_template_service import (
+    KnockoutTemplateService
 )
 from predictor_api.predictor_api.util.predictor_constants import (
     PredictorConstants
@@ -47,7 +49,10 @@ class TournamentTemplateService:
         __query_service (DatabaseQueryService): The database query service.
     """
 
-    def __init__(self, database_query_service: DatabaseQueryService):
+    def __init__(
+            self,
+            database_query_service: DatabaseQueryService,
+            knockout_template_service: KnockoutTemplateService):
         """
         Initialise the TournamentTemplateService.
 
@@ -56,6 +61,7 @@ class TournamentTemplateService:
                 service.
         """
         self.__query_service = database_query_service
+        self.__knockout_template_service = knockout_template_service
 
     def get_tournament_templates(self) -> list[TournamentTemplate]:
         """
@@ -71,6 +77,7 @@ class TournamentTemplateService:
                     parts=["tourn", "name"],
                     alias="tournamentName"
                 ),
+                Column.of("tourn", "knockoutTemplateId"),
                 Column(
                     parts=["league", StoreConstants.ID],
                     alias="leagueId"
@@ -81,16 +88,7 @@ class TournamentTemplateService:
                 ),
                 Column.of("league", "groupCount"),
                 Column.of("league", "teamsPerGroup"),
-                Column.of("league", "homeAndAway"),
-                Column(
-                    parts=["knock", StoreConstants.ID],
-                    alias="knockoutId"
-                ),
-                Column(
-                    parts=["knock", "name"],
-                    alias="knockoutName"
-                ),
-                Column.of("knock", "rounds")
+                Column.of("league", "homeAndAway")
             ],
             table=Table.of(
                 PredictorConstants.PREDICTOR_SCHEMA,
@@ -107,18 +105,6 @@ class TournamentTemplateService:
                     QueryCondition.of(
                         Column.of("tourn", "leagueTemplateId"),
                         Column.of("league", StoreConstants.ID)
-                    ),
-                    TableJoinType.LEFT
-                ),
-                TableJoin.of(
-                    Table.of(
-                        PredictorConstants.PREDICTOR_SCHEMA,
-                        KnockoutTemplate.TARGET_TABLE,
-                        "knock"
-                    ),
-                    QueryCondition.of(
-                        Column.of("tourn", "knockoutTemplateId"),
-                        Column.of("knock", StoreConstants.ID)
                     ),
                     TableJoinType.LEFT
                 )
@@ -185,6 +171,7 @@ class TournamentTemplateService:
                     parts=["tourn", "name"],
                     alias="tournamentName"
                 ),
+                Column.of("tourn", "knockoutTemplateId"),
                 Column(
                     parts=["league", StoreConstants.ID],
                     alias="leagueId"
@@ -195,16 +182,7 @@ class TournamentTemplateService:
                 ),
                 Column.of("league", "groupCount"),
                 Column.of("league", "teamsPerGroup"),
-                Column.of("league", "homeAndAway"),
-                Column(
-                    parts=["knock", StoreConstants.ID],
-                    alias="knockoutId"
-                ),
-                Column(
-                    parts=["knock", "name"],
-                    alias="knockoutName"
-                ),
-                Column.of("knock", "rounds")
+                Column.of("league", "homeAndAway")
             ],
             table=Table.of(
                 PredictorConstants.PREDICTOR_SCHEMA,
@@ -221,18 +199,6 @@ class TournamentTemplateService:
                     QueryCondition.of(
                         Column.of("tourn", "leagueTemplateId"),
                         Column.of("league", StoreConstants.ID)
-                    ),
-                    TableJoinType.LEFT
-                ),
-                TableJoin.of(
-                    Table.of(
-                        PredictorConstants.PREDICTOR_SCHEMA,
-                        KnockoutTemplate.TARGET_TABLE,
-                        "knock"
-                    ),
-                    QueryCondition.of(
-                        Column.of("tourn", "knockoutTemplateId"),
-                        Column.of("knock", StoreConstants.ID)
                     ),
                     TableJoinType.LEFT
                 )
@@ -278,6 +244,7 @@ class TournamentTemplateService:
                     parts=["tourn", "name"],
                     alias="tournamentName"
                 ),
+                Column.of("tourn", "knockoutTemplateId"),
                 Column(
                     parts=["league", StoreConstants.ID],
                     alias="leagueId"
@@ -288,16 +255,7 @@ class TournamentTemplateService:
                 ),
                 Column.of("league", "groupCount"),
                 Column.of("league", "teamsPerGroup"),
-                Column.of("league", "homeAndAway"),
-                Column(
-                    parts=["knock", StoreConstants.ID],
-                    alias="knockoutId"
-                ),
-                Column(
-                    parts=["knock", "name"],
-                    alias="knockoutName"
-                ),
-                Column.of("knock", "rounds")
+                Column.of("league", "homeAndAway")
             ],
             table=Table.of(
                 PredictorConstants.PREDICTOR_SCHEMA,
@@ -314,18 +272,6 @@ class TournamentTemplateService:
                     QueryCondition.of(
                         Column.of("tourn", "leagueTemplateId"),
                         Column.of("league", StoreConstants.ID)
-                    ),
-                    TableJoinType.LEFT
-                ),
-                TableJoin.of(
-                    Table.of(
-                        PredictorConstants.PREDICTOR_SCHEMA,
-                        KnockoutTemplate.TARGET_TABLE,
-                        "knock"
-                    ),
-                    QueryCondition.of(
-                        Column.of("tourn", "knockoutTemplateId"),
-                        Column.of("knock", StoreConstants.ID)
                     ),
                     TableJoinType.LEFT
                 )
@@ -404,8 +350,8 @@ class TournamentTemplateService:
 
         self.__query_service.update_records(update_request)
 
-    @staticmethod
     def __build_tournament_template(
+            self,
             record: dict[str, Any]) -> TournamentTemplate:
         """
         Build a TournamentTemplate object with child LeagueTemplate and
@@ -433,19 +379,16 @@ class TournamentTemplateService:
                 )
             })
 
-        if "knockoutId" in record and record["knockoutId"] is not None:
-            template = template.model_copy(update={
-                "knockout": KnockoutTemplate(
-                    id=record["knockoutId"],
-                    name=record["knockoutName"],
-                    rounds=list(
-                        map(
-                            lambda record_round:
-                            KnockoutRound.model_validate(record_round),
-                            record["rounds"]
-                        )
-                    )
+        if ("knockoutTemplateId" in record and
+                record["knockoutTemplateId"] is not None):
+            knock_template: KnockoutTemplate = (
+                self.__knockout_template_service.get_knockout_template_by_id(
+                    record["knockoutTemplateId"]
                 )
+            )
+
+            template = template.model_copy(update={
+                "knockout": knock_template
             })
 
         return template

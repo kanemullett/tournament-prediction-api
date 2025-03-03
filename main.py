@@ -67,6 +67,9 @@ database_query_service: DatabaseQueryService = DatabaseQueryService(
     QueryBuilderFunction(),
     RecordBuilderFunction()
 )
+knockout_template_service: KnockoutTemplateService = KnockoutTemplateService(
+    database_query_service
+)
 
 app.include_router(
     TournamentController(
@@ -75,7 +78,10 @@ app.include_router(
 )
 app.include_router(
     TournamentTemplateController(
-        TournamentTemplateService(database_query_service)
+        TournamentTemplateService(
+            database_query_service,
+            knockout_template_service
+        )
     ).router
 )
 app.include_router(
@@ -85,6 +91,6 @@ app.include_router(
 )
 app.include_router(
     KnockoutTemplateController(
-        KnockoutTemplateService(database_query_service)
+        knockout_template_service
     ).router
 )
