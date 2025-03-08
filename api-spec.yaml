@@ -1,0 +1,1734 @@
+openapi: 3.0.1
+info:
+  title: Tournament Prediction Api
+  version: 0.0.1
+servers:
+  - url: https://localhost:3000
+    description: Generated server url
+paths:
+  /competitions:
+    get:
+      tags: ["Competitions"]
+      summary: "Retrieve all competitions"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Competition"
+    post:
+      tags: ["Competitions"]
+      summary: "Create new competitions"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Competition"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Competition"
+    put:
+      tags: ["Competitions"]
+      summary: "Update competitions"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Competition"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Competition"
+  /competition/{competitionId}:
+    parameters:
+      - in: path
+        name: competitionId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: ["Competitions"]
+      summary: "Retrieve a competition by its id"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Competition"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No competitions found with a matching id."
+    delete:
+      tags: ["Competitions"]
+      summary: "Delete a competition by its id"
+      responses:
+        204:
+          description: No content
+  /tournaments:
+    get:
+      tags: ["Tournaments"]
+      summary: "Retrieve all tournaments"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tournament"
+    post:
+      tags: ["Tournaments"]
+      summary: "Create new tournaments"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Tournament"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tournament"
+    put:
+      tags: ["Tournaments"]
+      summary: "Update tournaments"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Tournament"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tournament"
+  /tournaments/{tournamentId}:
+    parameters:
+      - in: path
+        name: tournamentId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: ["Tournaments"]
+      summary: "Retrieve a tournament by its id"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tournament"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No tournaments found with a matching id."
+    delete:
+      tags: ["Tournaments"]
+      summary: "Delete a tournament by its id"
+      responses:
+        204:
+          description: No content
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Cannot delete tournament as it is part of an existing competition."
+  /tournament-templates:
+    get:
+      tags: ["Tournament Templates"]
+      summary: "Retrieve all tournament templates"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TournamentTemplate"
+    post:
+      tags: ["Tournament Templates"]
+      summary: "Create new tournament templates"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/TournamentTemplateRequest"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TournamentTemplate"
+  /tournament-templates/{templateId}:
+    parameters:
+      - in: path
+        name: templateId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: ["Tournament Templates"]
+      summary: "Retrieve a tournament template by its id"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TournamentTemplate"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No tournament templates found with a matching id."
+    delete:
+      tags: ["Tournament Templates"]
+      summary: "Delete a tournament template by its id"
+      responses:
+        204:
+          description: No content
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Cannot delete tournament template as it is part of an existing tournament."
+  /league-templates:
+    get:
+      tags: ["League Templates"]
+      summary: "Retrieve all league templates"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeagueTemplate"
+    post:
+      tags: ["League Templates"]
+      summary: "Create new league templates"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/LeagueTemplate"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeagueTemplate"
+  /league-templates/{leagueTemplateId}:
+    parameters:
+      - in: path
+        name: leagueTemplateId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: ["League Templates"]
+      summary: "Retrieve a league template by its id"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeagueTemplate"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No league templates found with a matching id."
+    delete:
+      tags: ["League Templates"]
+      summary: "Delete a league template by its id"
+      responses:
+        204:
+          description: No content
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Cannot delete league template as it is part of an existing tournament template."
+  /knockout-templates:
+    get:
+      tags: ["Knockout Templates"]
+      summary: "Retrieve all knockout templates"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/KnockoutTemplate"
+    post:
+      tags: ["Knockout Templates"]
+      summary: "Create new knockout templates"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/KnockoutTemplate"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/KnockoutTemplate"
+  /knockout-templates/{knockoutTemplateId}:
+    parameters:
+      - in: path
+        name: knockoutTemplateId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: ["Knockout Templates"]
+      summary: "Retrieve a knockout template by its id"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnockoutTemplate"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No knockout templates found with a matching id."
+    delete:
+      tags: ["Knockout Templates"]
+      summary: "Delete a knockout template by its id"
+      responses:
+        204:
+          description: No content
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Cannot delete knockout template as it is part of an existing tournament template."
+  /teams:
+    get:
+      tags: ["Teams"]
+      summary: "Retrieve teams"
+      parameters:
+      - in: query
+        name: confederation
+        required: false
+        schema:
+          type: string
+          enum:
+            - AFC
+            - CAF
+            - CONCACAF
+            - CONMEBOL
+            - OFC
+            - UEFA
+      - in: query
+        name: tournamentId
+        required: false
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Team"
+    post:
+      tags: ["Teams"]
+      summary: "Create new teams"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Team"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Team"
+    put:
+      tags: ["Teams"]
+      summary: "Update teams"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Team"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Team"
+  /teams/{teamId}:
+    parameters:
+      - in: path
+        name: teamId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: ["Teams"]
+      summary: "Retrieve a team by its id"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Team"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No teams found with a matching id."
+    delete:
+      tags: ["Teams"]
+      summary: "Delete a team by its id"
+      responses:
+        204:
+          description: No content
+  /tournaments/{tournamentId}/groups:
+    parameters:
+      - in: path
+        name: tournamentId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: ["Groups"]
+      summary: "Retrieve all groups of a tournament"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Group"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              examples:
+                tournamentNotFound:
+                    summary: Tournament not found
+                    value:
+                      detail: "No tournaments found with a matching id."
+                noGroupStage:
+                  summary: Tournament has no group stage
+                  value:
+                    detail: "The tournament with the supplied id does not have a group stage."
+    put:
+      tags: ["Groups"]
+      summary: "Update groups"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/GroupUpdate"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Group"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No tournaments found with a matching id."
+  /tournaments/{tournamentId}/groups/{groupId}:
+    parameters:
+      - in: path
+        name: tournamentId
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: groupId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: ["Groups"]
+      summary: "Retrieve a group by its id"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Group"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              examples:
+                tournamentNotFound:
+                    summary: Tournament not found
+                    value:
+                      detail: "No tournaments found with a matching id."
+                noGroupStage:
+                  summary: Tournament has no group stage
+                  value:
+                    detail: "The tournament with the supplied id does not have a group stage."
+                groupNotFound:
+                    summary: Group not found
+                    value:
+                      detail: "No groups found with a matching id."
+  /tournaments/{tournamentId}/groups/{groupId}/teams:
+    parameters:
+      - in: path
+        name: tournamentId
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: groupId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      tags: ["Groups"]
+      summary: "Add teams to a group"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uuid
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Group"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No teams found with ids: []"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              examples:
+                tournamentNotFound:
+                    summary: Tournament not found
+                    value:
+                      detail: "No tournaments found with a matching id."
+                noGroupStage:
+                  summary: Tournament has no group stage
+                  value:
+                    detail: "The tournament with the supplied id does not have a group stage."
+                groupNotFound:
+                    summary: Group not found
+                    value:
+                      detail: "No groups found with a matching id."
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "The number of groups in this tournament's group stage has been exceeded."
+  /tournaments/{tournamentId}/groups/{groupId}/teams/{teamId}:
+    parameters:
+      - in: path
+        name: tournamentId
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: groupId
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: teamId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    delete:
+      tags: ["Groups"]
+      summary: "Remove a team from a group by its id"
+      responses:
+        204:
+          description: No content
+        404:
+          description: Not Found
+          content:
+            application/json:
+              examples:
+                tournamentNotFound:
+                    summary: Tournament not found
+                    value:
+                      detail: "No tournaments found with a matching id."
+                noGroupStage:
+                  summary: Tournament has no group stage
+                  value:
+                    detail: "The tournament with the supplied id does not have a group stage."
+                groupNotFound:
+                    summary: Group not found
+                    value:
+                      detail: "No groups found with a matching id."
+  /tournaments/{tournamentId}/rounds:
+    parameters:
+      - in: path
+        name: tournamentId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: ["Rounds"]
+      summary: "Retrieve all rounds of a tournament"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Round"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              examples:
+                tournamentNotFound:
+                    summary: Tournament not found
+                    value:
+                      detail: "No tournaments found with a matching id."
+                noGroupStage:
+                  summary: Tournament has no knockout stage
+                  value:
+                    detail: "The tournament with the supplied id does not have a knockout stage."
+    put:
+      tags: ["Rounds"]
+      summary: "Update rounds"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/RoundUpdate"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Round"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No tournaments found with a matching id."
+  /tournaments/{tournamentId}/rounds/{roundId}:
+    parameters:
+      - in: path
+        name: tournamentId
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: roundId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: ["Rounds"]
+      summary: "Retrieve a round by its id"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Round"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              examples:
+                tournamentNotFound:
+                    summary: Tournament not found
+                    value:
+                      detail: "No tournaments found with a matching id."
+                noGroupStage:
+                  summary: Tournament has no knockout stage
+                  value:
+                    detail: "The tournament with the supplied id does not have a knockout stage."
+                groupNotFound:
+                    summary: Round not found
+                    value:
+                      detail: "No rounds found with a matching id."
+  /tournaments/{tournamentId}/matches:
+    parameters:
+      - in: path
+        name: tournamentId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: ["Matches"]
+      summary: "Retrieve matches of a tournament"
+      parameters:
+      - in: query
+        name: groupId
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: roundId
+        required: false
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Match"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No tournaments found with a matching id."
+    put:
+      tags: ["Matches"]
+      summary: "Update matches"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/MatchUpdate"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Match"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No tournaments found with a matching id."
+  /tournaments/{tournamentId}/matches/{matchId}:
+    parameters:
+      - in: path
+        name: tournamentId
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: matchId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: ["Matches"]
+      summary: "Retrieve a match by its id"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Match"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              examples:
+                tournamentNotFound:
+                    summary: Tournament not found
+                    value:
+                      detail: "No tournaments found with a matching id."
+                groupNotFound:
+                    summary: Match not found
+                    value:
+                      detail: "No matches found with a matching id."
+  /tournaments/{tournamentId}/results:
+    parameters:
+      - in: path
+        name: tournamentId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: ["Results"]
+      summary: "Retrieve results of a tournament"
+      parameters:
+      - in: query
+        name: groupId
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: roundId
+        required: false
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Result"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No tournaments found with a matching id."
+    post:
+      tags: ["Results"]
+      summary: "Add results"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/ResultUpdate"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Result"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No tournaments found with a matching id."
+    put:
+      tags: ["Results"]
+      summary: "Update results"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/ResultUpdate"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Result"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No tournaments found with a matching id."
+  /tournaments/{tournamentId}/matches/{matchId}/result:
+    parameters:
+      - in: path
+        name: tournamentId
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: matchId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: ["Results"]
+      summary: "Retrieve the result of a match by its id"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Result"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              examples:
+                tournamentNotFound:
+                    summary: Tournament not found
+                    value:
+                      detail: "No tournaments found with a matching id."
+                groupNotFound:
+                    summary: Match not found
+                    value:
+                      detail: "No matches found with a matching id."
+  /tournaments/{tournamentId}/predictions:
+    parameters:
+      - in: path
+        name: tournamentId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: ["Predictions"]
+      summary: "Retrieve the current user's predictions for a tournament"
+      parameters:
+      - in: query
+        name: groupId
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: roundId
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - in: header
+        name: username
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Prediction"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "User is not a participant of a competition involving this tournament."
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No tournaments found with a matching id."
+    post:
+      tags: ["Predictions"]
+      summary: "Add predictions from the current user"
+      parameters:
+      - in: header
+        name: username
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/PredictionUpdate"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Prediction"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "User is not a participant of a competition involving this tournament."
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No tournaments found with a matching id."
+    put:
+      tags: ["Predictions"]
+      summary: "Update the current user's predictions"
+      parameters:
+      - in: header
+        name: username
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/PredictionUpdate"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Prediction"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "User is not a participant of a competition involving this tournament."
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No tournaments found with a matching id."
+  /tournaments/{tournamentId}/matches/{matchId}/prediction:
+    parameters:
+      - in: path
+        name: tournamentId
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: matchId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: ["Predictions"]
+      summary: "Retrieve the current user's prediction for a match by its id"
+      parameters:
+      - in: header
+        name: username
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Prediction"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "User is not a participant of a competition involving this tournament."
+        404:
+          description: Not Found
+          content:
+            application/json:
+              examples:
+                tournamentNotFound:
+                    summary: Tournament not found
+                    value:
+                      detail: "No tournaments found with a matching id."
+                groupNotFound:
+                    summary: Match not found
+                    value:
+                      detail: "No matches found with a matching id."
+                predictionNotFound:
+                    summary: Prediction not found
+                    value:
+                      detail: "User has not made a prediction for this match."
+  /tournaments/{tournamentId}/matches/{matchId}/predictions:
+    parameters:
+      - in: path
+        name: tournamentId
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: matchId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: ["Predictions"]
+      summary: "Retrieve predictions for a match"
+      parameters:
+      - in: query
+        name: competitionId
+        required: false
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserPrediction"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "User is not a participant of a competition involving this tournament."
+        404:
+          description: Not Found
+          content:
+            application/json:
+              examples:
+                tournamentNotFound:
+                    summary: Tournament not found
+                    value:
+                      detail: "No tournaments found with a matching id."
+                groupNotFound:
+                    summary: Match not found
+                    value:
+                      detail: "No matches found with a matching id."
+  /competitions/{competitionId}/standings:
+    parameters:
+      - in: path
+        name: competitionId
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: ["Standings"]
+      summary: "Retrieve standings for a competition"
+      parameters:
+      - in: query
+        name: league
+        required: false
+        schema:
+          type: boolean
+      - in: query
+        name: knockout
+        required: false
+        schema:
+          type: boolean
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CompetitionStanding"
+components:
+  schemas:
+    Competition:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          format: int64
+          example: The Computer Lads 2026
+        tournamentId:
+          type: string
+          format: uuid
+    Tournament:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        year:
+          type: integer
+          format: int64
+          example: 2024
+        confederation:
+          type: string
+          enum:
+            - AFC
+            - CAF
+            - CONCACAF
+            - CONMEBOL
+            - OFC
+            - UEFA
+        templateId:
+          type: string
+          format: uuid
+    TournamentTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "32-Team League & Knockout"
+        league:
+          $ref: "#/components/schemas/LeagueTemplate"
+        knockout:
+          $ref: "#/components/schemas/KnockoutTemplate"
+    TournamentTemplateRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "32-Team League & Knockout"
+        leagueTemplateId:
+          type: string
+          format: uuid
+        knockoutTemplateId:
+          type: string
+          format: uuid
+    LeagueTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "Group Stage"
+        groupCount:
+          type: integer
+          format: int64
+          example: 8
+        teamsPerGroup:
+          type: integer
+          format: int64
+          example: 4
+        homeAndAway:
+          type: boolean
+    KnockoutTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "Knockout Phase"
+        rounds:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoundTemplate"
+    Round:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "Quarter-Finals"
+        teamCount:
+          type: integer
+          example: 8
+        roundOrder:
+          type: integer
+          example: 1
+        twoLegs:
+          type: boolean
+        extraTime:
+          type: boolean
+        awayGoals:
+          type: boolean
+    RoundTemplate:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Quarter-Finals"
+        teamCount:
+          type: integer
+          example: 8
+        roundOrder:
+          type: integer
+          example: 1
+        twoLegs:
+          type: boolean
+        extraTime:
+          type: boolean
+        awayGoals:
+          type: boolean
+    RoundUpdate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "Quarter-Finals"
+        twoLegs:
+          type: boolean
+        extraTime:
+          type: boolean
+        awayGoals:
+          type: boolean
+    Group:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "Group A"
+        teams:
+          type: array
+          items:
+            $ref: "#/components/schemas/Team"
+    GroupUpdate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "Group A"
+    Team:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "England"
+        imagePath:
+          type: string
+          example: "eng.png"
+        confederation:
+          type: string
+          enum:
+            - AFC
+            - CAF
+            - CONCACAF
+            - CONMEBOL
+            - OFC
+            - UEFA
+    Match:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        homeTeam:
+          $ref: "#/components/schemas/Team"
+        awayTeam:
+          $ref: "#/components/schemas/Team"
+        kickoff:
+          type: string
+          format: date-time
+    MatchUpdate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        homeTeamId:
+          type: string
+          format: uuid
+        awayTeamId:
+          type: string
+          format: uuid
+        kickoff:
+          type: string
+          format: date-time
+    Result:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        homeTeam:
+          $ref: "#/components/schemas/Team"
+        homeGoals:
+          type: integer
+        awayTeam:
+          $ref: "#/components/schemas/Team"
+        awayGoals:
+          type: integer
+        afterExtraTime:
+          type: boolean
+        afterPenalties:
+          type: boolean
+        penaltiesWinner:
+          type: string
+          enum:
+            - HOME
+            - AWAY
+    ResultUpdate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        homeGoals:
+          type: integer
+        awayGoals:
+          type: integer
+        afterExtraTime:
+          type: boolean
+        afterPenalties:
+          type: boolean
+        penaltiesWinner:
+          type: string
+          enum:
+            - HOME
+            - AWAY
+    Prediction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        homeTeam:
+          $ref: "#/components/schemas/Team"
+        homeGoals:
+          type: integer
+        awayTeam:
+          $ref: "#/components/schemas/Team"
+        awayGoals:
+          type: integer
+        afterExtraTime:
+          type: boolean
+        afterPenalties:
+          type: boolean
+        penaltiesWinner:
+          type: string
+          enum:
+            - HOME
+            - AWAY
+        matchId:
+          type: string
+          format: uuid
+    PredictionUpdate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        homeGoals:
+          type: integer
+        awayGoals:
+          type: integer
+        afterExtraTime:
+          type: boolean
+        afterPenalties:
+          type: boolean
+        penaltiesWinner:
+          type: string
+          enum:
+            - HOME
+            - AWAY
+        matchId:
+          type: string
+          format: uuid
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          example: kanemullett
+        displayName:
+          type: string
+          example: Kane Mullett
+    UserPrediction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user:
+          $ref: "#/components/schemas/User"
+        homeTeam:
+          $ref: "#/components/schemas/Team"
+        homeGoals:
+          type: integer
+        awayTeam:
+          $ref: "#/components/schemas/Team"
+        awayGoals:
+          type: integer
+        afterExtraTime:
+          type: boolean
+        afterPenalties:
+          type: boolean
+        penaltiesWinner:
+          type: string
+          enum:
+            - HOME
+            - AWAY
+        matchId:
+          type: string
+          format: uuid
+    CompetitionStanding:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        points:
+          type: integer
+          example: 75
