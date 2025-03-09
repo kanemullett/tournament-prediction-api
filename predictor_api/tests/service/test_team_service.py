@@ -236,3 +236,125 @@ class TestTeamService:
         Assertions.assert_equals("Botswana", team2.name)
         Assertions.assert_equals("BOT.png", team2.imagePath)
         Assertions.assert_equals(Confederation.CAF, team2.confederation)
+
+    def test_updates_existing_teams(self):
+        # Given
+        teams: list[Team] = [
+            Team(
+                id=UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+                confederation=Confederation.UEFA
+            ),
+            Team(
+                id=UUID("6ee28143-1286-4618-a8b9-ad86d348ead1"),
+                imagePath="BOT.png"
+            )
+        ]
+
+        self.__database_query_service.retrieve_records.return_value = (
+            QueryResponse(
+                referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
+                recordCount=2,
+                records=[
+                    {
+                        "id": "c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
+                        "name": "Bosnia & Herzegovina",
+                        "imagePath": "BIH.png",
+                        "confederation": "UEFA"
+                    },
+                    {
+                        "id": "6ee28143-1286-4618-a8b9-ad86d348ead1",
+                        "name": "Botswana",
+                        "imagePath": "BOT.png",
+                        "confederation": "CAF"
+                    }
+                ]
+            )
+        )
+
+        # When
+        updated: list[Team] = self.__service.update_teams(teams)
+
+        # Then
+        update_teams_args, update_teams_kwargs = (
+            self.__database_query_service.update_records.call_args
+        )
+        Assertions.assert_type(UpdateRequest, update_teams_args[0])
+
+        update_request: UpdateRequest = update_teams_args[0]
+        Assertions.assert_equals(SqlOperator.UPDATE, update_request.operation)
+
+        update_table: Table = update_request.table
+        Assertions.assert_equals("predictor", update_table.schema_)
+        Assertions.assert_equals("teams", update_table.table)
+
+        Assertions.assert_equals(2, len(update_request.records))
+
+        record1: dict[str, Any] = update_request.records[0]
+        Assertions.assert_equals(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+            record1["id"]
+        )
+        Assertions.assert_equals(Confederation.UEFA, record1["confederation"])
+
+        record2: dict[str, Any] = update_request.records[1]
+        Assertions.assert_equals(
+            UUID("6ee28143-1286-4618-a8b9-ad86d348ead1"),
+            record2["id"]
+        )
+        Assertions.assert_equals("BOT.png", record2["imagePath"])
+
+        get_teams_args, get_teams_kwargs = (
+            self.__database_query_service.retrieve_records.call_args
+        )
+        Assertions.assert_type(QueryRequest, get_teams_args[0])
+
+        query_request: QueryRequest = get_teams_args[0]
+
+        query_table: Table = query_request.table
+        Assertions.assert_equals("predictor", query_table.schema_)
+        Assertions.assert_equals("teams", query_table.table)
+
+        Assertions.assert_equals(
+            1,
+            len(query_request.conditionGroup.conditions)
+        )
+
+        query_condition: QueryCondition = (
+            query_request.conditionGroup.conditions
+        )[0]
+        Assertions.assert_equals(["id"], query_condition.column.parts)
+        Assertions.assert_equals(
+            ConditionOperator.IN,
+            query_condition.operator
+        )
+        Assertions.assert_equals(
+            [
+                UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+                UUID("6ee28143-1286-4618-a8b9-ad86d348ead1")
+            ],
+            query_condition.value
+        )
+
+        query_order_by: OrderBy = query_request.orderBy
+        Assertions.assert_equals(["name"], query_order_by.column.parts)
+        Assertions.assert_equals(OrderDirection.ASC, query_order_by.direction)
+
+        Assertions.assert_equals(2, len(updated))
+
+        team1: Team = updated[0]
+        Assertions.assert_equals(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+            team1.id
+        )
+        Assertions.assert_equals("Bosnia & Herzegovina", team1.name)
+        Assertions.assert_equals("BIH.png", team1.imagePath)
+        Assertions.assert_equals(Confederation.UEFA, team1.confederation)
+
+        team2: Team = updated[1]
+        Assertions.assert_equals(
+            UUID("6ee28143-1286-4618-a8b9-ad86d348ead1"),
+            team2.id
+        )
+        Assertions.assert_equals("Botswana", team2.name)
+        Assertions.assert_equals("BOT.png", team2.imagePath)
+        Assertions.assert_equals(Confederation.CAF, team2.confederation)
