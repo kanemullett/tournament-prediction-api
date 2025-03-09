@@ -4,6 +4,7 @@ from uuid import UUID
 from fastapi import HTTPException
 
 from db_handler.db_handler.model.column import Column
+from db_handler.db_handler.model.column_definition import ColumnDefinition
 from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.query_condition_group import (
     QueryConditionGroup
@@ -11,15 +12,21 @@ from db_handler.db_handler.model.query_condition_group import (
 from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_response import QueryResponse
 from db_handler.db_handler.model.table import Table
+from db_handler.db_handler.model.table_definition import TableDefinition
 from db_handler.db_handler.model.type.condition_operator import (
     ConditionOperator
 )
+from db_handler.db_handler.model.type.sql_data_type import SqlDataType
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.update_request import UpdateRequest
 from db_handler.db_handler.service.database_query_service import (
     DatabaseQueryService
 )
+from db_handler.db_handler.service.database_table_service import (
+    DatabaseTableService
+)
 from db_handler.db_handler.util.store_constants import StoreConstants
+from predictor_api.predictor_api.model.group import Group
 from predictor_api.predictor_api.model.tournament import Tournament
 from predictor_api.predictor_api.util.predictor_constants import (
     PredictorConstants
@@ -34,7 +41,10 @@ class TournamentService:
         __query_service (DatabaseQueryService): The database query service.
     """
 
-    def __init__(self, database_query_service: DatabaseQueryService) -> None:
+    def __init__(
+            self,
+            database_query_service: DatabaseQueryService,
+            database_table_service: DatabaseTableService) -> None:
         """
         Initialise the TournamentService.
 
@@ -43,6 +53,7 @@ class TournamentService:
                 service.
         """
         self.__query_service = database_query_service
+        self.__table_service = database_table_service
 
     def get_tournaments(self) -> list[Tournament]:
         """
@@ -90,16 +101,19 @@ class TournamentService:
             )
         )
 
-        update_request: UpdateRequest = UpdateRequest(
-            operation=SqlOperator.INSERT,
-            table=Table.of(
-                PredictorConstants.PREDICTOR_SCHEMA,
-                Tournament.TARGET_TABLE
-            ),
-            records=records
+        self.__query_service.update_records(
+            UpdateRequest(
+                operation=SqlOperator.INSERT,
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Tournament.TARGET_TABLE
+                ),
+                records=records
+            )
         )
 
-        self.__query_service.update_records(update_request)
+        for tournament in tournaments:
+            self.__create_tournament_tables(tournament.id)
 
         return tournaments
 
@@ -224,3 +238,30 @@ class TournamentService:
         )
 
         self.__query_service.update_records(update_request)
+
+    def __create_tournament_tables(self, tournament_id: UUID) -> None:
+        self.__table_service.create_table(
+            TableDefinition(
+                schema=PredictorConstants.PREDICTOR_SCHEMA,
+                table=Group.get_target_table(tournament_id),
+                columns=[
+                    ColumnDefinition(
+                        name=StoreConstants.ID,
+                        dataType=SqlDataType.VARCHAR,
+                        primaryKey=True
+                    ),
+                    ColumnDefinition.of("name", SqlDataType.VARCHAR)
+                ]
+            )
+        )
+
+        self.__table_service.create_table(
+            TableDefinition(
+                schema=PredictorConstants.PREDICTOR_SCHEMA,
+                table=PredictorConstants.get_group_teams_table(tournament_id),
+                columns=[
+                    ColumnDefinition.of("groupId", SqlDataType.VARCHAR),
+                    ColumnDefinition.of("teamId", SqlDataType.VARCHAR)
+                ]
+            )
+        )

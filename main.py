@@ -10,11 +10,17 @@ from db_handler.db_handler.function.query_builder_function import (
 from db_handler.db_handler.function.record_builder_function import (
     RecordBuilderFunction
 )
+from db_handler.db_handler.function.table_request_builder_function import (
+    TableRequestBuilderFunction
+)
 from db_handler.db_handler.service.database_initializer_service import (
     DatabaseInitializerService
 )
 from db_handler.db_handler.service.database_query_service import (
     DatabaseQueryService
+)
+from db_handler.db_handler.service.database_table_service import (
+    DatabaseTableService
 )
 from db_handler.db_handler.util.database_utils import DatabaseUtils
 from predictor_api.predictor_api.controller.knockout_template_controller import (  # noqa: E501
@@ -71,13 +77,17 @@ database_query_service: DatabaseQueryService = DatabaseQueryService(
     QueryBuilderFunction(),
     RecordBuilderFunction()
 )
+database_table_service: DatabaseTableService = DatabaseTableService(
+    DatabaseUtils.DATABASE_CONNECTION,
+    TableRequestBuilderFunction()
+)
 knockout_template_service: KnockoutTemplateService = KnockoutTemplateService(
     database_query_service
 )
 
 app.include_router(
     TournamentController(
-        TournamentService(database_query_service)
+        TournamentService(database_query_service, database_table_service)
     ).router
 )
 app.include_router(
