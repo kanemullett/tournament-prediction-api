@@ -436,3 +436,30 @@ class TestTeamService:
             "No teams found with a matching id.",
             httpe.value.detail
         )
+
+    def test_should_delete_team_by_id(self):
+        # When
+        self.__service.delete_team_by_id(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+        )
+
+        # Then
+        delete_args, delete_kwargs = (
+            self.__database_query_service.update_records.call_args
+        )
+        Assertions.assert_type(UpdateRequest, delete_args[0])
+
+        update_request: UpdateRequest = delete_args[0]
+        Assertions.assert_equals(SqlOperator.DELETE, update_request.operation)
+
+        table: Table = update_request.table
+        Assertions.assert_equals("predictor", table.schema_)
+        Assertions.assert_equals("teams", table.table)
+
+        condition: QueryCondition = update_request.conditionGroup.conditions[0]
+        Assertions.assert_equals("id", condition.column.parts[0])
+        Assertions.assert_equals(ConditionOperator.EQUAL, condition.operator)
+        Assertions.assert_equals(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+            condition.value
+        )
