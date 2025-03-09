@@ -26,23 +26,22 @@ class LeagueTemplateController:
                 template service containing league template-based logic.
         """
         self.router: APIRouter = APIRouter(
-            prefix="/league-templates",
             tags=["League Templates"]
         )
         self.__service = league_template_service
 
         self.router.add_api_route(
-            "/",
+            "/league-templates",
             self.get_league_templates,
             methods=["GET"]
         )
         self.router.add_api_route(
-            "/",
+            "/league-templates",
             self.create_league_templates,
             methods=["POST"]
         )
         self.router.add_api_route(
-            "/{league_template_id}",
+            "/league-templates/{league_template_id}",
             self.get_league_template_by_id,
             methods=["GET"],
             responses={
@@ -61,7 +60,7 @@ class LeagueTemplateController:
             }
         )
         self.router.add_api_route(
-            "/{league_template_id}",
+            "/league-templates/{league_template_id}",
             self.delete_league_template_by_id,
             methods=["DELETE"],
             responses={

@@ -35,23 +35,22 @@ class TournamentTemplateController:
                 template-based logic.
         """
         self.router: APIRouter = APIRouter(
-            prefix="/tournament-templates",
             tags=["Tournament Templates"]
         )
         self.__service = tournament_template_service
 
         self.router.add_api_route(
-            "/",
+            "/tournament-templates",
             self.get_tournament_templates,
             methods=["GET"]
         )
         self.router.add_api_route(
-            "/",
+            "/tournament-templates",
             self.create_tournament_templates,
             methods=["POST"]
         )
         self.router.add_api_route(
-            "/{tournament_template_id}",
+            "/tournament-templates/{tournament_template_id}",
             self.get_tournament_template_by_id,
             methods=["GET"],
             responses={
@@ -70,7 +69,7 @@ class TournamentTemplateController:
             }
         )
         self.router.add_api_route(
-            "/{tournament_template_id}",
+            "/tournament-templates/{tournament_template_id}",
             self.delete_tournament_template_by_id,
             methods=["DELETE"],
             responses={

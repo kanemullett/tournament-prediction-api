@@ -26,28 +26,27 @@ class TournamentController:
                 containing tournament-based logic.
         """
         self.router: APIRouter = APIRouter(
-            prefix="/tournaments",
             tags=["Tournaments"]
         )
         self.__service = tournament_service
 
         self.router.add_api_route(
-            "/",
+            "/tournaments",
             self.get_tournaments,
             methods=["GET"]
         )
         self.router.add_api_route(
-            "/",
+            "/tournaments",
             self.create_tournaments,
             methods=["POST"]
         )
         self.router.add_api_route(
-            "/",
+            "/tournaments",
             self.update_tournaments,
             methods=["PUT"]
         )
         self.router.add_api_route(
-            "/{tournament_id}",
+            "/tournaments/{tournament_id}",
             self.get_tournament_by_id,
             methods=["GET"],
             responses={
@@ -66,7 +65,7 @@ class TournamentController:
             }
         )
         self.router.add_api_route(
-            "/{tournament_id}",
+            "/tournaments/{tournament_id}",
             self.delete_tournament_by_id,
             methods=["DELETE"],
             responses={

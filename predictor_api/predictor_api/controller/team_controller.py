@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 
 from predictor_api.predictor_api.model.team import Team
 from predictor_api.predictor_api.model.type.confederation import Confederation
@@ -48,6 +48,17 @@ class TeamController:
                 }
             }
         )
+        self.router.add_api_route(
+            "/teams/{team_id}",
+            self.delete_team_by_id,
+            methods=["DELETE"],
+            responses={
+                204: {
+                    "description": "No Content - The team was successfully "
+                                   "deleted."
+                }
+            }
+        )
 
     async def get_teams(
             self,
@@ -63,3 +74,8 @@ class TeamController:
 
     async def get_team_by_id(self, team_id: UUID) -> Team:
         return self.__service.get_team_by_id(team_id)
+
+    async def delete_team_by_id(self, team_id: UUID) -> Response:
+        self.__service.delete_team_by_id(team_id)
+
+        return Response(status_code=204)

@@ -31,23 +31,22 @@ class KnockoutTemplateController:
                 template service containing knockout template-based logic.
         """
         self.router: APIRouter = APIRouter(
-            prefix="/knockout-templates",
             tags=["Knockout Templates"]
         )
         self.__service = knockout_template_service
 
         self.router.add_api_route(
-            "/",
+            "/knockout-templates",
             self.get_knockout_templates,
             methods=["GET"]
         )
         self.router.add_api_route(
-            "/",
+            "/knockout-templates",
             self.create_knockout_templates,
             methods=["POST"]
         )
         self.router.add_api_route(
-            "/{knockout_template_id}",
+            "/knockout-templates/{knockout_template_id}",
             self.get_knockout_template_by_id,
             methods=["GET"],
             responses={
@@ -66,7 +65,7 @@ class KnockoutTemplateController:
             }
         )
         self.router.add_api_route(
-            "/{knockout_template_id}",
+            "/knockout-templates/{knockout_template_id}",
             self.delete_knockout_template_by_id,
             methods=["DELETE"],
             responses={
