@@ -151,3 +151,27 @@ class TeamService:
                 response.records
             )
         )
+
+    def get_team_by_id(self, team_id: UUID) -> Team:
+        query_response: QueryResponse = self.__query_service.retrieve_records(
+            QueryRequest(
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Team.TARGET_TABLE
+                ),
+                conditionGroup=QueryConditionGroup.of(
+                    QueryCondition.of(
+                        Column.of(StoreConstants.ID),
+                        team_id
+                    )
+                )
+            )
+        )
+
+        if len(query_response.records) == 0:
+            raise HTTPException(
+                status_code=404,
+                detail="No teams found with a matching id."
+            )
+
+        return Team.model_validate(query_response.records[0])

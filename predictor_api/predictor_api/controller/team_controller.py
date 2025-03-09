@@ -30,6 +30,24 @@ class TeamController:
             self.update_teams,
             methods=["PUT"]
         )
+        self.router.add_api_route(
+            "/teams/{team_id}",
+            self.get_team_by_id,
+            methods=["GET"],
+            responses={
+                404: {
+                    "description": "Not Found - No teams found with a "
+                                   "matching id.",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "detail": "No teams found with a matching id."
+                            }
+                        }
+                    }
+                }
+            }
+        )
 
     async def get_teams(
             self,
@@ -42,3 +60,6 @@ class TeamController:
 
     async def update_teams(self, teams: list[Team]) -> list[Team]:
         return self.__service.update_teams(teams)
+
+    async def get_team_by_id(self, team_id: UUID) -> Team:
+        return self.__service.get_team_by_id(team_id)
