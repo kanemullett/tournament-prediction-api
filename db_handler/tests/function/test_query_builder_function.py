@@ -327,10 +327,10 @@ class TestQueryBuilderFunction:
 
         # When
         query_string: str = self.__query_builder.apply(sql_query)
-        expected: str = ("UPDATE \"test_schema\".\"test_table\" SET col1 = "
-                         "CASE WHEN id = 'id1' THEN 'val1' ELSE col1 END, "
-                         "col2 = CASE WHEN id = 'id1' THEN 2 ELSE col2 END "
-                         "WHERE \"id\" IN ('id1') ;")
+        expected: str = ("UPDATE \"test_schema\".\"test_table\" SET \"col1\" "
+                         "= CASE WHEN \"id\" = 'id1' THEN 'val1' ELSE "
+                         "\"col1\" END, \"col2\" = CASE WHEN \"id\" = 'id1' "
+                         "THEN 2 ELSE \"col2\" END WHERE \"id\" IN ('id1') ;")
 
         # Then
         Assertions.assert_equals(expected, query_string)
@@ -356,11 +356,12 @@ class TestQueryBuilderFunction:
 
         # When
         query_string: str = self.__query_builder.apply(sql_query)
-        expected: str = ("UPDATE \"test_schema\".\"test_table\" SET col1 = "
-                         "CASE WHEN id = 'id1' THEN 'val1' ELSE col1 END, "
-                         "col2 = CASE WHEN id = 'id1' THEN 2 WHEN id = 'id2' "
-                         "THEN 5 ELSE col2 END, col3 = CASE WHEN id = 'id2' "
-                         "THEN 'val3' ELSE col3 END WHERE \"id\" IN ('id1', "
+        expected: str = ("UPDATE \"test_schema\".\"test_table\" SET \"col1\" "
+                         "= CASE WHEN \"id\" = 'id1' THEN 'val1' ELSE "
+                         "\"col1\" END, \"col2\" = CASE WHEN \"id\" = 'id1' "
+                         "THEN 2 WHEN \"id\" = 'id2' THEN 5 ELSE \"col2\" "
+                         "END, \"col3\" = CASE WHEN \"id\" = 'id2' THEN "
+                         "'val3' ELSE \"col3\" END WHERE \"id\" IN ('id1', "
                          "'id2') ;")
 
         # Then

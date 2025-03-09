@@ -25,6 +25,11 @@ class TeamController:
             self.create_teams,
             methods=["POST"]
         )
+        self.router.add_api_route(
+            "/teams",
+            self.update_teams,
+            methods=["PUT"]
+        )
 
     async def get_teams(
             self,
@@ -34,3 +39,6 @@ class TeamController:
 
     async def create_teams(self, teams: list[Team]) -> list[Team]:
         return self.__service.create_teams(teams)
+
+    async def update_teams(self, teams: list[Team]) -> list[Team]:
+        return self.__service.update_teams(teams)

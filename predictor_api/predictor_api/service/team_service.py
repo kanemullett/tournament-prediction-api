@@ -11,11 +11,15 @@ from db_handler.db_handler.model.query_condition_group import (
 from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_response import QueryResponse
 from db_handler.db_handler.model.table import Table
+from db_handler.db_handler.model.type.condition_operator import (
+    ConditionOperator
+)
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.update_request import UpdateRequest
 from db_handler.db_handler.service.database_query_service import (
     DatabaseQueryService
 )
+from db_handler.db_handler.util.store_constants import StoreConstants
 from predictor_api.predictor_api.model.team import Team
 from predictor_api.predictor_api.model.type.confederation import Confederation
 from predictor_api.predictor_api.util.predictor_constants import (
@@ -94,3 +98,56 @@ class TeamService:
         )
 
         return teams
+
+    def update_teams(self, teams: list[Team]) -> list[Team]:
+        self.__query_service.update_records(
+            UpdateRequest(
+                operation=SqlOperator.UPDATE,
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Team.TARGET_TABLE
+                ),
+                records=list(
+                    map(
+                        lambda team:
+                        team.model_dump(exclude_none=True),
+                        teams
+                    )
+                )
+            )
+        )
+
+        updated_ids: list[UUID] = list(
+            map(
+                lambda team:
+                team.id,
+                teams
+            )
+        )
+
+        response: QueryResponse = self.__query_service.retrieve_records(
+            QueryRequest(
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Team.TARGET_TABLE
+                ),
+                conditionGroup=QueryConditionGroup.of(
+                    QueryCondition(
+                        column=Column.of(StoreConstants.ID),
+                        operator=ConditionOperator.IN,
+                        value=updated_ids
+                    )
+                ),
+                orderBy=OrderBy.of(
+                    Column.of("name")
+                )
+            )
+        )
+
+        return list(
+            map(
+                lambda record:
+                Team.model_validate(record),
+                response.records
+            )
+        )
