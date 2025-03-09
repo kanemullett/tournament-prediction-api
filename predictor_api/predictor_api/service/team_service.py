@@ -11,6 +11,8 @@ from db_handler.db_handler.model.query_condition_group import (
 from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_response import QueryResponse
 from db_handler.db_handler.model.table import Table
+from db_handler.db_handler.model.type.sql_operator import SqlOperator
+from db_handler.db_handler.model.update_request import UpdateRequest
 from db_handler.db_handler.service.database_query_service import (
     DatabaseQueryService
 )
@@ -72,3 +74,23 @@ class TeamService:
                 response.records
             )
         )
+
+    def create_teams(self, teams: list[Team]) -> list[Team]:
+        self.__query_service.update_records(
+            UpdateRequest(
+                operation=SqlOperator.INSERT,
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Team.TARGET_TABLE
+                ),
+                records=list(
+                    map(
+                        lambda team:
+                        team.model_dump(exclude_none=True),
+                        teams
+                    )
+                )
+            )
+        )
+
+        return teams

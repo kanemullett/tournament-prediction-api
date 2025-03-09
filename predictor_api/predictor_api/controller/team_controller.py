@@ -20,10 +20,17 @@ class TeamController:
             self.get_teams,
             methods=["GET"]
         )
+        self.router.add_api_route(
+            "/teams",
+            self.create_teams,
+            methods=["POST"]
+        )
 
     async def get_teams(
             self,
             confederation: Confederation = None,
             tournament_id: UUID = None) -> list[Team]:
-
         return self.__service.get_teams(confederation, tournament_id)
+
+    async def create_teams(self, teams: list[Team]) -> list[Team]:
+        return self.__service.create_teams(teams)
