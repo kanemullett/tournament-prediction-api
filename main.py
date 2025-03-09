@@ -23,6 +23,9 @@ from predictor_api.predictor_api.controller.knockout_template_controller import 
 from predictor_api.predictor_api.controller.league_template_controller import (
     LeagueTemplateController
 )
+from predictor_api.predictor_api.controller.team_controller import (
+    TeamController
+)
 from predictor_api.predictor_api.controller.tournament_controller import (
     TournamentController
 )
@@ -35,6 +38,7 @@ from predictor_api.predictor_api.service.knockout_template_service import (
 from predictor_api.predictor_api.service.league_template_service import (
     LeagueTemplateService
 )
+from predictor_api.predictor_api.service.team_service import TeamService
 from predictor_api.predictor_api.service.tournament_service import (
     TournamentService
 )
@@ -92,5 +96,12 @@ app.include_router(
 app.include_router(
     KnockoutTemplateController(
         knockout_template_service
+    ).router
+)
+app.include_router(
+    TeamController(
+        TeamService(
+            database_query_service
+        )
     ).router
 )

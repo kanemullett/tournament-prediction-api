@@ -103,6 +103,15 @@ class QueryBuilderFunction:
                 self.__build_conditions(sql_query.conditionGroup)
             )
 
+        if sql_query.orderBy is not None:
+            string_parts.append("ORDER BY")
+            string_parts.append(
+                self.__build_column(
+                    sql_query.orderBy.column,
+                    True)
+            )
+            string_parts.append(sql_query.orderBy.direction.value)
+
         return string_parts
 
     def __build_insert_statement(
