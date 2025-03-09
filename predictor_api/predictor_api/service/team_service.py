@@ -28,14 +28,33 @@ from predictor_api.predictor_api.util.predictor_constants import (
 
 
 class TeamService:
+    """
+    Service for performing team-related actions.
+
+    Attributes:
+        __query_service (DatabaseQueryService): The database query service.
+    """
 
     def __init__(self, database_query_service: DatabaseQueryService) -> None:
+        """
+        Initialise the TeamService.
+
+        Args:
+            database_query_service (DatabaseQueryService): The database query
+                service.
+        """
         self.__query_service = database_query_service
 
     def get_teams(
             self,
             confederation: Confederation = None,
             tournament_id: UUID = None) -> list[Team]:
+        """
+        Retrieve stored teams.
+
+        Returns:
+            list[Team]: The stored teams.
+        """
         if tournament_id is not None:
             raise HTTPException(
                 status_code=501,
@@ -80,6 +99,15 @@ class TeamService:
         )
 
     def create_teams(self, teams: list[Team]) -> list[Team]:
+        """
+        Create new teams.
+
+        Args:
+            teams (list[Team]): The new teams to create.
+
+        Returns:
+            list[Team]: The newly created teams.
+        """
         self.__query_service.update_records(
             UpdateRequest(
                 operation=SqlOperator.INSERT,
@@ -100,6 +128,15 @@ class TeamService:
         return teams
 
     def update_teams(self, teams: list[Team]) -> list[Team]:
+        """
+        Update existing teams.
+
+        Args:
+            teams (list[Team]): The teams to update.
+
+        Returns:
+            list[Team]: The newly updated teams.
+        """
         self.__query_service.update_records(
             UpdateRequest(
                 operation=SqlOperator.UPDATE,
@@ -153,6 +190,15 @@ class TeamService:
         )
 
     def get_team_by_id(self, team_id: UUID) -> Team:
+        """
+        Retrieve a single stored team by its id.
+
+        Args:
+            team_id (UUID): The id of the team to retrieve.
+
+        Returns:
+            Team: The retrieved team.
+        """
         query_response: QueryResponse = self.__query_service.retrieve_records(
             QueryRequest(
                 table=Table.of(
@@ -177,6 +223,12 @@ class TeamService:
         return Team.model_validate(query_response.records[0])
 
     def delete_team_by_id(self, team_id: UUID) -> None:
+        """
+        Delete a single stored team by its id.
+
+        Args:
+            team_id (UUID): The id of the team to delete.
+        """
         self.__query_service.update_records(
             UpdateRequest(
                 operation=SqlOperator.DELETE,

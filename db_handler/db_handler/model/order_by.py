@@ -5,6 +5,13 @@ from db_handler.db_handler.model.type.order_direction import OrderDirection
 
 
 class OrderBy(BaseModel):
+    """
+    Object representing an order by clause.
+
+    Attributes:
+        column (Column): The column to order by.
+        direction (OrderDirection): The direction in which to order.
+    """
     column: Column
     direction: OrderDirection = OrderDirection.ASC
 
