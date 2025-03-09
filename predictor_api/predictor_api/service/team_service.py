@@ -168,7 +168,7 @@ class TeamService:
             )
         )
 
-        if len(query_response.records) == 0:
+        if query_response.recordCount == 0:
             raise HTTPException(
                 status_code=404,
                 detail="No teams found with a matching id."

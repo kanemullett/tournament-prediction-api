@@ -3,6 +3,9 @@ from uuid import UUID
 
 import pytest
 
+from fastapi import HTTPException
+from pytest import raises
+
 from predictor_api.predictor_api.controller.team_controller import (
     TeamController
 )
@@ -181,3 +184,48 @@ class TestTeamController:
         Assertions.assert_equals("Botswana", team2.name)
         Assertions.assert_equals("BOT.png", team2.imagePath)
         Assertions.assert_equals(Confederation.CAF, team2.confederation)
+
+    @pytest.mark.asyncio
+    async def test_should_pass_team_as_response(self):
+        # Given
+        self.__service.get_team_by_id.return_value = Team(
+            id=UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+            name="Bosnia & Herzegovina",
+            imagePath="BIH.png",
+            confederation=Confederation.UEFA
+        )
+
+        # When
+        team: Team = await self.__controller.get_team_by_id(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+        )
+
+        # Then
+        Assertions.assert_equals(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+            team.id
+        )
+        Assertions.assert_equals("Bosnia & Herzegovina", team.name)
+        Assertions.assert_equals("BIH.png", team.imagePath)
+        Assertions.assert_equals(Confederation.UEFA, team.confederation)
+
+    @pytest.mark.asyncio
+    async def test_should_pass_error_if_team_not_found(self):
+        # Given
+        self.__service.get_team_by_id.side_effect = HTTPException(
+            status_code=404,
+            detail="No teams found with a matching id."
+        )
+
+        # When
+        with raises(HTTPException) as httpe:
+            await self.__controller.get_team_by_id(
+                UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+            )
+
+        # Then
+        Assertions.assert_equals(404, httpe.value.status_code)
+        Assertions.assert_equals(
+            "No teams found with a matching id.",
+            httpe.value.detail
+        )

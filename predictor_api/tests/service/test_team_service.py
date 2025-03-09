@@ -2,6 +2,9 @@ from typing import Any
 from unittest.mock import MagicMock
 from uuid import UUID
 
+from fastapi import HTTPException
+from pytest import raises
+
 from db_handler.db_handler.model.order_by import OrderBy
 from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.query_request import QueryRequest
@@ -358,3 +361,78 @@ class TestTeamService:
         Assertions.assert_equals("Botswana", team2.name)
         Assertions.assert_equals("BOT.png", team2.imagePath)
         Assertions.assert_equals(Confederation.CAF, team2.confederation)
+
+    def test_returns_team_by_id(self):
+        # Given
+        self.__database_query_service.retrieve_records.return_value = (
+            QueryResponse(
+                referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
+                recordCount=1,
+                records=[
+                    {
+                        "id": "c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
+                        "name": "Bosnia & Herzegovina",
+                        "imagePath": "BIH.png",
+                        "confederation": "UEFA"
+                    }
+                ]
+            )
+        )
+
+        # When
+        team: Team = self.__service.get_team_by_id(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+        )
+
+        # Then
+        teams_args, teams_kwargs = (
+            self.__database_query_service.retrieve_records.call_args
+        )
+        Assertions.assert_type(QueryRequest, teams_args[0])
+
+        request: QueryRequest = teams_args[0]
+
+        table: Table = request.table
+        Assertions.assert_equals("predictor", table.schema_)
+        Assertions.assert_equals("teams", table.table)
+
+        Assertions.assert_equals(1, len(request.conditionGroup.conditions))
+
+        condition: QueryCondition = request.conditionGroup.conditions[0]
+        Assertions.assert_equals(["id"], condition.column.parts)
+        Assertions.assert_equals(ConditionOperator.EQUAL, condition.operator)
+        Assertions.assert_equals(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+            condition.value
+        )
+
+        Assertions.assert_equals(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+            team.id
+        )
+        Assertions.assert_equals("Bosnia & Herzegovina", team.name)
+        Assertions.assert_equals("BIH.png", team.imagePath)
+        Assertions.assert_equals(Confederation.UEFA, team.confederation)
+
+    def test_should_raise_exception_if_team_not_found(self):
+        # Given
+        self.__database_query_service.retrieve_records.return_value = (
+            QueryResponse(
+                referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
+                recordCount=0,
+                records=[]
+            )
+        )
+
+        # When
+        with raises(HTTPException) as httpe:
+            self.__service.get_team_by_id(
+                UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4")
+            )
+
+        # Then
+        Assertions.assert_equals(404, httpe.value.status_code)
+        Assertions.assert_equals(
+            "No teams found with a matching id.",
+            httpe.value.detail
+        )
