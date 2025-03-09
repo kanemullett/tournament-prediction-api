@@ -2,7 +2,7 @@ from typing import Optional, ClassVar
 from uuid import UUID
 
 from db_handler.db_handler.model.database_record import DatabaseRecord
-from predictor_api.predictor_api.model.type.competition import Competition
+from predictor_api.predictor_api.model.type.confederation import Confederation
 
 
 class Tournament(DatabaseRecord):
@@ -11,11 +11,12 @@ class Tournament(DatabaseRecord):
 
     Attributes:
         year (Optional[int]): The year of the tournament.
-        competition (Optional[Competition]): The type of competition.
+        confederation (Optional[Confederation]): The confederation of the
+            tournament.
         templateId (Optional[UUID]): The id of the tournament's template.
     """
     year: Optional[int] = None
-    competition: Optional[Competition] = None
+    confederation: Optional[Confederation] = None
     templateId: Optional[UUID] = None
 
     TARGET_TABLE: ClassVar[str] = "tournaments"

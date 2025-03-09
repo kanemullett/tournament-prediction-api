@@ -103,6 +103,15 @@ class QueryBuilderFunction:
                 self.__build_conditions(sql_query.conditionGroup)
             )
 
+        if sql_query.orderBy is not None:
+            string_parts.append("ORDER BY")
+            string_parts.append(
+                self.__build_column(
+                    sql_query.orderBy.column,
+                    True)
+            )
+            string_parts.append(sql_query.orderBy.direction.value)
+
         return string_parts
 
     def __build_insert_statement(
@@ -510,9 +519,9 @@ class QueryBuilderFunction:
         )
 
         return (
-            f"{column} = CASE "
-            f"{when_clauses} "
-            f"ELSE {column} END"
+            f'"{column}" = CASE '
+            f'{when_clauses} '
+            f'ELSE "{column}" END'
         )
 
     def __build_when_clause(self, column: str, record: dict[str, Any]) -> str:
@@ -529,5 +538,6 @@ class QueryBuilderFunction:
         Examples:
             - WHEN id = 'id1' THEN 'val1'
         """
-        return (f"WHEN {StoreConstants.ID} = '{record[StoreConstants.ID]}' "
-                f"THEN {self.__build_value(record[column])}")
+        return (f"WHEN \"{StoreConstants.ID}\" = "
+                f"'{record[StoreConstants.ID]}' THEN "
+                f"{self.__build_value(record[column])}")

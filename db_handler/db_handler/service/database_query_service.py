@@ -64,7 +64,8 @@ class DatabaseQueryService:
             table=query_request.table,
             columns=query_request.columns,
             tableJoins=query_request.tableJoins,
-            conditionGroup=query_request.conditionGroup
+            conditionGroup=query_request.conditionGroup,
+            orderBy=query_request.orderBy
         )
 
         this_cursor.execute(self.__query_builder.apply(sql_query))
