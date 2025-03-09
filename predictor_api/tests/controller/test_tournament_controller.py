@@ -8,10 +8,10 @@ from predictor_api.predictor_api.controller.tournament_controller import (
     TournamentController
 )
 from predictor_api.predictor_api.model.tournament import Tournament
-from predictor_api.predictor_api.model.type.competition import Competition
 
 import pytest
 
+from predictor_api.predictor_api.model.type.confederation import Confederation
 from predictor_common.test_resources.assertions import Assertions
 
 
@@ -28,12 +28,11 @@ class TestTournamentController:
             Tournament(
                 id="c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
                 year=2024,
-                competition=Competition.EUROS
+                confederation=Confederation.UEFA
             ),
             Tournament(
                 id="6ee28143-1286-4618-a8b9-ad86d348ead1",
-                year=2026,
-                competition=Competition.WORLD_CUP
+                year=2026
             )
         ]
 
@@ -49,16 +48,13 @@ class TestTournamentController:
         Assertions.assert_type(Tournament, tournament1)
         Assertions.assert_type(UUID, tournament1.id)
         Assertions.assert_equals(2024, tournament1.year)
-        Assertions.assert_equals(Competition.EUROS, tournament1.competition)
+        Assertions.assert_equals(Confederation.UEFA, tournament1.confederation)
 
         tournament2 = tournaments[1]
         Assertions.assert_type(Tournament, tournament2)
         Assertions.assert_type(UUID, tournament2.id)
         Assertions.assert_equals(2026, tournament2.year)
-        Assertions.assert_equals(
-            Competition.WORLD_CUP,
-            tournament2.competition
-        )
+        Assertions.assert_none(tournament2.confederation)
 
     @pytest.mark.asyncio
     async def test_should_pass_created_tournaments_as_response(self):
@@ -66,11 +62,10 @@ class TestTournamentController:
         tournaments: list[Tournament] = [
             Tournament(
                 year=2024,
-                competition=Competition.EUROS
+                confederation=Confederation.UEFA
             ),
             Tournament(
-                year=2026,
-                competition=Competition.WORLD_CUP
+                year=2026
             )
         ]
 
@@ -78,12 +73,11 @@ class TestTournamentController:
             Tournament(
                 id="c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
                 year=2024,
-                competition=Competition.EUROS
+                confederation=Confederation.UEFA
             ),
             Tournament(
                 id="6ee28143-1286-4618-a8b9-ad86d348ead1",
-                year=2026,
-                competition=Competition.WORLD_CUP
+                year=2026
             )
         ]
 
@@ -99,16 +93,13 @@ class TestTournamentController:
         Assertions.assert_type(Tournament, tournament1)
         Assertions.assert_type(UUID, tournament1.id)
         Assertions.assert_equals(2024, tournament1.year)
-        Assertions.assert_equals(Competition.EUROS, tournament1.competition)
+        Assertions.assert_equals(Confederation.UEFA, tournament1.confederation)
 
         tournament2 = created[1]
         Assertions.assert_type(Tournament, tournament2)
         Assertions.assert_type(UUID, tournament2.id)
         Assertions.assert_equals(2026, tournament2.year)
-        Assertions.assert_equals(
-            Competition.WORLD_CUP,
-            tournament2.competition
-        )
+        Assertions.assert_none(tournament2.confederation)
 
     @pytest.mark.asyncio
     async def test_should_pass_updated_tournaments_as_response(self):
@@ -116,7 +107,7 @@ class TestTournamentController:
         tournaments: list[Tournament] = [
             Tournament(
                 id=UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
-                competition=Competition.EUROS
+                confederation=Confederation.UEFA
             ),
             Tournament(
                 id=UUID("023b3aa0-7f61-4331-8206-d75232f49ebc"),
@@ -128,12 +119,11 @@ class TestTournamentController:
             Tournament(
                 id=UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
                 year=2024,
-                competition=Competition.EUROS
+                confederation=Confederation.UEFA
             ),
             Tournament(
                 id=UUID("023b3aa0-7f61-4331-8206-d75232f49ebc"),
-                year=2026,
-                competition=Competition.WORLD_CUP
+                year=2026
             )
         ]
 
@@ -149,16 +139,13 @@ class TestTournamentController:
         Assertions.assert_type(Tournament, tournament1)
         Assertions.assert_type(UUID, tournament1.id)
         Assertions.assert_equals(2024, tournament1.year)
-        Assertions.assert_equals(Competition.EUROS, tournament1.competition)
+        Assertions.assert_equals(Confederation.UEFA, tournament1.confederation)
 
         tournament2 = updated[1]
         Assertions.assert_type(Tournament, tournament2)
         Assertions.assert_type(UUID, tournament2.id)
         Assertions.assert_equals(2026, tournament2.year)
-        Assertions.assert_equals(
-            Competition.WORLD_CUP,
-            tournament2.competition
-        )
+        Assertions.assert_none(tournament2.confederation)
 
     @pytest.mark.asyncio
     async def test_should_pass_found_tournament_as_response(self):
@@ -166,7 +153,7 @@ class TestTournamentController:
         self.__service.get_tournament_by_id.return_value = Tournament(
             id="c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
             year=2024,
-            competition=Competition.EUROS
+            confederation=Confederation.UEFA
         )
 
         # When
@@ -180,7 +167,7 @@ class TestTournamentController:
             tournament.id
         )
         Assertions.assert_equals(2024, tournament.year)
-        Assertions.assert_equals(Competition.EUROS, tournament.competition)
+        Assertions.assert_equals(Confederation.UEFA, tournament.confederation)
 
     @pytest.mark.asyncio
     async def test_should_pass_error_if_tournament_not_found(self):

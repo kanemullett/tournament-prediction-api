@@ -15,7 +15,7 @@ from db_handler.db_handler.model.type.condition_operator import (
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.update_request import UpdateRequest
 from predictor_api.predictor_api.model.tournament import Tournament
-from predictor_api.predictor_api.model.type.competition import Competition
+from predictor_api.predictor_api.model.type.confederation import Confederation
 from predictor_api.predictor_api.service.tournament_service import (
     TournamentService
 )
@@ -41,12 +41,12 @@ class TestTournamentService:
                     {
                         "id": "c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
                         "year": 2024,
-                        "competition": "EUROS"
+                        "confederation": "UEFA"
                     },
                     {
                         "id": "6ee28143-1286-4618-a8b9-ad86d348ead1",
                         "year": 2026,
-                        "competition": "WORLD_CUP"
+                        "confederation": None
                     }
                 ]
             )
@@ -75,27 +75,23 @@ class TestTournamentService:
         Assertions.assert_type(Tournament, tournament1)
         Assertions.assert_type(UUID, tournament1.id)
         Assertions.assert_equals(2024, tournament1.year)
-        Assertions.assert_equals(Competition.EUROS, tournament1.competition)
+        Assertions.assert_equals(Confederation.UEFA, tournament1.confederation)
 
         tournament2 = tournaments[1]
         Assertions.assert_type(Tournament, tournament2)
         Assertions.assert_type(UUID, tournament2.id)
         Assertions.assert_equals(2026, tournament2.year)
-        Assertions.assert_equals(
-            Competition.WORLD_CUP,
-            tournament2.competition
-        )
+        Assertions.assert_none(tournament2.confederation)
 
     def test_should_create_tournaments(self):
         # Given
         tournaments: list[Tournament] = [
             Tournament(
                 year=2024,
-                competition=Competition.EUROS
+                confederation=Confederation.UEFA
             ),
             Tournament(
-                year=2022,
-                competition=Competition.WORLD_CUP
+                year=2022
             )
         ]
 
@@ -126,12 +122,12 @@ class TestTournamentService:
         record1: dict[str, Any] = update_request.records[0]
         Assertions.assert_type(UUID, record1["id"])
         Assertions.assert_equals(2024, record1["year"])
-        Assertions.assert_equals(Competition.EUROS, record1["competition"])
+        Assertions.assert_equals(Confederation.UEFA, record1["confederation"])
 
         record2: dict[str, Any] = update_request.records[1]
         Assertions.assert_type(UUID, record2["id"])
         Assertions.assert_equals(2022, record2["year"])
-        Assertions.assert_equals(Competition.WORLD_CUP, record2["competition"])
+        Assertions.assert_none(record2["confederation"])
 
         Assertions.assert_equals(2, len(created))
 
@@ -139,23 +135,20 @@ class TestTournamentService:
         Assertions.assert_type(Tournament, tournament1)
         Assertions.assert_type(UUID, tournament1.id)
         Assertions.assert_equals(2024, tournament1.year)
-        Assertions.assert_equals(Competition.EUROS, tournament1.competition)
+        Assertions.assert_equals(Confederation.UEFA, tournament1.confederation)
 
         tournament2 = created[1]
         Assertions.assert_type(Tournament, tournament2)
         Assertions.assert_type(UUID, tournament2.id)
         Assertions.assert_equals(2022, tournament2.year)
-        Assertions.assert_equals(
-            Competition.WORLD_CUP,
-            tournament2.competition
-        )
+        Assertions.assert_none(tournament2.confederation)
 
     def test_should_update_tournaments(self):
         # Given
         tournaments: list[Tournament] = [
             Tournament(
                 id=UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
-                competition=Competition.EUROS
+                confederation=Confederation.UEFA
             ),
             Tournament(
                 id=UUID("023b3aa0-7f61-4331-8206-d75232f49ebc"),
@@ -171,12 +164,12 @@ class TestTournamentService:
                     {
                         "id": "c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
                         "year": 2024,
-                        "competition": "EUROS"
+                        "confederation": "UEFA"
                     },
                     {
                         "id": "023b3aa0-7f61-4331-8206-d75232f49ebc",
                         "year": 2022,
-                        "competition": "WORLD_CUP"
+                        "confederation": None
                     }
                 ]
             )
@@ -208,7 +201,7 @@ class TestTournamentService:
             UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
             record1["id"]
         )
-        Assertions.assert_equals(Competition.EUROS, record1["competition"])
+        Assertions.assert_equals(Confederation.UEFA, record1["confederation"])
 
         record2: dict[str, Any] = update_request.records[1]
         Assertions.assert_equals(
@@ -251,7 +244,7 @@ class TestTournamentService:
             tournament1.id
         )
         Assertions.assert_equals(2024, tournament1.year)
-        Assertions.assert_equals(Competition.EUROS, tournament1.competition)
+        Assertions.assert_equals(Confederation.UEFA, tournament1.confederation)
 
         tournament2 = updated[1]
         Assertions.assert_type(Tournament, tournament2)
@@ -260,10 +253,7 @@ class TestTournamentService:
             tournament2.id
         )
         Assertions.assert_equals(2022, tournament2.year)
-        Assertions.assert_equals(
-            Competition.WORLD_CUP,
-            tournament2.competition
-        )
+        Assertions.assert_none(tournament2.confederation)
 
     def test_should_return_tournament_by_id(self):
         # Given
@@ -275,7 +265,7 @@ class TestTournamentService:
                     {
                         "id": "c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
                         "year": 2024,
-                        "competition": "EUROS"
+                        "confederation": "UEFA"
                     }
                 ]
             )
@@ -314,7 +304,7 @@ class TestTournamentService:
             tournament.id
         )
         Assertions.assert_equals(2024, tournament.year)
-        Assertions.assert_equals(Competition.EUROS, tournament.competition)
+        Assertions.assert_equals(Confederation.UEFA, tournament.confederation)
 
     def test_should_raise_exception_if_tournament_not_found(self):
         # Given
