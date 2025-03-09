@@ -21,7 +21,7 @@ class TeamController:
             methods=["GET"]
         )
 
-    def get_teams(
+    async def get_teams(
             self,
             confederation: Confederation = None,
             tournament_id: UUID = None) -> list[Team]:
