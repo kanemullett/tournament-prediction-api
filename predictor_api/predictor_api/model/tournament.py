@@ -15,6 +15,7 @@ class Tournament(DatabaseRecord):
             tournament.
         templateId (Optional[UUID]): The id of the tournament's template.
     """
+    name: Optional[str] = None
     year: Optional[int] = None
     confederation: Optional[Confederation] = None
     templateId: Optional[UUID] = None
