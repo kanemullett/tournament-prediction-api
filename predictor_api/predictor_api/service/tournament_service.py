@@ -32,7 +32,9 @@ from db_handler.db_handler.util.store_constants import StoreConstants
 from predictor_api.predictor_api.model.group import Group
 from predictor_api.predictor_api.model.league_template import LeagueTemplate
 from predictor_api.predictor_api.model.tournament import Tournament
-from predictor_api.predictor_api.model.tournament_template import TournamentTemplate
+from predictor_api.predictor_api.model.tournament_template import (
+    TournamentTemplate
+)
 from predictor_api.predictor_api.util.predictor_constants import (
     PredictorConstants
 )
@@ -325,7 +327,6 @@ class TournamentService:
 
         if response.recordCount > 0:
             group_count: int = response.records[0]["groupCount"]
-            groups: list[Group]
 
             self.__query_service.update_records(
                 UpdateRequest(
