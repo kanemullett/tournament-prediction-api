@@ -112,8 +112,8 @@ class TournamentService:
             )
         )
 
-        for tournament in tournaments:
-            self.__create_tournament_tables(tournament.id)
+        for tourn in tournaments:
+            self.__create_tournament_tables(tourn.id)
 
         return tournaments
 
@@ -226,18 +226,23 @@ class TournamentService:
         Args:
             tournament_id (UUID): The id of the tournament to delete.
         """
-        update_request: UpdateRequest = UpdateRequest(
-            operation=SqlOperator.DELETE,
-            table=Table.of(
-                PredictorConstants.PREDICTOR_SCHEMA,
-                Tournament.TARGET_TABLE
-            ),
-            conditionGroup=QueryConditionGroup.of(
-                QueryCondition.of(Column.of(StoreConstants.ID), tournament_id)
+        self.__delete_tournament_tables(tournament_id)
+
+        self.__query_service.update_records(
+            UpdateRequest(
+                operation=SqlOperator.DELETE,
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Tournament.TARGET_TABLE
+                ),
+                conditionGroup=QueryConditionGroup.of(
+                    QueryCondition.of(
+                        Column.of(StoreConstants.ID),
+                        tournament_id
+                    )
+                )
             )
         )
-
-        self.__query_service.update_records(update_request)
 
     def __create_tournament_tables(self, tournament_id: UUID) -> None:
         self.__table_service.create_table(
@@ -263,5 +268,20 @@ class TournamentService:
                     ColumnDefinition.of("groupId", SqlDataType.VARCHAR),
                     ColumnDefinition.of("teamId", SqlDataType.VARCHAR)
                 ]
+            )
+        )
+
+    def __delete_tournament_tables(self, tournament_id: UUID) -> None:
+        self.__table_service.delete_table(
+            Table.of(
+                PredictorConstants.PREDICTOR_SCHEMA,
+                Group.get_target_table(tournament_id)
+            )
+        )
+
+        self.__table_service.delete_table(
+            Table.of(
+                PredictorConstants.PREDICTOR_SCHEMA,
+                PredictorConstants.get_group_teams_table(tournament_id)
             )
         )
