@@ -119,9 +119,51 @@ class TournamentService:
             )
         )
 
-        for tourn in tournaments:
-            self.__create_tournament_tables(tourn.id)
-            self.__create_groups(tourn.id)
+        response: QueryResponse = self.__query_service.retrieve_records(
+            QueryRequest(
+                columns=[
+                    Column.of("tourn", StoreConstants.ID),
+                    Column.of("temp", "leagueTemplateId"),
+                    Column.of("temp", "knockoutTemplateId")
+                ],
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Tournament.TARGET_TABLE,
+                    "tourn"
+                ),
+                tableJoins=[
+                    TableJoin.of(
+                        Table.of(
+                            PredictorConstants.PREDICTOR_SCHEMA,
+                            TournamentTemplate.TARGET_TABLE,
+                            "temp"
+                        ),
+                        QueryCondition.of(
+                            Column.of("tourn", "templateId"),
+                            Column.of("temp", StoreConstants.ID)
+                        ),
+                        TableJoinType.LEFT
+                    )
+                ],
+                conditionGroup=QueryConditionGroup.of(
+                    QueryCondition(
+                        column=Column.of("tourn", StoreConstants.ID),
+                        operator=ConditionOperator.IN,
+                        value=list(
+                            map(
+                                lambda tournament:
+                                tournament.id,
+                                tournaments
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        for record in response.records:
+            if record["leagueTemplateId"] is not None:
+                self.__create_group_tables(UUID(record[StoreConstants.ID]))
 
         return tournaments
 
@@ -252,7 +294,7 @@ class TournamentService:
             )
         )
 
-    def __create_tournament_tables(self, tournament_id: UUID) -> None:
+    def __create_group_tables(self, tournament_id: UUID) -> None:
         self.__table_service.create_table(
             TableDefinition(
                 schema=PredictorConstants.PREDICTOR_SCHEMA,
@@ -278,6 +320,8 @@ class TournamentService:
                 ]
             )
         )
+
+        self.__create_groups(tournament_id)
 
     def __create_groups(self, tournament_id: UUID) -> None:
         response: QueryResponse = self.__query_service.retrieve_records(

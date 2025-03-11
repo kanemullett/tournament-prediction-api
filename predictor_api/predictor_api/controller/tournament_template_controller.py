@@ -55,8 +55,7 @@ class TournamentTemplateController:
             methods=["GET"],
             responses={
                 404: {
-                    "description": "Not Found - No tournament templates found "
-                                   "with a matching id.",
+                    "description": "Not Found",
                     "content": {
                         "application/json": {
                             "example": {
@@ -74,13 +73,10 @@ class TournamentTemplateController:
             methods=["DELETE"],
             responses={
                 204: {
-                    "description": "No Content - The tournament template was "
-                                   "successfully deleted."
+                    "description": "No Content"
                 },
                 409: {
-                    "description": "Conflict - Cannot delete tournament "
-                                   "template as it is part of an existing "
-                                   "tournament.",
+                    "description": "Conflict",
                     "content": {
                         "application/json": {
                             "example": {

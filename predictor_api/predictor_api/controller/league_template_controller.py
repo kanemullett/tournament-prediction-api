@@ -46,8 +46,7 @@ class LeagueTemplateController:
             methods=["GET"],
             responses={
                 404: {
-                    "description": "Not Found - No league templates found "
-                                   "with a matching id.",
+                    "description": "Not Found",
                     "content": {
                         "application/json": {
                             "example": {
@@ -65,8 +64,7 @@ class LeagueTemplateController:
             methods=["DELETE"],
             responses={
                 204: {
-                    "description": "No Content - The league template was "
-                                   "successfully deleted."
+                    "description": "No Content"
                 },
                 409: {
                     "description": "Conflict - The league template cannot be "

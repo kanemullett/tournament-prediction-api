@@ -18,27 +18,187 @@ class GroupController:
         self.router.add_api_route(
             "/tournaments/{tournament_id}/groups",
             self.get_groups,
-            methods=["GET"]
+            methods=["GET"],
+            responses={
+                404: {
+                    "description": "Not Found",
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "tournamentNotFound": {
+                                    "summary": "Tournament not found",
+                                    "value": {
+                                        "detail": "No tournaments found with "
+                                                  "a matching id."
+                                    }
+                                },
+                                "noGroupStage": {
+                                    "summary": "Tournament has no group stage",
+                                    "value": {
+                                        "detail": "The tournament with the "
+                                                  "supplied id does not have "
+                                                  "a group stage."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         )
         self.router.add_api_route(
             "/tournaments/{tournament_id}/groups",
             self.update_groups,
-            methods=["PUT"]
+            methods=["PUT"],
+            responses={
+                404: {
+                    "description": "Not Found",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "detail": "The tournament with the supplied "
+                                          "id does not have a group stage."
+                            }
+                        }
+                    }
+                }
+            }
         )
         self.router.add_api_route(
             "/tournaments/{tournament_id}/groups/{group_id}",
             self.get_group_by_id,
-            methods=["GET"]
+            methods=["GET"],
+            responses={
+                404: {
+                    "description": "Not Found",
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "tournamentNotFound": {
+                                    "summary": "Tournament not found",
+                                    "value": {
+                                        "detail": "No tournaments found with "
+                                                  "a matching id."
+                                    }
+                                },
+                                "noGroupStage": {
+                                    "summary": "Tournament has no group stage",
+                                    "value": {
+                                        "detail": "The tournament with the "
+                                                  "supplied id does not have "
+                                                  "a group stage."
+                                    }
+                                },
+                                "groupNotFound": {
+                                    "summary": "Group not found",
+                                    "value": {
+                                        "detail": "No groups found with a "
+                                                  "matching id."
+                                    }
+                                },
+                            }
+                        }
+                    }
+                }
+            }
         )
         self.router.add_api_route(
             "/tournaments/{tournament_id}/groups/{group_id}/teams",
             self.add_teams_to_group,
-            methods=["POST"]
+            methods=["POST"],
+            responses={
+                400: {
+                    "description": "Bad Request",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "detail": "No teams found with ids: []"
+                            }
+                        }
+                    }
+                },
+                404: {
+                    "description": "Not Found",
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "tournamentNotFound": {
+                                    "summary": "Tournament not found",
+                                    "value": {
+                                        "detail": "No tournaments found with "
+                                                  "a matching id."
+                                    }
+                                },
+                                "noGroupStage": {
+                                    "summary": "Tournament has no group stage",
+                                    "value": {
+                                        "detail": "The tournament with the "
+                                                  "supplied id does not have "
+                                                  "a group stage."
+                                    }
+                                },
+                                "groupNotFound": {
+                                    "summary": "Group not found",
+                                    "value": {
+                                        "detail": "No groups found with a "
+                                                  "matching id."
+                                    }
+                                },
+                            }
+                        }
+                    }
+                },
+                409: {
+                    "description": "Conflict",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "detail": "The number of groups in this "
+                                          "tournament's group stage has been "
+                                          "exceeded."
+                            }
+                        }
+                    }
+                }
+            }
         )
         self.router.add_api_route(
             "/tournaments/{tournament_id}/groups/{group_id}/teams/{team_id}",
             self.remove_team_from_group,
-            methods=["DELETE"]
+            methods=["DELETE"],
+            responses={
+                404: {
+                    "description": "Not Found",
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "tournamentNotFound": {
+                                    "summary": "Tournament not found",
+                                    "value": {
+                                        "detail": "No tournaments found with "
+                                                  "a matching id."
+                                    }
+                                },
+                                "noGroupStage": {
+                                    "summary": "Tournament has no group stage",
+                                    "value": {
+                                        "detail": "The tournament with the "
+                                                  "supplied id does not have "
+                                                  "a group stage."
+                                    }
+                                },
+                                "groupNotFound": {
+                                    "summary": "Group not found",
+                                    "value": {
+                                        "detail": "No groups found with a "
+                                                  "matching id."
+                                    }
+                                },
+                            }
+                        }
+                    }
+                }
+            }
         )
 
     async def get_groups(self, tournament_id: UUID) -> list[Group]:

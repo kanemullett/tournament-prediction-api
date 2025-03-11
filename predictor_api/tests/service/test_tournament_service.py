@@ -111,15 +111,33 @@ class TestTournamentService:
         # Given
         tournaments: list[Tournament] = [
             Tournament(
+                id=UUID("34e1fae2-f630-4a7b-a813-8e692d443871"),
                 year=2024,
                 confederation=Confederation.UEFA
             ),
             Tournament(
+                id=UUID("690d998a-14a5-4058-a6ab-25d1ddd86df5"),
                 year=2022
             )
         ]
 
         self.__query_service.retrieve_records.side_effect = [
+            QueryResponse(
+                referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
+                recordCount=2,
+                records=[
+                    {
+                        "id": "34e1fae2-f630-4a7b-a813-8e692d443871",
+                        "leagueTemplateId": "69b7ef49-5c3a-4419-9dbb-"
+                                            "b5beae71c6c8"
+                    },
+                    {
+                        "id": "690d998a-14a5-4058-a6ab-25d1ddd86df5",
+                        "leagueTemplateId": "5341cff8-df9f-4068-8a42-"
+                                            "4b4288ecba87"
+                    }
+                ]
+            ),
             QueryResponse(
                 referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
                 recordCount=1,
@@ -413,15 +431,28 @@ class TestTournamentService:
             templateId=UUID("e6689ab3-f234-4278-9718-713b4232034b")
         )
 
-        self.__query_service.retrieve_records.return_value = QueryResponse(
-            referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
-            recordCount=1,
-            records=[
-                {
-                    "groupCount": 4,
-                }
-            ]
-        )
+        self.__query_service.retrieve_records.side_effect = [
+            QueryResponse(
+                referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
+                recordCount=1,
+                records=[
+                    {
+                        "id": "c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
+                        "leagueTemplateId": "69b7ef49-5c3a-4419-9dbb-"
+                                            "b5beae71c6c8"
+                    }
+                ]
+            ),
+            QueryResponse(
+                referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
+                recordCount=1,
+                records=[
+                    {
+                        "groupCount": 4,
+                    }
+                ]
+            )
+        ]
 
         # When
         self.__service.create_tournaments([tournament])

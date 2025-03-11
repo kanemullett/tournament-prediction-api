@@ -51,8 +51,7 @@ class TournamentController:
             methods=["GET"],
             responses={
                 404: {
-                    "description": "Not Found - No tournaments found with a "
-                                   "matching id.",
+                    "description": "Not Found",
                     "content": {
                         "application/json": {
                             "example": {
@@ -70,8 +69,7 @@ class TournamentController:
             methods=["DELETE"],
             responses={
                 204: {
-                    "description": "No Content - The league template was "
-                                   "successfully deleted."
+                    "description": "No Content"
                 }
             }
         )

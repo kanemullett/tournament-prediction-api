@@ -51,8 +51,7 @@ class KnockoutTemplateController:
             methods=["GET"],
             responses={
                 404: {
-                    "description": "Not Found - No knockout templates found "
-                                   "with a matching id.",
+                    "description": "Not Found",
                     "content": {
                         "application/json": {
                             "example": {
@@ -70,13 +69,10 @@ class KnockoutTemplateController:
             methods=["DELETE"],
             responses={
                 204: {
-                    "description": "No Content - The knockout template was "
-                                   "successfully deleted."
+                    "description": "No Content"
                 },
                 409: {
-                    "description": "Conflict - The knockout template cannot "
-                                   "be deleted as it is part of an existing "
-                                   "tournament template.",
+                    "description": "Conflict",
                     "content": {
                         "application/json": {
                             "example": {
