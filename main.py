@@ -23,7 +23,9 @@ from db_handler.db_handler.service.database_table_service import (
     DatabaseTableService
 )
 from db_handler.db_handler.util.database_utils import DatabaseUtils
-from predictor_api.predictor_api.controller.group_controller import GroupController
+from predictor_api.predictor_api.controller.group_controller import (
+    GroupController
+)
 from predictor_api.predictor_api.controller.knockout_template_controller import (  # noqa: E501
     KnockoutTemplateController
 )
@@ -86,7 +88,10 @@ database_table_service: DatabaseTableService = DatabaseTableService(
 knockout_template_service: KnockoutTemplateService = KnockoutTemplateService(
     database_query_service
 )
-tournament_service: TournamentService = TournamentService(database_query_service, database_table_service)
+tournament_service: TournamentService = TournamentService(
+    database_query_service,
+    database_table_service
+)
 
 app.include_router(
     TournamentController(tournament_service).router

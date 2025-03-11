@@ -1,12 +1,11 @@
 from typing import Optional
 from uuid import UUID
 
-from db_handler.db_handler.model.database_record import DatabaseRecord
+from predictor_api.predictor_api.model.group_update import GroupUpdate
 from predictor_api.predictor_api.model.team import Team
 
 
-class Group(DatabaseRecord):
-    name: str
+class Group(GroupUpdate):
     teams: Optional[list[Team]] = None
 
     @classmethod
