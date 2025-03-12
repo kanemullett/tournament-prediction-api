@@ -388,7 +388,7 @@ class GroupService:
                     "group"
                 ),
                 conditionGroup=condition_group,
-                orderBy=OrderBy.of(Column.of("name"))
+                orderBy=OrderBy.of(Column.of("group", "name"))
             )
         )
 
