@@ -55,9 +55,22 @@ class GroupController:
                     "description": "Not Found",
                     "content": {
                         "application/json": {
-                            "example": {
-                                "detail": "The tournament with the supplied "
-                                          "id does not have a group stage."
+                            "examples": {
+                                "tournamentNotFound": {
+                                    "summary": "Tournament not found",
+                                    "value": {
+                                        "detail": "No tournaments found with "
+                                                  "a matching id."
+                                    }
+                                },
+                                "noGroupStage": {
+                                    "summary": "Tournament has no group stage",
+                                    "value": {
+                                        "detail": "The tournament with the "
+                                                  "supplied id does not have "
+                                                  "a group stage."
+                                    }
+                                }
                             }
                         }
                     }

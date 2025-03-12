@@ -66,6 +66,13 @@ class GroupService:
             groups: list[GroupUpdate]) -> list[Group]:
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
+        if not self.__tournament_has_group_stage(tournament_id):
+            raise HTTPException(
+                status_code=404,
+                detail="The tournament with the supplied id does not have a "
+                       "group stage."
+            )
+
         self.__query_service.update_records(
             UpdateRequest(
                 operation=SqlOperator.UPDATE,
