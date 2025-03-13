@@ -67,13 +67,12 @@ class TableRequestBuilderFunction:
         Examples:
             - ("id" VARCHAR PRIMARY KEY, "petCount" INTEGER)
         """
-        return f"({', '.join(list(
-            map(
-                lambda definition:
-                self.__build_column(definition),
-                column_definitions
-            )
-        ))})"
+        columns = [
+            self.__build_column(definition)
+            for definition in column_definitions
+        ]
+
+        return f"({', '.join(columns)})"
 
     @staticmethod
     def __build_column(column_definition: ColumnDefinition) -> str:

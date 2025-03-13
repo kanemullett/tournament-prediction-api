@@ -56,7 +56,7 @@ class DatabaseTableService:
         this_cursor: cursor = self.__connection.cursor()
 
         this_cursor.execute(
-            f'DROP TABLE \"{table.schema_}\".\"{table.table}\";'
+            f'DROP TABLE IF EXISTS \"{table.schema_}\".\"{table.table}\";'
         )
         self.__connection.commit()
 

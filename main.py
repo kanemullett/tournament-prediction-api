@@ -10,13 +10,22 @@ from db_handler.db_handler.function.query_builder_function import (
 from db_handler.db_handler.function.record_builder_function import (
     RecordBuilderFunction
 )
+from db_handler.db_handler.function.table_request_builder_function import (
+    TableRequestBuilderFunction
+)
 from db_handler.db_handler.service.database_initializer_service import (
     DatabaseInitializerService
 )
 from db_handler.db_handler.service.database_query_service import (
     DatabaseQueryService
 )
+from db_handler.db_handler.service.database_table_service import (
+    DatabaseTableService
+)
 from db_handler.db_handler.util.database_utils import DatabaseUtils
+from predictor_api.predictor_api.controller.group_controller import (
+    GroupController
+)
 from predictor_api.predictor_api.controller.knockout_template_controller import (  # noqa: E501
     KnockoutTemplateController
 )
@@ -32,6 +41,7 @@ from predictor_api.predictor_api.controller.tournament_controller import (
 from predictor_api.predictor_api.controller.tournament_template_controller import (  # noqa: E501
     TournamentTemplateController
 )
+from predictor_api.predictor_api.service.group_service import GroupService
 from predictor_api.predictor_api.service.knockout_template_service import (
     KnockoutTemplateService
 )
@@ -71,14 +81,20 @@ database_query_service: DatabaseQueryService = DatabaseQueryService(
     QueryBuilderFunction(),
     RecordBuilderFunction()
 )
+database_table_service: DatabaseTableService = DatabaseTableService(
+    DatabaseUtils.DATABASE_CONNECTION,
+    TableRequestBuilderFunction()
+)
 knockout_template_service: KnockoutTemplateService = KnockoutTemplateService(
     database_query_service
 )
+tournament_service: TournamentService = TournamentService(
+    database_query_service,
+    database_table_service
+)
 
 app.include_router(
-    TournamentController(
-        TournamentService(database_query_service)
-    ).router
+    TournamentController(tournament_service).router
 )
 app.include_router(
     TournamentTemplateController(
@@ -102,6 +118,14 @@ app.include_router(
     TeamController(
         TeamService(
             database_query_service
+        )
+    ).router
+)
+app.include_router(
+    GroupController(
+        GroupService(
+            database_query_service,
+            tournament_service
         )
     ).router
 )

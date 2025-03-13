@@ -50,8 +50,7 @@ class TeamController:
             methods=["GET"],
             responses={
                 404: {
-                    "description": "Not Found - No teams found with a "
-                                   "matching id.",
+                    "description": "Not Found",
                     "content": {
                         "application/json": {
                             "example": {
@@ -68,8 +67,7 @@ class TeamController:
             methods=["DELETE"],
             responses={
                 204: {
-                    "description": "No Content - The team was successfully "
-                                   "deleted."
+                    "description": "No Content"
                 }
             }
         )
