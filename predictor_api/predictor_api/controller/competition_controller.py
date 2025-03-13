@@ -24,6 +24,11 @@ class CompetitionController:
             self.create_competitions,
             methods=["POST"]
         )
+        self.router.add_api_route(
+            "/competitions",
+            self.update_competitions,
+            methods=["PUT"]
+        )
 
     async def get_competitions(self) -> list[Competition]:
         return self.__service.get_competitions()
@@ -32,3 +37,8 @@ class CompetitionController:
             self,
             competitions: list[Competition]) -> list[Competition]:
         return self.__service.create_competitions(competitions)
+
+    async def update_competitions(
+            self,
+            competitions: list[Competition]) -> list[Competition]:
+        return self.__service.update_competitions(competitions)
