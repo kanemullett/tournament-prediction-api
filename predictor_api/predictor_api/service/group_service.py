@@ -162,7 +162,26 @@ class GroupService:
                        "group stage."
             )
 
-        self.get_group_by_id(tournament_id, group_id)
+        group_response: QueryResponse = self.__query_service.retrieve_records(
+            QueryRequest(
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Group.get_target_table(tournament_id)
+                ),
+                conditionGroup=QueryConditionGroup.of(
+                    QueryCondition.of(
+                        Column.of(StoreConstants.ID),
+                        group_id
+                    )
+                )
+            )
+        )
+
+        if len(group_response.records) == 0:
+            raise HTTPException(
+                status_code=404,
+                detail="No groups found with a matching id."
+            )
 
         team_records: list[dict[str, Any]] = (
             self.__query_service.retrieve_records(
@@ -194,7 +213,7 @@ class GroupService:
         if len(invalid_ids) > 0:
             raise HTTPException(
                 status_code=400,
-                detail="No teams found with ids:" + str(
+                detail="No teams found with ids: " + str(
                     list(
                         map(
                             lambda team_id:
@@ -321,7 +340,26 @@ class GroupService:
                        "group stage."
             )
 
-        self.get_group_by_id(tournament_id, group_id)
+        group_response: QueryResponse = self.__query_service.retrieve_records(
+            QueryRequest(
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Group.get_target_table(tournament_id)
+                ),
+                conditionGroup=QueryConditionGroup.of(
+                    QueryCondition.of(
+                        Column.of(StoreConstants.ID),
+                        group_id
+                    )
+                )
+            )
+        )
+
+        if len(group_response.records) == 0:
+            raise HTTPException(
+                status_code=404,
+                detail="No groups found with a matching id."
+            )
 
         self.__query_service.update_records(
             UpdateRequest(
