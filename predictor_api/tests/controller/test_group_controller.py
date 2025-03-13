@@ -6,7 +6,9 @@ import pytest
 from fastapi import HTTPException
 from pytest import raises
 
-from predictor_api.predictor_api.controller.group_controller import GroupController
+from predictor_api.predictor_api.controller.group_controller import (
+    GroupController
+)
 from predictor_api.predictor_api.model.group import Group
 from predictor_api.predictor_api.model.group_update import GroupUpdate
 from predictor_api.predictor_api.model.team import Team
@@ -91,38 +93,68 @@ class TestGroupController:
         Assertions.assert_equals(2, len(groups))
 
         group1: Group = groups[0]
-        Assertions.assert_equals(UUID("96074478-23c4-4b6f-a8a4-1abe9fac2659"), group1.id)
+        Assertions.assert_equals(
+            UUID("96074478-23c4-4b6f-a8a4-1abe9fac2659"),
+            group1.id
+        )
         Assertions.assert_equals("Group A", group1.name)
         Assertions.assert_equals(2, len(group1.teams))
 
         group1_team1: Team = group1.teams[0]
-        Assertions.assert_equals(UUID("525bf855-a5b1-45cf-a1de-c017e67c0ce7"), group1_team1.id)
+        Assertions.assert_equals(
+            UUID("525bf855-a5b1-45cf-a1de-c017e67c0ce7"),
+            group1_team1.id
+        )
         Assertions.assert_equals("Croatia", group1_team1.name)
         Assertions.assert_equals("HRV.png", group1_team1.imagePath)
-        Assertions.assert_equals(Confederation.UEFA, group1_team1.confederation)
+        Assertions.assert_equals(
+            Confederation.UEFA,
+            group1_team1.confederation
+        )
 
         group1_team2: Team = group1.teams[1]
-        Assertions.assert_equals(UUID("bc339fee-cfda-4dbd-b1de-337a270bc414"), group1_team2.id)
+        Assertions.assert_equals(
+            UUID("bc339fee-cfda-4dbd-b1de-337a270bc414"),
+            group1_team2.id
+        )
         Assertions.assert_equals("Serbia", group1_team2.name)
         Assertions.assert_equals("SRB.png", group1_team2.imagePath)
-        Assertions.assert_equals(Confederation.UEFA, group1_team2.confederation)
+        Assertions.assert_equals(
+            Confederation.UEFA,
+            group1_team2.confederation
+        )
 
         group2: Group = groups[1]
-        Assertions.assert_equals(UUID("e0ee5d0e-9d57-4c74-b938-0aa306a2313e"), group2.id)
+        Assertions.assert_equals(
+            UUID("e0ee5d0e-9d57-4c74-b938-0aa306a2313e"),
+            group2.id
+        )
         Assertions.assert_equals("Group B", group2.name)
         Assertions.assert_equals(2, len(group2.teams))
 
         group2_team1: Team = group2.teams[0]
-        Assertions.assert_equals(UUID("6c1496f5-b819-4ed3-b4c3-17bdaa6f252d"), group2_team1.id)
+        Assertions.assert_equals(
+            UUID("6c1496f5-b819-4ed3-b4c3-17bdaa6f252d"),
+            group2_team1.id
+        )
         Assertions.assert_equals("Bosnia & Herzegovina", group2_team1.name)
         Assertions.assert_equals("BIH.png", group2_team1.imagePath)
-        Assertions.assert_equals(Confederation.UEFA, group2_team1.confederation)
+        Assertions.assert_equals(
+            Confederation.UEFA,
+            group2_team1.confederation
+        )
 
         group2_team2: Team = group2.teams[1]
-        Assertions.assert_equals(UUID("1708fce1-2862-4604-b863-5fb4f00b68d2"), group2_team2.id)
+        Assertions.assert_equals(
+            UUID("1708fce1-2862-4604-b863-5fb4f00b68d2"),
+            group2_team2.id
+        )
         Assertions.assert_equals("Slovenia", group2_team2.name)
         Assertions.assert_equals("SLO.png", group2_team2.imagePath)
-        Assertions.assert_equals(Confederation.UEFA, group2_team2.confederation)
+        Assertions.assert_equals(
+            Confederation.UEFA,
+            group2_team2.confederation
+        )
 
     @pytest.mark.asyncio
     async def test_should_pass_error_get_groups(self):
@@ -205,38 +237,68 @@ class TestGroupController:
         Assertions.assert_equals(2, len(groups))
 
         group1: Group = groups[0]
-        Assertions.assert_equals(UUID("96074478-23c4-4b6f-a8a4-1abe9fac2659"), group1.id)
+        Assertions.assert_equals(
+            UUID("96074478-23c4-4b6f-a8a4-1abe9fac2659"),
+            group1.id
+        )
         Assertions.assert_equals("Group A", group1.name)
         Assertions.assert_equals(2, len(group1.teams))
 
         group1_team1: Team = group1.teams[0]
-        Assertions.assert_equals(UUID("525bf855-a5b1-45cf-a1de-c017e67c0ce7"), group1_team1.id)
+        Assertions.assert_equals(
+            UUID("525bf855-a5b1-45cf-a1de-c017e67c0ce7"),
+            group1_team1.id
+        )
         Assertions.assert_equals("Croatia", group1_team1.name)
         Assertions.assert_equals("HRV.png", group1_team1.imagePath)
-        Assertions.assert_equals(Confederation.UEFA, group1_team1.confederation)
+        Assertions.assert_equals(
+            Confederation.UEFA,
+            group1_team1.confederation
+        )
 
         group1_team2: Team = group1.teams[1]
-        Assertions.assert_equals(UUID("bc339fee-cfda-4dbd-b1de-337a270bc414"), group1_team2.id)
+        Assertions.assert_equals(
+            UUID("bc339fee-cfda-4dbd-b1de-337a270bc414"),
+            group1_team2.id
+        )
         Assertions.assert_equals("Serbia", group1_team2.name)
         Assertions.assert_equals("SRB.png", group1_team2.imagePath)
-        Assertions.assert_equals(Confederation.UEFA, group1_team2.confederation)
+        Assertions.assert_equals(
+            Confederation.UEFA,
+            group1_team2.confederation
+        )
 
         group2: Group = groups[1]
-        Assertions.assert_equals(UUID("e0ee5d0e-9d57-4c74-b938-0aa306a2313e"), group2.id)
+        Assertions.assert_equals(
+            UUID("e0ee5d0e-9d57-4c74-b938-0aa306a2313e"),
+            group2.id
+        )
         Assertions.assert_equals("Group B", group2.name)
         Assertions.assert_equals(2, len(group2.teams))
 
         group2_team1: Team = group2.teams[0]
-        Assertions.assert_equals(UUID("6c1496f5-b819-4ed3-b4c3-17bdaa6f252d"), group2_team1.id)
+        Assertions.assert_equals(
+            UUID("6c1496f5-b819-4ed3-b4c3-17bdaa6f252d"),
+            group2_team1.id
+        )
         Assertions.assert_equals("Bosnia & Herzegovina", group2_team1.name)
         Assertions.assert_equals("BIH.png", group2_team1.imagePath)
-        Assertions.assert_equals(Confederation.UEFA, group2_team1.confederation)
+        Assertions.assert_equals(
+            Confederation.UEFA,
+            group2_team1.confederation
+        )
 
         group2_team2: Team = group2.teams[1]
-        Assertions.assert_equals(UUID("1708fce1-2862-4604-b863-5fb4f00b68d2"), group2_team2.id)
+        Assertions.assert_equals(
+            UUID("1708fce1-2862-4604-b863-5fb4f00b68d2"),
+            group2_team2.id
+        )
         Assertions.assert_equals("Slovenia", group2_team2.name)
         Assertions.assert_equals("SLO.png", group2_team2.imagePath)
-        Assertions.assert_equals(Confederation.UEFA, group2_team2.confederation)
+        Assertions.assert_equals(
+            Confederation.UEFA,
+            group2_team2.confederation
+        )
 
     @pytest.mark.asyncio
     async def test_should_pass_error_update_groups(self):
@@ -299,18 +361,27 @@ class TestGroupController:
         )
 
         # Then
-        Assertions.assert_equals(UUID("96074478-23c4-4b6f-a8a4-1abe9fac2659"), group.id)
+        Assertions.assert_equals(
+            UUID("96074478-23c4-4b6f-a8a4-1abe9fac2659"),
+            group.id
+        )
         Assertions.assert_equals("Group A", group.name)
         Assertions.assert_equals(2, len(group.teams))
 
         team1: Team = group.teams[0]
-        Assertions.assert_equals(UUID("525bf855-a5b1-45cf-a1de-c017e67c0ce7"), team1.id)
+        Assertions.assert_equals(
+            UUID("525bf855-a5b1-45cf-a1de-c017e67c0ce7"),
+            team1.id
+        )
         Assertions.assert_equals("Croatia", team1.name)
         Assertions.assert_equals("HRV.png", team1.imagePath)
         Assertions.assert_equals(Confederation.UEFA, team1.confederation)
 
         team2: Team = group.teams[1]
-        Assertions.assert_equals(UUID("bc339fee-cfda-4dbd-b1de-337a270bc414"), team2.id)
+        Assertions.assert_equals(
+            UUID("bc339fee-cfda-4dbd-b1de-337a270bc414"),
+            team2.id
+        )
         Assertions.assert_equals("Serbia", team2.name)
         Assertions.assert_equals("SRB.png", team2.imagePath)
         Assertions.assert_equals(Confederation.UEFA, team2.confederation)
@@ -371,18 +442,27 @@ class TestGroupController:
         )
 
         # Then
-        Assertions.assert_equals(UUID("96074478-23c4-4b6f-a8a4-1abe9fac2659"), group.id)
+        Assertions.assert_equals(
+            UUID("96074478-23c4-4b6f-a8a4-1abe9fac2659"),
+            group.id
+        )
         Assertions.assert_equals("Group A", group.name)
         Assertions.assert_equals(2, len(group.teams))
 
         team1: Team = group.teams[0]
-        Assertions.assert_equals(UUID("525bf855-a5b1-45cf-a1de-c017e67c0ce7"), team1.id)
+        Assertions.assert_equals(
+            UUID("525bf855-a5b1-45cf-a1de-c017e67c0ce7"),
+            team1.id
+        )
         Assertions.assert_equals("Croatia", team1.name)
         Assertions.assert_equals("HRV.png", team1.imagePath)
         Assertions.assert_equals(Confederation.UEFA, team1.confederation)
 
         team2: Team = group.teams[1]
-        Assertions.assert_equals(UUID("bc339fee-cfda-4dbd-b1de-337a270bc414"), team2.id)
+        Assertions.assert_equals(
+            UUID("bc339fee-cfda-4dbd-b1de-337a270bc414"),
+            team2.id
+        )
         Assertions.assert_equals("Serbia", team2.name)
         Assertions.assert_equals("SRB.png", team2.imagePath)
         Assertions.assert_equals(Confederation.UEFA, team2.confederation)
@@ -444,24 +524,33 @@ class TestGroupController:
         )
 
         # Then
-        Assertions.assert_equals(UUID("96074478-23c4-4b6f-a8a4-1abe9fac2659"), group.id)
+        Assertions.assert_equals(
+            UUID("96074478-23c4-4b6f-a8a4-1abe9fac2659"),
+            group.id
+        )
         Assertions.assert_equals("Group A", group.name)
         Assertions.assert_equals(2, len(group.teams))
 
         team1: Team = group.teams[0]
-        Assertions.assert_equals(UUID("525bf855-a5b1-45cf-a1de-c017e67c0ce7"), team1.id)
+        Assertions.assert_equals(
+            UUID("525bf855-a5b1-45cf-a1de-c017e67c0ce7"),
+            team1.id
+        )
         Assertions.assert_equals("Croatia", team1.name)
         Assertions.assert_equals("HRV.png", team1.imagePath)
         Assertions.assert_equals(Confederation.UEFA, team1.confederation)
 
         team2: Team = group.teams[1]
-        Assertions.assert_equals(UUID("bc339fee-cfda-4dbd-b1de-337a270bc414"), team2.id)
+        Assertions.assert_equals(
+            UUID("bc339fee-cfda-4dbd-b1de-337a270bc414"),
+            team2.id
+        )
         Assertions.assert_equals("Serbia", team2.name)
         Assertions.assert_equals("SRB.png", team2.imagePath)
         Assertions.assert_equals(Confederation.UEFA, team2.confederation)
 
     @pytest.mark.asyncio
-    async def test_should_pass_error_add_teams_to_group(self):
+    async def test_should_pass_error_remove_team_from_group(self):
         # Given
         self.__service.remove_team_from_group.side_effect = HTTPException(
             status_code=404,

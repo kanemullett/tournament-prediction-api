@@ -40,15 +40,40 @@ from predictor_api.predictor_api.util.predictor_constants import (
 
 
 class GroupService:
+    """
+    Service for performing group-related actions.
+
+    Attributes:
+        __query_service (DatabaseQueryService): The database query service.
+        __tournament_service (TournamentService): The tournament service.
+    """
 
     def __init__(
             self,
             database_query_service: DatabaseQueryService,
             tournament_service: TournamentService) -> None:
+        """
+        Initialise the GroupService.
+
+        Args:
+            database_query_service (DatabaseQueryService): The database query
+                service.
+            tournament_service (TournamentService): The tournament service.
+        """
         self.__query_service = database_query_service
         self.__tournament_service = tournament_service
 
     def get_groups(self, tournament_id: UUID) -> list[Group]:
+        """
+        Retrieve stored groups.
+
+        Args:
+            tournament_id (UUID): The id of the tournament whose groups are
+                to be retrieved.
+
+        Returns:
+            list[Group]: The stored groups.
+        """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
         if not self.__tournament_has_group_stage(tournament_id):
@@ -64,6 +89,17 @@ class GroupService:
             self,
             tournament_id: UUID,
             groups: list[GroupUpdate]) -> list[Group]:
+        """
+        Update existing groups.
+
+        Args:
+            tournament_id (UUID): The id of the tournament whose groups are
+                to be updated.
+            groups (list[GroupUpdate]): The groups to update.
+
+        Returns:
+            list[Group]: The newly updated groups.
+        """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
         if not self.__tournament_has_group_stage(tournament_id):
@@ -108,6 +144,17 @@ class GroupService:
         )
 
     def get_group_by_id(self, tournament_id: UUID, group_id: UUID) -> Group:
+        """
+        Retrieve a single stored group by its id.
+
+        Args:
+            tournament_id (UUID): The id of the tournament the group belongs
+                to.
+            group_id (UUID): The id of the group to retrieve.
+
+        Returns:
+            Group: The retrieved group.
+        """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
         if not self.__tournament_has_group_stage(tournament_id):
@@ -153,6 +200,18 @@ class GroupService:
             tournament_id: UUID,
             group_id: UUID,
             team_ids: list[UUID]) -> Group:
+        """
+        Add teams to a group.
+
+        Args:
+             tournament_id (UUID): The id of the tournament the group belongs
+                to.
+             group_id (UUID): The id of the group to add teams to.
+             team_ids (list[UUID]): The ids of the teams to add to the group.
+
+        Returns:
+            Group: The updated group.
+        """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
         if not self.__tournament_has_group_stage(tournament_id):
@@ -331,6 +390,18 @@ class GroupService:
             tournament_id: UUID,
             group_id: UUID,
             team_id: UUID) -> Group:
+        """
+        Remove a single team from a group.
+
+        Args:
+            tournament_id (UUID): The id of the tournament the group belongs
+                to.
+            group_id (UUID): The id of the group to remove the team from.
+            team_id (UUID): The id of the team to remove from the group.
+
+        Return:
+            Group: The updated group.
+        """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
         if not self.__tournament_has_group_stage(tournament_id):
@@ -386,6 +457,15 @@ class GroupService:
         )[0]
 
     def __tournament_has_group_stage(self, tournament_id: UUID) -> bool:
+        """
+        Determine whether a tournament has a group stage or not.
+
+        Args:
+            tournament_id (UUID): The id of the tournament.
+
+        Returns:
+            bool: True if the tournament has a group stage.
+        """
         response: QueryResponse = self.__query_service.retrieve_records(
             QueryRequest(
                 columns=[
@@ -425,6 +505,19 @@ class GroupService:
             self,
             tournament_id: UUID,
             condition_group: QueryConditionGroup = None) -> list[Group]:
+        """
+        Retrieve a set of groups and build them into objects containing their
+        teams.
+
+        Args:
+             tournament_id (UUID): The id of the tournament the groups belong
+                to.
+             condition_group (QueryConditionGroup): The conditions by which
+                to filter the groups by.
+
+        Returns:
+            list[Group]: The retrieved groups.
+        """
         response: QueryResponse = self.__query_service.retrieve_records(
             QueryRequest(
                 table=Table.of(

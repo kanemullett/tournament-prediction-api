@@ -6,6 +6,12 @@ from predictor_api.predictor_api.model.team import Team
 
 
 class Group(GroupUpdate):
+    """
+    Object representing a group.
+
+    Attributes:
+        teams (Optional[list[Team]]): The teams competing in the group.
+    """
     teams: Optional[list[Team]] = None
 
     @classmethod
