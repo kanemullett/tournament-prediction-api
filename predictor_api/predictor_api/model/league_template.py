@@ -7,6 +7,12 @@ class LeagueTemplate(DatabaseRecord):
     """
     Object representing a league template.
 
+    League templates are an optional component of tournament templates and
+    define the structure of a tournament's league phase.
+
+    This template is used to generate groups and matches within those groups
+    upon creation of a tournament that uses it.
+
     Attributes:
         name (str): The name of the league template.
         groupCount (int): The number of groups that make up the league phase.

@@ -5,6 +5,9 @@ class Confederation(Enum):
     """
     Defines an international football confederation.
 
+    Teams within a confederation can only be added to a tournament of the
+    same confederation or a tournament with no stated confederation.
+
     Attributes:
         AFC (str): Asian Football Confederation (Asia)
         CAF (str): Confederation of African Football (Africa)

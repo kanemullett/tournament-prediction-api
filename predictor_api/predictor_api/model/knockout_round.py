@@ -8,6 +8,9 @@ class KnockoutRound(DatabaseRecord):
     """
     Object representing a knockout round.
 
+    Knockout rounds are tournament-scoped and generated upon the creation of
+    their parent tournament, using the tournament's template as a guide.
+
     Attributes:
         name (str): The name of the round.
         teamCount (int): The number of teams participating in the round.

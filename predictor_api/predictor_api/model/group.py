@@ -9,6 +9,9 @@ class Group(GroupUpdate):
     """
     Object representing a group.
 
+    Groups are tournament-scoped and generated upon the creation of their
+    parent tournament, using the tournament's template as a guide.
+
     Attributes:
         teams (Optional[list[Team]]): The teams competing in the group.
     """
