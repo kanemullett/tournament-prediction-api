@@ -30,7 +30,11 @@ from db_handler.db_handler.service.database_table_service import (
 )
 from db_handler.db_handler.util.store_constants import StoreConstants
 from predictor_api.predictor_api.model.group import Group
+from predictor_api.predictor_api.model.knockout_template import (
+    KnockoutTemplate
+)
 from predictor_api.predictor_api.model.league_template import LeagueTemplate
+from predictor_api.predictor_api.model.round import Round
 from predictor_api.predictor_api.model.tournament import Tournament
 from predictor_api.predictor_api.model.tournament_template import (
     TournamentTemplate
@@ -164,6 +168,9 @@ class TournamentService:
         for record in response.records:
             if record["leagueTemplateId"] is not None:
                 self.__create_group_tables(UUID(record[StoreConstants.ID]))
+
+            if record["knockoutTemplateId"] is not None:
+                self.__create_round_tables(UUID(record[StoreConstants.ID]))
 
         return tournaments
 
@@ -398,6 +405,101 @@ class TournamentService:
             for letter in string.ascii_uppercase[:count]
         ]
 
+    def __create_round_tables(self, tournament_id: UUID) -> None:
+        self.__table_service.create_table(
+            TableDefinition(
+                schema=PredictorConstants.PREDICTOR_SCHEMA,
+                table=Round.get_target_table(tournament_id),
+                columns=[
+                    ColumnDefinition(
+                        name=StoreConstants.ID,
+                        dataType=SqlDataType.VARCHAR,
+                        primaryKey=True
+                    ),
+                    ColumnDefinition.of("name", SqlDataType.VARCHAR),
+                    ColumnDefinition.of("teamCount", SqlDataType.INTEGER),
+                    ColumnDefinition.of("roundOrder", SqlDataType.INTEGER),
+                    ColumnDefinition.of("twoLegs", SqlDataType.BOOLEAN),
+                    ColumnDefinition.of("extraTime", SqlDataType.BOOLEAN),
+                    ColumnDefinition.of("awayGoals", SqlDataType.BOOLEAN)
+                ]
+            )
+        )
+
+        self.__create_rounds(tournament_id)
+
+    def __create_rounds(self, tournament_id: UUID) -> None:
+        response: QueryResponse = self.__query_service.retrieve_records(
+            QueryRequest(
+                columns=[
+                    Column.of("knock", "rounds")
+                ],
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Tournament.TARGET_TABLE,
+                    "tourn"
+                ),
+                tableJoins=[
+                    TableJoin.of(
+                        Table.of(
+                            PredictorConstants.PREDICTOR_SCHEMA,
+                            TournamentTemplate.TARGET_TABLE,
+                            "temp"
+                        ),
+                        QueryCondition.of(
+                            Column.of("tourn", "templateId"),
+                            Column.of("temp", StoreConstants.ID)
+                        ),
+                        TableJoinType.INNER
+                    ),
+                    TableJoin.of(
+                        Table.of(
+                            PredictorConstants.PREDICTOR_SCHEMA,
+                            KnockoutTemplate.TARGET_TABLE,
+                            "knock"
+                        ),
+                        QueryCondition.of(
+                            Column.of("temp", "knockoutTemplateId"),
+                            Column.of("knock", StoreConstants.ID)
+                        ),
+                        TableJoinType.INNER
+                    )
+                ],
+                conditionGroup=QueryConditionGroup.of(
+                    QueryCondition.of(
+                        Column.of("tourn", StoreConstants.ID),
+                        tournament_id
+                    )
+                )
+            )
+        )
+
+        if response.recordCount > 0:
+            rounds: list[Round] = list(
+                map(
+                    lambda round_dict:
+                    Round.model_validate(round_dict),
+                    response.records[0]["rounds"]
+                )
+            )
+
+            self.__query_service.update_records(
+                UpdateRequest(
+                    operation=SqlOperator.INSERT,
+                    table=Table.of(
+                        PredictorConstants.PREDICTOR_SCHEMA,
+                        Round.get_target_table(tournament_id)
+                    ),
+                    records=list(
+                        map(
+                            lambda knock:
+                            knock.model_dump(exclude_none=True),
+                            rounds
+                        )
+                    )
+                )
+            )
+
     def __delete_tournament_tables(self, tournament_id: UUID) -> None:
         self.__table_service.delete_table(
             Table.of(
@@ -410,5 +512,12 @@ class TournamentService:
             Table.of(
                 PredictorConstants.PREDICTOR_SCHEMA,
                 PredictorConstants.get_group_teams_table(tournament_id)
+            )
+        )
+
+        self.__table_service.delete_table(
+            Table.of(
+                PredictorConstants.PREDICTOR_SCHEMA,
+                Round.get_target_table(tournament_id)
             )
         )

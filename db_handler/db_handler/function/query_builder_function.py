@@ -5,7 +5,6 @@ from typing import Any
 from uuid import UUID
 
 from fastapi import HTTPException
-from pydantic import BaseModel
 
 from db_handler.db_handler.model.column import Column
 from db_handler.db_handler.model.query_condition import QueryCondition
@@ -347,7 +346,8 @@ class QueryBuilderFunction:
         if isinstance(value, Column):
             return self.__build_column(value, True)
 
-        if isinstance(value, list) and all(isinstance(item, dict) for item in value):
+        if (isinstance(value, list) and
+                all(isinstance(item, dict) for item in value)):
             return f"'{json.dumps(value)}'"
 
         if isinstance(value, list):

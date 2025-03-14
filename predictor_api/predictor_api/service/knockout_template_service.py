@@ -144,7 +144,9 @@ class KnockoutTemplateService:
             query_response.records[0]
         )
 
-    def delete_knockout_template_by_id(self, knockout_template_id: UUID) -> None:
+    def delete_knockout_template_by_id(
+            self,
+            knockout_template_id: UUID) -> None:
         """
         Delete a single stored knockout template by its id.
 
