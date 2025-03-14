@@ -8,6 +8,11 @@ class Team(DatabaseRecord):
     """
     Object representing a team.
 
+    Teams are unique and shared across all tournaments to reduce replication.
+
+    If a tournament has a specific stated confederation, only teams belonging
+    to the same confederation can participate in its matches.
+
     Attributes:
         name (Optional[str]): The name of the team.
         imagePath (Optional[str]): The path to the team's badge image.

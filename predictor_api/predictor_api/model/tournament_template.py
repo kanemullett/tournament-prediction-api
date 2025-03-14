@@ -13,6 +13,12 @@ class TournamentTemplate(TournamentTemplateBase):
     """
     Object representing a tournament template.
 
+    Tournament templates are a required component of tournaments as they
+    define their structure.
+
+    Tournament templates must have at least one of either league or knockout
+    template defined.
+
     Attributes:
         league (Optional[LeagueTemplate]): The template of the tournament's
             league phase.
