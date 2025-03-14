@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter
 
 from predictor_api.predictor_api.model.competition import Competition
@@ -29,6 +31,24 @@ class CompetitionController:
             self.update_competitions,
             methods=["PUT"]
         )
+        self.router.add_api_route(
+            "/competitions/{competition_id}",
+            self.get_competition_by_id,
+            methods=["GET"],
+            responses={
+                404: {
+                    "description": "Not Found",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "detail": "No competitions found with a "
+                                          "matching id."
+                            }
+                        }
+                    }
+                }
+            }
+        )
 
     async def get_competitions(self) -> list[Competition]:
         return self.__service.get_competitions()
@@ -42,3 +62,6 @@ class CompetitionController:
             self,
             competitions: list[Competition]) -> list[Competition]:
         return self.__service.update_competitions(competitions)
+
+    async def get_competition_by_id(self, competition_id: UUID) -> Competition:
+        return self.__service.get_competition_by_id(competition_id)

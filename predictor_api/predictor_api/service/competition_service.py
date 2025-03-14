@@ -1,3 +1,7 @@
+from uuid import UUID
+
+from fastapi import HTTPException
+
 from db_handler.db_handler.model.column import Column
 from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.query_condition_group import (
@@ -115,3 +119,27 @@ class CompetitionService:
                 response.records
             )
         )
+
+    def get_competition_by_id(self, competition_id: UUID) -> Competition:
+        response: QueryResponse = self.__query_service.retrieve_records(
+            QueryRequest(
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Competition.TARGET_TABLE
+                ),
+                conditionGroup=QueryConditionGroup.of(
+                    QueryCondition.of(
+                        Column.of(StoreConstants.ID),
+                        competition_id
+                    )
+                )
+            )
+        )
+
+        if response.recordCount == 0:
+            raise HTTPException(
+                status_code=404,
+                detail="No competitions found with a matching id."
+            )
+
+        return Competition.model_validate(response.records[0])
