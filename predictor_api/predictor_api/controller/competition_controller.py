@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 
 from predictor_api.predictor_api.model.competition import Competition
 from predictor_api.predictor_api.service.competition_service import (
@@ -49,6 +49,16 @@ class CompetitionController:
                 }
             }
         )
+        self.router.add_api_route(
+            "/competitions/{competition_id}",
+            self.delete_competition_by_id,
+            methods=["DELETE"],
+            responses={
+                204: {
+                    "description": "No Content"
+                }
+            }
+        )
 
     async def get_competitions(self) -> list[Competition]:
         return self.__service.get_competitions()
@@ -65,3 +75,8 @@ class CompetitionController:
 
     async def get_competition_by_id(self, competition_id: UUID) -> Competition:
         return self.__service.get_competition_by_id(competition_id)
+
+    async def delete_competition_by_id(self, competition_id: UUID) -> Response:
+        self.__service.delete_competition_by_id(competition_id)
+
+        return Response(status_code=204)

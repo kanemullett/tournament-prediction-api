@@ -143,3 +143,20 @@ class CompetitionService:
             )
 
         return Competition.model_validate(response.records[0])
+
+    def delete_competition_by_id(self, competition_id: UUID) -> None:
+        self.__query_service.update_records(
+            UpdateRequest(
+                operation=SqlOperator.DELETE,
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Competition.TARGET_TABLE
+                ),
+                conditionGroup=QueryConditionGroup.of(
+                    QueryCondition.of(
+                        Column.of(StoreConstants.ID),
+                        competition_id
+                    )
+                )
+            )
+        )
