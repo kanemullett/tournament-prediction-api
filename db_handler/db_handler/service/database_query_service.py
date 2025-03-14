@@ -110,7 +110,6 @@ class DatabaseQueryService:
             records=update_request.records
         )
 
-        print(self.__query_builder.apply(sql_query))
         this_cursor.execute(self.__query_builder.apply(sql_query))
         record_count: int = this_cursor.rowcount
 
