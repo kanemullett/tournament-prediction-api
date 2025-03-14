@@ -348,3 +348,37 @@ class TestCompetitionService:
             "No competitions found with a matching id.",
             httpe.value.detail
         )
+
+    def test_should_delete_competition(self):
+        # When
+        self.__service.delete_competition_by_id(
+            UUID("71d14fb4-ba29-47f7-a235-d2675028d700")
+        )
+
+        # Then
+        delete_args, delete_kwargs = (
+            self.__query_service.update_records.call_args
+        )
+        Assertions.assert_type(UpdateRequest, delete_args[0])
+
+        request: UpdateRequest = delete_args[0]
+        Assertions.assert_equals(SqlOperator.DELETE, request.operation)
+
+        request_table: Table = request.table
+        Assertions.assert_equals("predictor", request_table.schema_)
+        Assertions.assert_equals("competitions", request_table.table)
+
+        Assertions.assert_equals(1, len(request.conditionGroup.conditions))
+
+        request_condition: QueryCondition = (
+            request.conditionGroup.conditions
+        )[0]
+        Assertions.assert_equals(["id"], request_condition.column.parts)
+        Assertions.assert_equals(
+            ConditionOperator.EQUAL,
+            request_condition.operator
+        )
+        Assertions.assert_equals(
+            UUID("71d14fb4-ba29-47f7-a235-d2675028d700"),
+            request_condition.value
+        )
