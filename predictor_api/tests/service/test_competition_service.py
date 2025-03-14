@@ -2,6 +2,9 @@ from typing import Any
 from unittest.mock import MagicMock
 from uuid import UUID
 
+from fastapi import HTTPException
+from pytest import raises
+
 from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_response import QueryResponse
@@ -268,4 +271,80 @@ class TestCompetitionService:
         Assertions.assert_equals(
             UUID("72ed614f-06a3-41b4-9d50-52e1f8fd9e58"),
             competition2.tournamentId
+        )
+
+    def test_should_return_competition_by_id(self):
+        # Given
+        self.__query_service.retrieve_records.return_value = QueryResponse(
+            referenceId=UUID("90a6637a-e534-46bd-8715-33c6f2afdd7a"),
+            recordCount=1,
+            records=[
+                {
+                    "id": "71d14fb4-ba29-47f7-a235-d2675028d700",
+                    "name": "The Boys",
+                    "tournamentId": "72ed614f-06a3-41b4-9d50-52e1f8fd9e58"
+                }
+            ]
+        )
+
+        # When
+        competition: Competition = self.__service.get_competition_by_id(
+            UUID("71d14fb4-ba29-47f7-a235-d2675028d700")
+        )
+
+        # Then
+        competitions_args, competitions_kwargs = (
+            self.__query_service.retrieve_records.call_args
+        )
+        Assertions.assert_type(QueryRequest, competitions_args[0])
+
+        request: QueryRequest = competitions_args[0]
+        request_table: Table = request.table
+        Assertions.assert_equals("predictor", request_table.schema_)
+        Assertions.assert_equals("competitions", request_table.table)
+
+        Assertions.assert_equals(1, len(request.conditionGroup.conditions))
+
+        request_condition: QueryCondition = (
+            request.conditionGroup.conditions
+        )[0]
+        Assertions.assert_equals(["id"], request_condition.column.parts)
+        Assertions.assert_equals(
+            ConditionOperator.EQUAL,
+            request_condition.operator
+        )
+        Assertions.assert_equals(
+            UUID("71d14fb4-ba29-47f7-a235-d2675028d700"),
+            request_condition.value
+        )
+
+        Assertions.assert_equals(
+            UUID("71d14fb4-ba29-47f7-a235-d2675028d700"),
+            competition.id
+        )
+        Assertions.assert_equals("The Boys", competition.name)
+        Assertions.assert_equals(
+            UUID("72ed614f-06a3-41b4-9d50-52e1f8fd9e58"),
+            competition.tournamentId
+        )
+
+    def test_should_error_competition_not_found(self):
+        # Given
+        self.__query_service.retrieve_records.return_value = QueryResponse(
+            referenceId=UUID("90a6637a-e534-46bd-8715-33c6f2afdd7a"),
+            recordCount=0,
+            records=[]
+        )
+
+        # When
+        with raises(HTTPException) as httpe:
+            self.__service.get_competition_by_id(
+                UUID("71d14fb4-ba29-47f7-a235-d2675028d700")
+            )
+
+        # Then
+        Assertions.assert_equals(404, httpe.value.status_code)
+        Assertions.assert_equals(
+            "No competitions found with a matching id.",
+            httpe.value.detail
         )
