@@ -1,10 +1,9 @@
-from typing import ClassVar, Optional
-from uuid import UUID
+from typing import ClassVar
 
-from db_handler.db_handler.model.database_record import DatabaseRecord
+from pydantic import BaseModel
 
 
-class KnockoutRound(DatabaseRecord):
+class RoundTemplate(BaseModel):
     """
     Object representing a knockout round.
 
@@ -28,6 +27,5 @@ class KnockoutRound(DatabaseRecord):
     twoLegs: bool
     extraTime: bool
     awayGoals: bool
-    knockoutTemplateId: Optional[UUID] = None
 
     TARGET_TABLE: ClassVar[str] = "rounds"

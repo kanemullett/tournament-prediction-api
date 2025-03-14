@@ -17,7 +17,7 @@ from db_handler.db_handler.model.type.condition_operator import (
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.type.table_join_type import TableJoinType
 from db_handler.db_handler.model.update_request import UpdateRequest
-from predictor_api.predictor_api.model.knockout_round import KnockoutRound
+from predictor_api.predictor_api.model.round_template import RoundTemplate
 from predictor_api.predictor_api.model.knockout_template import (
     KnockoutTemplate
 )
@@ -99,7 +99,7 @@ class TestTournamentTemplateService:
                 id=UUID("80e9c164-637d-400f-a3cf-bf922073bc9b"),
                 name="knockout1",
                 rounds=[
-                    KnockoutRound(
+                    RoundTemplate(
                         name="round1",
                         teamCount=4,
                         roundOrder=1,
@@ -107,7 +107,7 @@ class TestTournamentTemplateService:
                         extraTime=True,
                         awayGoals=True
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="round2",
                         teamCount=2,
                         roundOrder=2,
@@ -121,7 +121,7 @@ class TestTournamentTemplateService:
                 id=UUID("1a4d1cc8-f035-439a-b274-fe739b8fcfa5"),
                 name="knockout2",
                 rounds=[
-                    KnockoutRound(
+                    RoundTemplate(
                         name="round3",
                         teamCount=4,
                         roundOrder=1,
@@ -129,7 +129,7 @@ class TestTournamentTemplateService:
                         extraTime=True,
                         awayGoals=True
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="round4",
                         teamCount=2,
                         roundOrder=2,
@@ -238,7 +238,7 @@ class TestTournamentTemplateService:
         Assertions.assert_equals("knockout1", knockout1.name)
         Assertions.assert_equals(2, len(knockout1.rounds))
 
-        knockout1_round1: KnockoutRound = knockout1.rounds[0]
+        knockout1_round1: RoundTemplate = knockout1.rounds[0]
         Assertions.assert_equals("round1", knockout1_round1.name)
         Assertions.assert_equals(4, knockout1_round1.teamCount)
         Assertions.assert_equals(1, knockout1_round1.roundOrder)
@@ -246,7 +246,7 @@ class TestTournamentTemplateService:
         Assertions.assert_true(knockout1_round1.extraTime)
         Assertions.assert_true(knockout1_round1.awayGoals)
 
-        knockout1_round2: KnockoutRound = knockout1.rounds[1]
+        knockout1_round2: RoundTemplate = knockout1.rounds[1]
         Assertions.assert_equals("round2", knockout1_round2.name)
         Assertions.assert_equals(2, knockout1_round2.teamCount)
         Assertions.assert_equals(2, knockout1_round2.roundOrder)
@@ -300,7 +300,7 @@ class TestTournamentTemplateService:
         Assertions.assert_equals("knockout2", knockout2.name)
         Assertions.assert_equals(2, len(knockout2.rounds))
 
-        knockout2_round1: KnockoutRound = knockout2.rounds[0]
+        knockout2_round1: RoundTemplate = knockout2.rounds[0]
         Assertions.assert_equals("round3", knockout2_round1.name)
         Assertions.assert_equals(4, knockout2_round1.teamCount)
         Assertions.assert_equals(1, knockout2_round1.roundOrder)
@@ -308,7 +308,7 @@ class TestTournamentTemplateService:
         Assertions.assert_true(knockout2_round1.extraTime)
         Assertions.assert_true(knockout2_round1.awayGoals)
 
-        knockout2_round2: KnockoutRound = knockout2.rounds[1]
+        knockout2_round2: RoundTemplate = knockout2.rounds[1]
         Assertions.assert_equals("round4", knockout2_round2.name)
         Assertions.assert_equals(2, knockout2_round2.teamCount)
         Assertions.assert_equals(2, knockout2_round2.roundOrder)
@@ -339,7 +339,7 @@ class TestTournamentTemplateService:
                 id=UUID("80e9c164-637d-400f-a3cf-bf922073bc9b"),
                 name="knockout1",
                 rounds=[
-                    KnockoutRound(
+                    RoundTemplate(
                         name="round1",
                         teamCount=4,
                         roundOrder=1,
@@ -347,7 +347,7 @@ class TestTournamentTemplateService:
                         extraTime=True,
                         awayGoals=True
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="round2",
                         teamCount=2,
                         roundOrder=2,
@@ -361,7 +361,7 @@ class TestTournamentTemplateService:
                 id=UUID("1a4d1cc8-f035-439a-b274-fe739b8fcfa5"),
                 name="knockout2",
                 rounds=[
-                    KnockoutRound(
+                    RoundTemplate(
                         name="round3",
                         teamCount=4,
                         roundOrder=1,
@@ -369,7 +369,7 @@ class TestTournamentTemplateService:
                         extraTime=True,
                         awayGoals=True
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="round4",
                         teamCount=2,
                         roundOrder=2,
@@ -486,7 +486,7 @@ class TestTournamentTemplateService:
         Assertions.assert_equals("knockout1", knockout1.name)
         Assertions.assert_equals(2, len(knockout1.rounds))
 
-        knockout1_round1: KnockoutRound = knockout1.rounds[0]
+        knockout1_round1: RoundTemplate = knockout1.rounds[0]
         Assertions.assert_equals("round1", knockout1_round1.name)
         Assertions.assert_equals(4, knockout1_round1.teamCount)
         Assertions.assert_equals(1, knockout1_round1.roundOrder)
@@ -494,7 +494,7 @@ class TestTournamentTemplateService:
         Assertions.assert_true(knockout1_round1.extraTime)
         Assertions.assert_true(knockout1_round1.awayGoals)
 
-        knockout1_round2: KnockoutRound = knockout1.rounds[1]
+        knockout1_round2: RoundTemplate = knockout1.rounds[1]
         Assertions.assert_equals("round2", knockout1_round2.name)
         Assertions.assert_equals(2, knockout1_round2.teamCount)
         Assertions.assert_equals(2, knockout1_round2.roundOrder)
@@ -542,7 +542,7 @@ class TestTournamentTemplateService:
         Assertions.assert_equals("knockout2", knockout2.name)
         Assertions.assert_equals(2, len(knockout2.rounds))
 
-        knockout2_round1: KnockoutRound = knockout2.rounds[0]
+        knockout2_round1: RoundTemplate = knockout2.rounds[0]
         Assertions.assert_equals("round3", knockout2_round1.name)
         Assertions.assert_equals(4, knockout2_round1.teamCount)
         Assertions.assert_equals(1, knockout2_round1.roundOrder)
@@ -550,7 +550,7 @@ class TestTournamentTemplateService:
         Assertions.assert_true(knockout2_round1.extraTime)
         Assertions.assert_true(knockout2_round1.awayGoals)
 
-        knockout2_round2: KnockoutRound = knockout2.rounds[1]
+        knockout2_round2: RoundTemplate = knockout2.rounds[1]
         Assertions.assert_equals("round4", knockout2_round2.name)
         Assertions.assert_equals(2, knockout2_round2.teamCount)
         Assertions.assert_equals(2, knockout2_round2.roundOrder)
@@ -583,7 +583,7 @@ class TestTournamentTemplateService:
                 id=UUID("1a4d1cc8-f035-439a-b274-fe739b8fcfa5"),
                 name="knockout2",
                 rounds=[
-                    KnockoutRound(
+                    RoundTemplate(
                         name="round3",
                         teamCount=4,
                         roundOrder=1,
@@ -591,7 +591,7 @@ class TestTournamentTemplateService:
                         extraTime=True,
                         awayGoals=True
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="round4",
                         teamCount=2,
                         roundOrder=2,
@@ -718,7 +718,7 @@ class TestTournamentTemplateService:
         Assertions.assert_equals("knockout2", knockout2.name)
         Assertions.assert_equals(2, len(knockout2.rounds))
 
-        knockout2_round1: KnockoutRound = knockout2.rounds[0]
+        knockout2_round1: RoundTemplate = knockout2.rounds[0]
         Assertions.assert_equals("round3", knockout2_round1.name)
         Assertions.assert_equals(4, knockout2_round1.teamCount)
         Assertions.assert_equals(1, knockout2_round1.roundOrder)
@@ -726,7 +726,7 @@ class TestTournamentTemplateService:
         Assertions.assert_true(knockout2_round1.extraTime)
         Assertions.assert_true(knockout2_round1.awayGoals)
 
-        knockout2_round2: KnockoutRound = knockout2.rounds[1]
+        knockout2_round2: RoundTemplate = knockout2.rounds[1]
         Assertions.assert_equals("round4", knockout2_round2.name)
         Assertions.assert_equals(2, knockout2_round2.teamCount)
         Assertions.assert_equals(2, knockout2_round2.roundOrder)

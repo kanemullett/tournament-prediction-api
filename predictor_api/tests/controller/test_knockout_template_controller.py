@@ -9,7 +9,7 @@ from pytest import raises
 from predictor_api.predictor_api.controller.knockout_template_controller import (  # noqa: E501
     KnockoutTemplateController
 )
-from predictor_api.predictor_api.model.knockout_round import KnockoutRound
+from predictor_api.predictor_api.model.round_template import RoundTemplate
 from predictor_api.predictor_api.model.knockout_template import (
     KnockoutTemplate
 )
@@ -32,7 +32,7 @@ class TestKnockoutTemplateController:
                 id="c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
                 name="16-Team Single-Leg",
                 rounds=[
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Round of 16",
                         teamCount=16,
                         roundOrder=1,
@@ -40,7 +40,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=False
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Quarter-Finals",
                         teamCount=8,
                         roundOrder=2,
@@ -48,7 +48,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=False
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Semi-Finals",
                         teamCount=4,
                         roundOrder=3,
@@ -56,7 +56,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=False
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Third-Place Play-Off",
                         teamCount=2,
                         roundOrder=4,
@@ -64,7 +64,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=False
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Final",
                         teamCount=2,
                         roundOrder=5,
@@ -78,7 +78,7 @@ class TestKnockoutTemplateController:
                 id="6ee28143-1286-4618-a8b9-ad86d348ead1",
                 name="8-Team Double-Leg Away Goals",
                 rounds=[
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Quarter-Finals",
                         teamCount=8,
                         roundOrder=1,
@@ -86,7 +86,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=True
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Semi-Finals",
                         teamCount=4,
                         roundOrder=2,
@@ -94,7 +94,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=True
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Final",
                         teamCount=2,
                         roundOrder=3,
@@ -121,7 +121,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_equals(5, len(template1.rounds))
 
         template1_round1 = template1.rounds[0]
-        Assertions.assert_type(KnockoutRound, template1_round1)
+        Assertions.assert_type(RoundTemplate, template1_round1)
         Assertions.assert_equals("Round of 16", template1_round1.name)
         Assertions.assert_equals(16, template1_round1.teamCount)
         Assertions.assert_equals(1, template1_round1.roundOrder)
@@ -130,7 +130,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_false(template1_round1.awayGoals)
 
         template1_round2 = template1.rounds[1]
-        Assertions.assert_type(KnockoutRound, template1_round2)
+        Assertions.assert_type(RoundTemplate, template1_round2)
         Assertions.assert_equals("Quarter-Finals", template1_round2.name)
         Assertions.assert_equals(8, template1_round2.teamCount)
         Assertions.assert_equals(2, template1_round2.roundOrder)
@@ -139,7 +139,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_false(template1_round2.awayGoals)
 
         template1_round3 = template1.rounds[2]
-        Assertions.assert_type(KnockoutRound, template1_round3)
+        Assertions.assert_type(RoundTemplate, template1_round3)
         Assertions.assert_equals("Semi-Finals", template1_round3.name)
         Assertions.assert_equals(4, template1_round3.teamCount)
         Assertions.assert_equals(3, template1_round3.roundOrder)
@@ -148,7 +148,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_false(template1_round3.awayGoals)
 
         template1_round4 = template1.rounds[3]
-        Assertions.assert_type(KnockoutRound, template1_round4)
+        Assertions.assert_type(RoundTemplate, template1_round4)
         Assertions.assert_equals("Third-Place Play-Off", template1_round4.name)
         Assertions.assert_equals(2, template1_round4.teamCount)
         Assertions.assert_equals(4, template1_round4.roundOrder)
@@ -157,7 +157,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_false(template1_round4.awayGoals)
 
         template1_round5 = template1.rounds[4]
-        Assertions.assert_type(KnockoutRound, template1_round5)
+        Assertions.assert_type(RoundTemplate, template1_round5)
         Assertions.assert_equals("Final", template1_round5.name)
         Assertions.assert_equals(2, template1_round5.teamCount)
         Assertions.assert_equals(5, template1_round5.roundOrder)
@@ -175,7 +175,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_equals(3, len(template2.rounds))
 
         template2_round1 = template2.rounds[0]
-        Assertions.assert_type(KnockoutRound, template2_round1)
+        Assertions.assert_type(RoundTemplate, template2_round1)
         Assertions.assert_equals("Quarter-Finals", template2_round1.name)
         Assertions.assert_equals(8, template2_round1.teamCount)
         Assertions.assert_equals(1, template2_round1.roundOrder)
@@ -184,7 +184,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_true(template2_round1.awayGoals)
 
         template2_round2 = template2.rounds[1]
-        Assertions.assert_type(KnockoutRound, template2_round2)
+        Assertions.assert_type(RoundTemplate, template2_round2)
         Assertions.assert_equals("Semi-Finals", template2_round2.name)
         Assertions.assert_equals(4, template2_round2.teamCount)
         Assertions.assert_equals(2, template2_round2.roundOrder)
@@ -193,7 +193,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_true(template2_round2.awayGoals)
 
         template2_round3 = template2.rounds[2]
-        Assertions.assert_type(KnockoutRound, template2_round3)
+        Assertions.assert_type(RoundTemplate, template2_round3)
         Assertions.assert_equals("Final", template2_round3.name)
         Assertions.assert_equals(2, template2_round3.teamCount)
         Assertions.assert_equals(3, template2_round3.roundOrder)
@@ -208,7 +208,7 @@ class TestKnockoutTemplateController:
             KnockoutTemplate(
                 name="16-Team Single-Leg",
                 rounds=[
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Round of 16",
                         teamCount=16,
                         roundOrder=1,
@@ -216,7 +216,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=False
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Quarter-Finals",
                         teamCount=8,
                         roundOrder=2,
@@ -224,7 +224,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=False
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Semi-Finals",
                         teamCount=4,
                         roundOrder=3,
@@ -232,7 +232,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=False
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Third-Place Play-Off",
                         teamCount=2,
                         roundOrder=4,
@@ -240,7 +240,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=False
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Final",
                         teamCount=2,
                         roundOrder=5,
@@ -253,7 +253,7 @@ class TestKnockoutTemplateController:
             KnockoutTemplate(
                 name="8-Team Double-Leg Away Goals",
                 rounds=[
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Quarter-Finals",
                         teamCount=8,
                         roundOrder=1,
@@ -261,7 +261,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=True
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Semi-Finals",
                         teamCount=4,
                         roundOrder=2,
@@ -269,7 +269,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=True
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Final",
                         teamCount=2,
                         roundOrder=3,
@@ -286,7 +286,7 @@ class TestKnockoutTemplateController:
                 id="c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
                 name="16-Team Single-Leg",
                 rounds=[
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Round of 16",
                         teamCount=16,
                         roundOrder=1,
@@ -294,7 +294,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=False
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Quarter-Finals",
                         teamCount=8,
                         roundOrder=2,
@@ -302,7 +302,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=False
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Semi-Finals",
                         teamCount=4,
                         roundOrder=3,
@@ -310,7 +310,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=False
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Third-Place Play-Off",
                         teamCount=2,
                         roundOrder=4,
@@ -318,7 +318,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=False
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Final",
                         teamCount=2,
                         roundOrder=5,
@@ -332,7 +332,7 @@ class TestKnockoutTemplateController:
                 id="6ee28143-1286-4618-a8b9-ad86d348ead1",
                 name="8-Team Double-Leg Away Goals",
                 rounds=[
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Quarter-Finals",
                         teamCount=8,
                         roundOrder=1,
@@ -340,7 +340,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=True
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Semi-Finals",
                         teamCount=4,
                         roundOrder=2,
@@ -348,7 +348,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=True
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Final",
                         teamCount=2,
                         roundOrder=3,
@@ -377,7 +377,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_equals(5, len(template1.rounds))
 
         template1_round1 = template1.rounds[0]
-        Assertions.assert_type(KnockoutRound, template1_round1)
+        Assertions.assert_type(RoundTemplate, template1_round1)
         Assertions.assert_equals("Round of 16", template1_round1.name)
         Assertions.assert_equals(16, template1_round1.teamCount)
         Assertions.assert_equals(1, template1_round1.roundOrder)
@@ -386,7 +386,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_false(template1_round1.awayGoals)
 
         template1_round2 = template1.rounds[1]
-        Assertions.assert_type(KnockoutRound, template1_round2)
+        Assertions.assert_type(RoundTemplate, template1_round2)
         Assertions.assert_equals("Quarter-Finals", template1_round2.name)
         Assertions.assert_equals(8, template1_round2.teamCount)
         Assertions.assert_equals(2, template1_round2.roundOrder)
@@ -395,7 +395,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_false(template1_round2.awayGoals)
 
         template1_round3 = template1.rounds[2]
-        Assertions.assert_type(KnockoutRound, template1_round3)
+        Assertions.assert_type(RoundTemplate, template1_round3)
         Assertions.assert_equals("Semi-Finals", template1_round3.name)
         Assertions.assert_equals(4, template1_round3.teamCount)
         Assertions.assert_equals(3, template1_round3.roundOrder)
@@ -404,7 +404,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_false(template1_round3.awayGoals)
 
         template1_round4 = template1.rounds[3]
-        Assertions.assert_type(KnockoutRound, template1_round4)
+        Assertions.assert_type(RoundTemplate, template1_round4)
         Assertions.assert_equals("Third-Place Play-Off", template1_round4.name)
         Assertions.assert_equals(2, template1_round4.teamCount)
         Assertions.assert_equals(4, template1_round4.roundOrder)
@@ -413,7 +413,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_false(template1_round4.awayGoals)
 
         template1_round5 = template1.rounds[4]
-        Assertions.assert_type(KnockoutRound, template1_round5)
+        Assertions.assert_type(RoundTemplate, template1_round5)
         Assertions.assert_equals("Final", template1_round5.name)
         Assertions.assert_equals(2, template1_round5.teamCount)
         Assertions.assert_equals(5, template1_round5.roundOrder)
@@ -431,7 +431,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_equals(3, len(template2.rounds))
 
         template2_round1 = template2.rounds[0]
-        Assertions.assert_type(KnockoutRound, template2_round1)
+        Assertions.assert_type(RoundTemplate, template2_round1)
         Assertions.assert_equals("Quarter-Finals", template2_round1.name)
         Assertions.assert_equals(8, template2_round1.teamCount)
         Assertions.assert_equals(1, template2_round1.roundOrder)
@@ -440,7 +440,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_true(template2_round1.awayGoals)
 
         template2_round2 = template2.rounds[1]
-        Assertions.assert_type(KnockoutRound, template2_round2)
+        Assertions.assert_type(RoundTemplate, template2_round2)
         Assertions.assert_equals("Semi-Finals", template2_round2.name)
         Assertions.assert_equals(4, template2_round2.teamCount)
         Assertions.assert_equals(2, template2_round2.roundOrder)
@@ -449,7 +449,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_true(template2_round2.awayGoals)
 
         template2_round3 = template2.rounds[2]
-        Assertions.assert_type(KnockoutRound, template2_round3)
+        Assertions.assert_type(RoundTemplate, template2_round3)
         Assertions.assert_equals("Final", template2_round3.name)
         Assertions.assert_equals(2, template2_round3.teamCount)
         Assertions.assert_equals(3, template2_round3.roundOrder)
@@ -465,7 +465,7 @@ class TestKnockoutTemplateController:
                 id="c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
                 name="8-Team Double-Leg Away Goals",
                 rounds=[
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Quarter-Finals",
                         teamCount=8,
                         roundOrder=1,
@@ -473,7 +473,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=True
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Semi-Finals",
                         teamCount=4,
                         roundOrder=2,
@@ -481,7 +481,7 @@ class TestKnockoutTemplateController:
                         extraTime=True,
                         awayGoals=True
                     ),
-                    KnockoutRound(
+                    RoundTemplate(
                         name="Final",
                         teamCount=2,
                         roundOrder=3,
@@ -512,7 +512,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_equals(3, len(knockout_template.rounds))
 
         template2_round1 = knockout_template.rounds[0]
-        Assertions.assert_type(KnockoutRound, template2_round1)
+        Assertions.assert_type(RoundTemplate, template2_round1)
         Assertions.assert_equals("Quarter-Finals", template2_round1.name)
         Assertions.assert_equals(8, template2_round1.teamCount)
         Assertions.assert_equals(1, template2_round1.roundOrder)
@@ -521,7 +521,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_true(template2_round1.awayGoals)
 
         template2_round2 = knockout_template.rounds[1]
-        Assertions.assert_type(KnockoutRound, template2_round2)
+        Assertions.assert_type(RoundTemplate, template2_round2)
         Assertions.assert_equals("Semi-Finals", template2_round2.name)
         Assertions.assert_equals(4, template2_round2.teamCount)
         Assertions.assert_equals(2, template2_round2.roundOrder)
@@ -530,7 +530,7 @@ class TestKnockoutTemplateController:
         Assertions.assert_true(template2_round2.awayGoals)
 
         template2_round3 = knockout_template.rounds[2]
-        Assertions.assert_type(KnockoutRound, template2_round3)
+        Assertions.assert_type(RoundTemplate, template2_round3)
         Assertions.assert_equals("Final", template2_round3.name)
         Assertions.assert_equals(2, template2_round3.teamCount)
         Assertions.assert_equals(3, template2_round3.roundOrder)
