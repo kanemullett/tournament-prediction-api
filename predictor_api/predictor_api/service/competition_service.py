@@ -26,11 +26,30 @@ from predictor_api.predictor_api.util.predictor_constants import (
 
 
 class CompetitionService:
+    """
+    Service for performing competition-related actions.
+
+    Attributes:
+        __query_service (DatabaseQueryService): The database query service.
+    """
 
     def __init__(self, database_query_service: DatabaseQueryService) -> None:
+        """
+        Initialise the CompetitionService.
+
+        Args:
+            database_query_service (DatabaseQueryService): The database query
+                service.
+        """
         self.__query_service = database_query_service
 
     def get_competitions(self) -> list[Competition]:
+        """
+        Retrieve stored competitions.
+
+        Returns:
+            list[Competition]: The stored competitions.
+        """
         response: QueryResponse = self.__query_service.retrieve_records(
             QueryRequest(
                 table=Table.of(
@@ -51,6 +70,15 @@ class CompetitionService:
     def create_competitions(
             self,
             competitions: list[Competition]) -> list[Competition]:
+        """
+        Create new competitions.
+
+        Args:
+            competitions (list[Competition]): The new competitions to create.
+
+        Returns:
+            list[Competition]: The newly created competitions.
+        """
         self.__query_service.update_records(
             UpdateRequest(
                 operation=SqlOperator.INSERT,
@@ -73,6 +101,15 @@ class CompetitionService:
     def update_competitions(
             self,
             competitions: list[Competition]) -> list[Competition]:
+        """
+        Update existing competitions.
+
+        Args:
+            competitions (list[Competition]): The competitions to update.
+
+        Returns:
+            list[Competition]: The newly updated competitions.
+        """
         self.__query_service.update_records(
             UpdateRequest(
                 operation=SqlOperator.UPDATE,
@@ -121,6 +158,15 @@ class CompetitionService:
         )
 
     def get_competition_by_id(self, competition_id: UUID) -> Competition:
+        """
+        Retrieve a single stored competition by its id.
+
+        Args:
+            competition_id (UUID): The id of the competition to retrieve.
+
+        Returns:
+            Competition: The retrieved competition.
+        """
         response: QueryResponse = self.__query_service.retrieve_records(
             QueryRequest(
                 table=Table.of(
@@ -145,6 +191,12 @@ class CompetitionService:
         return Competition.model_validate(response.records[0])
 
     def delete_competition_by_id(self, competition_id: UUID) -> None:
+        """
+        Delete a single stored competition by its id.
+
+        Args:
+            competition_id (UUID): The id of the competition to delete.
+        """
         self.__query_service.update_records(
             UpdateRequest(
                 operation=SqlOperator.DELETE,
