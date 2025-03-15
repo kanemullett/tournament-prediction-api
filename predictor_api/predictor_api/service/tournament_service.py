@@ -180,6 +180,7 @@ class TournamentService:
                         ColumnDefinition.of("homeTeamId", SqlDataType.VARCHAR),
                         ColumnDefinition.of("awayTeamId", SqlDataType.VARCHAR),
                         ColumnDefinition.of("kickoff", SqlDataType.TIMESTAMP_WITHOUT_TIME_ZONE),
+                        ColumnDefinition.of("groupMatchDay", SqlDataType.INTEGER),
                         ColumnDefinition.of("groupId", SqlDataType.VARCHAR),
                         ColumnDefinition.of("roundId", SqlDataType.VARCHAR)
                     ]
@@ -354,7 +355,9 @@ class TournamentService:
         response: QueryResponse = self.__query_service.retrieve_records(
             QueryRequest(
                 columns=[
-                    Column.of("league", "groupCount")
+                    Column.of("league", "groupCount"),
+                    Column.of("league", "teamsPerGroup"),
+                    Column.of("league", "homeAndAway")
                 ],
                 table=Table.of(
                     PredictorConstants.PREDICTOR_SCHEMA,
@@ -399,6 +402,10 @@ class TournamentService:
         if response.recordCount > 0:
             group_count: int = response.records[0]["groupCount"]
 
+            generated_groups: list[Group] = self.__generate_groups(
+                group_count
+            )
+
             self.__query_service.update_records(
                 UpdateRequest(
                     operation=SqlOperator.INSERT,
@@ -410,7 +417,40 @@ class TournamentService:
                         map(
                             lambda group:
                             group.model_dump(exclude_none=True),
-                            self.__generate_groups(group_count)
+                            generated_groups
+                        )
+                    )
+                )
+            )
+
+            generated_matches: list[Match] = [
+                item for sublist in
+                list(
+                    map(
+                        lambda group:
+                        self.__generate_group_matches(
+                            group.id,
+                            response.records[0]["teamsPerGroup"],
+                            response.records[0]["homeAndAway"]
+                        ),
+                        generated_groups
+                    )
+                )
+                for item in sublist
+            ]
+
+            self.__query_service.update_records(
+                UpdateRequest(
+                    operation=SqlOperator.INSERT,
+                    table=Table.of(
+                        PredictorConstants.PREDICTOR_SCHEMA,
+                        Match.get_target_table(tournament_id)
+                    ),
+                    records=list(
+                        map(
+                            lambda match:
+                            match.model_dump(exclude_none=True),
+                            generated_matches
                         )
                     )
                 )
@@ -424,6 +464,38 @@ class TournamentService:
             )
             for letter in string.ascii_uppercase[:count]
         ]
+
+    def __generate_group_matches(
+            self,
+            group_id: UUID,
+            teams_per_group: int,
+            home_and_away: bool) -> list[Match]:
+        return [
+            Match(
+                groupMatchDay=matchDay,
+                groupId=group_id
+            )
+            for matchDay in range(
+                1,
+                self.__calculate_total_game_days(
+                    teams_per_group,
+                    home_and_away
+                ) + 1
+            )
+            for _ in range(
+                self.__calculate_matches_per_game_day(teams_per_group)
+            )
+        ]
+
+    @staticmethod
+    def __calculate_matches_per_game_day(team_count: int) -> int:
+        return int(team_count / 2)
+
+    @staticmethod
+    def __calculate_total_game_days(team_count: int, home_and_away: bool) -> int:
+        multiplier: int = 2 if home_and_away else 1
+
+        return (team_count - 1) * multiplier
 
     def __create_round_tables(self, tournament_id: UUID) -> None:
         self.__table_service.create_table(
