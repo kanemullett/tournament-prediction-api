@@ -79,6 +79,45 @@ class RoundController:
                 }
             }
         )
+        self.router.add_api_route(
+            "/tournaments/{tournament_id}/rounds/{round_id}",
+            self.get_round_by_id,
+            methods=["GET"],
+            responses={
+                404: {
+                    "description": "Not Found",
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "tournamentNotFound": {
+                                    "summary": "Tournament not found",
+                                    "value": {
+                                        "detail": "No tournaments found with "
+                                                  "a matching id."
+                                    }
+                                },
+                                "noKnockoutStage": {
+                                    "summary": "Tournament has no knockout "
+                                               "stage",
+                                    "value": {
+                                        "detail": "The tournament with the "
+                                                  "supplied id does not have "
+                                                  "a knockout stage."
+                                    }
+                                },
+                                "roundNotFound": {
+                                    "summary": "Round not found",
+                                    "value": {
+                                        "detail": "No rounds found with a "
+                                                  "matching id."
+                                    }
+                                },
+                            }
+                        }
+                    }
+                }
+            }
+        )
 
     async def get_rounds(self, tournament_id: UUID) -> list[Round]:
         """
@@ -111,3 +150,21 @@ class RoundController:
             list[Round]: The newly updated rounds.
         """
         return self.__service.update_rounds(tournament_id, rounds)
+
+    async def get_round_by_id(
+            self,
+            tournament_id: UUID,
+            round_id: UUID) -> Round:
+        """
+        GET /tournaments/{tournament_id}/rounds/{round_id} endpoint to
+        retrieve a single stored round by its id.
+
+        Args:
+            tournament_id (UUID): The id of the tournament the round belongs
+                to.
+            round_id (UUID): The id of the round to retrieve.
+
+        Returns:
+            Round: The retrieved round.
+        """
+        return self.__service.get_round_by_id(tournament_id, round_id)

@@ -136,6 +136,39 @@ class RoundService:
             )
         )
 
+    def get_round_by_id(self, tournament_id: UUID, round_id: UUID) -> Round:
+        self.__tournament_service.get_tournament_by_id(tournament_id)
+
+        if not self.__tournament_has_knockout_stage(tournament_id):
+            raise HTTPException(
+                status_code=404,
+                detail="The tournament with the supplied id does not have a "
+                       "knockout stage."
+            )
+
+        response: QueryResponse = self.__query_service.retrieve_records(
+            QueryRequest(
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Round.get_target_table(tournament_id)
+                ),
+                conditionGroup=QueryConditionGroup.of(
+                    QueryCondition.of(
+                        Column.of(StoreConstants.ID),
+                        round_id
+                    )
+                )
+            )
+        )
+
+        if response.recordCount == 0:
+            raise HTTPException(
+                status_code=404,
+                detail="No rounds found with a matching id."
+            )
+
+        return Round.model_validate(response.records[0])
+
     def __tournament_has_knockout_stage(self, tournament_id: UUID) -> bool:
         """
         Determine whether a tournament has a knockout stage or not.

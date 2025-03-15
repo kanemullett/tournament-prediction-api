@@ -569,3 +569,244 @@ class TestRoundService:
             "stage.",
             httpe.value.detail
         )
+
+    def test_should_return_group_by_id(self):
+        # Given
+        self.__query_service.retrieve_records.side_effect = [
+            QueryResponse(
+                referenceId=UUID("ac97eb18-d9b7-40b8-b406-14f90455121a"),
+                recordCount=1,
+                records=[
+                    {
+                        "knockoutTemplateId": "72119bfa-212b-443c-b992-"
+                                              "7dc6983c6a1a"
+                    }
+                ]
+            ),
+            QueryResponse(
+                referenceId=UUID("ac97eb18-d9b7-40b8-b406-14f90455121a"),
+                recordCount=1,
+                records=[
+                    {
+                        "id": "96074478-23c4-4b6f-a8a4-1abe9fac2659",
+                        "name": "Round 1",
+                        "teamCount": 32,
+                        "roundOrder": 1,
+                        "twoLegs": True,
+                        "extraTime": True,
+                        "awayGoals": True
+                    }
+                ]
+            )
+        ]
+
+        # When
+        found_round: Round = self.__service.get_round_by_id(
+            UUID("5341cff8-df9f-4068-8a42-4b4288ecba87"),
+            UUID("96074478-23c4-4b6f-a8a4-1abe9fac2659")
+        )
+
+        # Then
+        tournament_args, tournament_kwargs = (
+            self.__tournament_service.get_tournament_by_id.call_args
+        )
+        Assertions.assert_equals(
+            UUID("5341cff8-df9f-4068-8a42-4b4288ecba87"),
+            tournament_args[0]
+        )
+
+        template_args, template_kwargs = (
+            self.__query_service.retrieve_records.call_args_list
+        )[0]
+        Assertions.assert_type(QueryRequest, template_args[0])
+
+        template_request: QueryRequest = template_args[0]
+        Assertions.assert_equals(1, len(template_request.columns))
+
+        template_column: Column = template_request.columns[0]
+        Assertions.assert_equals(
+            ["temp", "knockoutTemplateId"],
+            template_column.parts
+        )
+
+        template_table: Table = template_request.table
+        Assertions.assert_equals("predictor", template_table.schema_)
+        Assertions.assert_equals("tournaments", template_table.table)
+        Assertions.assert_equals("tourn", template_table.alias)
+
+        Assertions.assert_equals(1, len(template_request.tableJoins))
+
+        template_join: TableJoin = template_request.tableJoins[0]
+        Assertions.assert_equals(TableJoinType.INNER, template_join.joinType)
+
+        template_join_table: Table = template_join.table
+        Assertions.assert_equals("predictor", template_join_table.schema_)
+        Assertions.assert_equals(
+            "tournament-templates",
+            template_join_table.table
+        )
+        Assertions.assert_equals("temp", template_join_table.alias)
+
+        template_join_condition: QueryCondition = template_join.joinCondition
+        Assertions.assert_equals(
+            ["tourn", "templateId"],
+            template_join_condition.column.parts
+        )
+        Assertions.assert_equals(
+            ConditionOperator.EQUAL,
+            template_join_condition.operator
+        )
+        Assertions.assert_equals(
+            ["temp", "id"],
+            template_join_condition.value.parts
+        )
+
+        Assertions.assert_equals(
+            1,
+            len(template_request.conditionGroup.conditions)
+        )
+
+        template_condition: QueryCondition = (
+            template_request.conditionGroup.conditions
+        )[0]
+        Assertions.assert_equals(
+            ["tourn", "id"],
+            template_condition.column.parts
+        )
+        Assertions.assert_equals(
+            ConditionOperator.EQUAL,
+            template_condition.operator
+        )
+        Assertions.assert_equals(
+            UUID("5341cff8-df9f-4068-8a42-4b4288ecba87"),
+            template_condition.value
+        )
+
+        round_check_args, round_check_kwargs = (
+            self.__query_service.retrieve_records.call_args_list
+        )[1]
+        Assertions.assert_type(QueryRequest, round_check_args[0])
+
+        round_check_request: QueryRequest = round_check_args[0]
+
+        round_check_table: Table = round_check_request.table
+        Assertions.assert_equals("predictor", round_check_table.schema_)
+        Assertions.assert_equals(
+            "rounds_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            round_check_table.table
+        )
+
+        Assertions.assert_equals(
+            1,
+            len(round_check_request.conditionGroup.conditions)
+        )
+
+        round_check_condition: QueryCondition = (
+            round_check_request.conditionGroup.conditions
+        )[0]
+        Assertions.assert_equals(["id"], round_check_condition.column.parts)
+        Assertions.assert_equals(
+            ConditionOperator.EQUAL,
+            round_check_condition.operator
+        )
+        Assertions.assert_equals(
+            UUID("96074478-23c4-4b6f-a8a4-1abe9fac2659"),
+            round_check_condition.value
+        )
+
+        Assertions.assert_equals(
+            UUID("96074478-23c4-4b6f-a8a4-1abe9fac2659"),
+            found_round.id
+        )
+        Assertions.assert_equals("Round 1", found_round.name)
+        Assertions.assert_equals(32, found_round.teamCount)
+        Assertions.assert_equals(1, found_round.roundOrder)
+        Assertions.assert_true(found_round.twoLegs)
+        Assertions.assert_true(found_round.extraTime)
+        Assertions.assert_true(found_round.awayGoals)
+
+    def test_should_error_tournament_not_exists_get_round_by_id(self):
+        # Given
+        self.__tournament_service.get_tournament_by_id.side_effect = (
+            HTTPException(
+                status_code=404,
+                detail="No tournaments found with a matching id."
+            )
+        )
+
+        # When
+        with raises(HTTPException) as httpe:
+            self.__service.get_round_by_id(
+                UUID("5341cff8-df9f-4068-8a42-4b4288ecba87"),
+                UUID("96074478-23c4-4b6f-a8a4-1abe9fac2659")
+            )
+
+        # Then
+        Assertions.assert_equals(404, httpe.value.status_code)
+        Assertions.assert_equals(
+            "No tournaments found with a matching id.",
+            httpe.value.detail
+        )
+
+    def test_should_error_tournament_no_knockout_stage_get_round_by_id(self):
+        # Given
+        self.__query_service.retrieve_records.side_effect = [
+            QueryResponse(
+                referenceId=UUID("ac97eb18-d9b7-40b8-b406-14f90455121a"),
+                recordCount=1,
+                records=[
+                    {
+                        "knockoutTemplateId": None
+                    }
+                ]
+            )
+        ]
+
+        # When
+        with raises(HTTPException) as httpe:
+            self.__service.get_round_by_id(
+                UUID("5341cff8-df9f-4068-8a42-4b4288ecba87"),
+                UUID("96074478-23c4-4b6f-a8a4-1abe9fac2659")
+            )
+
+        # Then
+        Assertions.assert_equals(404, httpe.value.status_code)
+        Assertions.assert_equals(
+            "The tournament with the supplied id does not have a knockout "
+            "stage.",
+            httpe.value.detail
+        )
+
+    def test_should_error_round_not_exists_get_round_by_id(self):
+        # Given
+        self.__query_service.retrieve_records.side_effect = [
+            QueryResponse(
+                referenceId=UUID("ac97eb18-d9b7-40b8-b406-14f90455121a"),
+                recordCount=1,
+                records=[
+                    {
+                        "knockoutTemplateId": "72119bfa-212b-443c-b992-"
+                                              "7dc6983c6a1a"
+                    }
+                ]
+            ),
+            QueryResponse(
+                referenceId=UUID("ac97eb18-d9b7-40b8-b406-14f90455121a"),
+                recordCount=0,
+                records=[]
+            )
+        ]
+
+        # When
+        with raises(HTTPException) as httpe:
+            self.__service.get_round_by_id(
+                UUID("5341cff8-df9f-4068-8a42-4b4288ecba87"),
+                UUID("96074478-23c4-4b6f-a8a4-1abe9fac2659")
+            )
+
+        # Then
+        Assertions.assert_equals(404, httpe.value.status_code)
+        Assertions.assert_equals(
+            "No rounds found with a matching id.",
+            httpe.value.detail
+        )
