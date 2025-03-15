@@ -451,6 +451,8 @@ class TestTournamentService:
                 records=[
                     {
                         "groupCount": 4,
+                        "teamsPerGroup": 4,
+                        "homeAndAway": False
                     }
                 ]
             ),
@@ -510,9 +512,93 @@ class TestTournamentService:
         self.__service.create_tournaments([tournament])
 
         # Then
-        groups_table_args, groups_table_kwargs = (
+        matches_table_args, matches_table_kwargs = (
             self.__table_service.create_table.call_args_list
         )[0]
+        Assertions.assert_type(TableDefinition, matches_table_args[0])
+
+        matches_table_definition: TableDefinition = matches_table_args[0]
+        Assertions.assert_equals("predictor", matches_table_definition.schema_)
+        Assertions.assert_equals(
+            "matches_c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
+            matches_table_definition.table
+        )
+
+        Assertions.assert_equals(7, len(matches_table_definition.columns))
+
+        matches_table_column1: ColumnDefinition = (
+            matches_table_definition.columns
+        )[0]
+        Assertions.assert_equals("id", matches_table_column1.name)
+        Assertions.assert_equals(
+            SqlDataType.VARCHAR,
+            matches_table_column1.dataType
+        )
+        Assertions.assert_true(matches_table_column1.primaryKey)
+
+        matches_table_column2: ColumnDefinition = (
+            matches_table_definition.columns
+        )[1]
+        Assertions.assert_equals("homeTeamId", matches_table_column2.name)
+        Assertions.assert_equals(
+            SqlDataType.VARCHAR,
+            matches_table_column2.dataType
+        )
+        Assertions.assert_false(matches_table_column2.primaryKey)
+
+        matches_table_column3: ColumnDefinition = (
+            matches_table_definition.columns
+        )[2]
+        Assertions.assert_equals("awayTeamId", matches_table_column3.name)
+        Assertions.assert_equals(
+            SqlDataType.VARCHAR,
+            matches_table_column3.dataType
+        )
+        Assertions.assert_false(matches_table_column3.primaryKey)
+
+        matches_table_column4: ColumnDefinition = (
+            matches_table_definition.columns
+        )[3]
+        Assertions.assert_equals("kickoff", matches_table_column4.name)
+        Assertions.assert_equals(
+            SqlDataType.TIMESTAMP_WITHOUT_TIME_ZONE,
+            matches_table_column4.dataType
+        )
+        Assertions.assert_false(matches_table_column4.primaryKey)
+
+        matches_table_column5: ColumnDefinition = (
+            matches_table_definition.columns
+        )[4]
+        Assertions.assert_equals("groupMatchDay", matches_table_column5.name)
+        Assertions.assert_equals(
+            SqlDataType.INTEGER,
+            matches_table_column5.dataType
+        )
+        Assertions.assert_false(matches_table_column5.primaryKey)
+
+        matches_table_column6: ColumnDefinition = (
+            matches_table_definition.columns
+        )[5]
+        Assertions.assert_equals("groupId", matches_table_column6.name)
+        Assertions.assert_equals(
+            SqlDataType.VARCHAR,
+            matches_table_column6.dataType
+        )
+        Assertions.assert_false(matches_table_column6.primaryKey)
+
+        matches_table_column7: ColumnDefinition = (
+            matches_table_definition.columns
+        )[6]
+        Assertions.assert_equals("roundId", matches_table_column7.name)
+        Assertions.assert_equals(
+            SqlDataType.VARCHAR,
+            matches_table_column7.dataType
+        )
+        Assertions.assert_false(matches_table_column7.primaryKey)
+
+        groups_table_args, groups_table_kwargs = (
+            self.__table_service.create_table.call_args_list
+        )[1]
         Assertions.assert_type(TableDefinition, groups_table_args[0])
 
         groups_table_definition: TableDefinition = groups_table_args[0]
@@ -546,7 +632,7 @@ class TestTournamentService:
 
         rounds_table_args, groups_update_kwargs = (
             self.__table_service.create_table.call_args_list
-        )[1]
+        )[2]
         Assertions.assert_type(TableDefinition, rounds_table_args[0])
 
         group_teams_table_definition: TableDefinition = (
@@ -620,7 +706,7 @@ class TestTournamentService:
 
         rounds_table_args, rounds_table_kwargs = (
             self.__table_service.create_table.call_args_list
-        )[2]
+        )[3]
         Assertions.assert_type(TableDefinition, rounds_table_args[0])
 
         rounds_definition: TableDefinition = rounds_table_args[0]
@@ -673,9 +759,21 @@ class TestTournamentService:
         )
 
         # Then
-        delete_groups_table_args, delete_groups_table_kwargs = (
+        delete_matches_table_args, delete_matches_table_kwargs = (
             self.__table_service.delete_table.call_args_list
         )[0]
+        Assertions.assert_type(Table, delete_matches_table_args[0])
+
+        matches_table: Table = delete_matches_table_args[0]
+        Assertions.assert_equals("predictor", matches_table.schema_)
+        Assertions.assert_equals(
+            "matches_c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
+            matches_table.table
+        )
+
+        delete_groups_table_args, delete_groups_table_kwargs = (
+            self.__table_service.delete_table.call_args_list
+        )[1]
         Assertions.assert_type(Table, delete_groups_table_args[0])
 
         groups_table: Table = delete_groups_table_args[0]
@@ -687,7 +785,7 @@ class TestTournamentService:
 
         delete_group_teams_table_args, delete_group_teams_table_kwargs = (
             self.__table_service.delete_table.call_args_list
-        )[1]
+        )[2]
         Assertions.assert_type(Table, delete_group_teams_table_args[0])
 
         group_teams_table: Table = delete_group_teams_table_args[0]
@@ -699,7 +797,7 @@ class TestTournamentService:
 
         delete_rounds_table_args, delete_rounds_table_kwargs = (
             self.__table_service.delete_table.call_args_list
-        )[2]
+        )[3]
         Assertions.assert_type(Table, delete_rounds_table_args[0])
 
         rounds_table: Table = delete_rounds_table_args[0]

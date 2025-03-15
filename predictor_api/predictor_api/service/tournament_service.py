@@ -170,7 +170,9 @@ class TournamentService:
             self.__table_service.create_table(
                 TableDefinition(
                     schema=PredictorConstants.PREDICTOR_SCHEMA,
-                    table=Match.get_target_table(UUID(record[StoreConstants.ID])),
+                    table=Match.get_target_table(
+                        UUID(record[StoreConstants.ID])
+                    ),
                     columns=[
                         ColumnDefinition(
                             name=StoreConstants.ID,
@@ -179,8 +181,14 @@ class TournamentService:
                         ),
                         ColumnDefinition.of("homeTeamId", SqlDataType.VARCHAR),
                         ColumnDefinition.of("awayTeamId", SqlDataType.VARCHAR),
-                        ColumnDefinition.of("kickoff", SqlDataType.TIMESTAMP_WITHOUT_TIME_ZONE),
-                        ColumnDefinition.of("groupMatchDay", SqlDataType.INTEGER),
+                        ColumnDefinition.of(
+                            "kickoff",
+                            SqlDataType.TIMESTAMP_WITHOUT_TIME_ZONE
+                        ),
+                        ColumnDefinition.of(
+                            "groupMatchDay",
+                            SqlDataType.INTEGER
+                        ),
                         ColumnDefinition.of("groupId", SqlDataType.VARCHAR),
                         ColumnDefinition.of("roundId", SqlDataType.VARCHAR)
                     ]
@@ -492,7 +500,9 @@ class TournamentService:
         return int(team_count / 2)
 
     @staticmethod
-    def __calculate_total_game_days(team_count: int, home_and_away: bool) -> int:
+    def __calculate_total_game_days(
+            team_count: int,
+            home_and_away: bool) -> int:
         multiplier: int = 2 if home_and_away else 1
 
         return (team_count - 1) * multiplier
@@ -597,7 +607,10 @@ class TournamentService:
                 list(
                     map(
                         lambda knock:
-                        self.__generate_round_matches(knock.id, knock.teamCount),
+                        self.__generate_round_matches(
+                            knock.id,
+                            knock.teamCount
+                        ),
                         rounds
                     )
                 )
@@ -621,7 +634,10 @@ class TournamentService:
                 )
             )
 
-    def __generate_round_matches(self, round_id: UUID, team_count: int) -> list[Match]:
+    def __generate_round_matches(
+            self,
+            round_id: UUID,
+            team_count: int) -> list[Match]:
         return [
             Match(
                 roundId=round_id
