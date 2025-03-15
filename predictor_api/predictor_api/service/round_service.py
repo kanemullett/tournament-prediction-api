@@ -12,12 +12,18 @@ from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_response import QueryResponse
 from db_handler.db_handler.model.table import Table
 from db_handler.db_handler.model.table_join import TableJoin
+from db_handler.db_handler.model.type.condition_operator import (
+    ConditionOperator
+)
+from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.type.table_join_type import TableJoinType
+from db_handler.db_handler.model.update_request import UpdateRequest
 from db_handler.db_handler.service.database_query_service import (
     DatabaseQueryService
 )
 from db_handler.db_handler.util.store_constants import StoreConstants
 from predictor_api.predictor_api.model.round import Round
+from predictor_api.predictor_api.model.round_update import RoundUpdate
 from predictor_api.predictor_api.model.tournament import Tournament
 from predictor_api.predictor_api.model.tournament_template import (
     TournamentTemplate
@@ -58,6 +64,67 @@ class RoundService:
                 orderBy=OrderBy.of(
                     Column.of("roundOrder")
                 )
+            )
+        )
+
+        return list(
+            map(
+                lambda record:
+                Round.model_validate(record),
+                response.records
+            )
+        )
+
+    def update_rounds(
+            self,
+            tournament_id: UUID,
+            rounds: list[RoundUpdate]) -> list[Round]:
+        self.__tournament_service.get_tournament_by_id(tournament_id)
+
+        if not self.__tournament_has_knockout_stage(tournament_id):
+            raise HTTPException(
+                status_code=404,
+                detail="The tournament with the supplied id does not have a "
+                       "knockout stage."
+            )
+
+        self.__query_service.update_records(
+            UpdateRequest(
+                operation=SqlOperator.UPDATE,
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Round.get_target_table(tournament_id)
+                ),
+                records=list(
+                    map(
+                        lambda round_update:
+                        round_update.model_dump(exclude_none=True),
+                        rounds
+                    )
+                )
+            )
+        )
+
+        response: QueryResponse = self.__query_service.retrieve_records(
+            QueryRequest(
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Round.get_target_table(tournament_id)
+                ),
+                conditionGroup=QueryConditionGroup.of(
+                    QueryCondition(
+                        column=Column.of(StoreConstants.ID),
+                        operator=ConditionOperator.IN,
+                        value=list(
+                            map(
+                                lambda round_update:
+                                round_update.id,
+                                rounds
+                            )
+                        )
+                    )
+                ),
+                orderBy=OrderBy.of(Column.of("roundOrder"))
             )
         )
 
