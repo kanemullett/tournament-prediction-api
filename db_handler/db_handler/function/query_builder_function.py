@@ -7,6 +7,7 @@ from uuid import UUID
 from fastapi import HTTPException
 
 from db_handler.db_handler.model.column import Column
+from db_handler.db_handler.model.function import Function
 from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.query_condition_group import (
     QueryConditionGroup
@@ -103,6 +104,18 @@ class QueryBuilderFunction:
             string_parts.append(
                 self.__build_conditions(sql_query.conditionGroup)
             )
+
+        if sql_query.groupBy is not None:
+            string_parts.append("GROUP BY")
+            string_parts.append(", ".join(
+                list(
+                    map(
+                        lambda column:
+                        self.__build_column(column, False),
+                        sql_query.groupBy.columns
+                    )
+                )
+            ))
 
         if sql_query.orderBy is not None:
             string_parts.append("ORDER BY")
@@ -363,8 +376,7 @@ class QueryBuilderFunction:
 
         return str(value)
 
-    @staticmethod
-    def __build_column(column: Column, is_condition: bool) -> str:
+    def __build_column(self, column: Column, is_condition: bool) -> str:
         """
         Convert a Column object into a SQL string.
 
@@ -380,6 +392,9 @@ class QueryBuilderFunction:
             - example_table.example_column
             - example_table.example_column AS example
         """
+        if isinstance(column, Function):
+            return self.__build_function(column)
+
         if column.alias is not None and not is_condition:
             return '{} AS "{}"'.format(
                 '.'.join(f'"{part}"' for part in column.parts),
@@ -387,6 +402,31 @@ class QueryBuilderFunction:
             )
 
         return '.'.join(f'"{part}"' for part in column.parts)
+
+    def __build_function(self, function: Function) -> str:
+        name_parts: list[str] = []
+
+        if len(function.parts) == 2:
+            name_parts.append(f'"{function.parts[0]}"')
+        name_parts.append(function.parts[len(function.parts) - 1])
+
+        function_parts: list[str] = [".".join(name_parts), "("]
+        function_args: list[str] = []
+        for arg in function.args:
+            if isinstance(arg, Function):
+                function_args.append(self.__build_function(arg))
+            else:
+                function_args.append(self.__build_value(arg))
+        function_parts.append(", ".join(function_args))
+        function_parts.append(")")
+
+        if function.alias is not None:
+            return '{} AS "{}"'.format(
+                "".join(function_parts),
+                function.alias
+            )
+
+        return "".join(function_parts)
 
     def __build_insert_records(
             self,

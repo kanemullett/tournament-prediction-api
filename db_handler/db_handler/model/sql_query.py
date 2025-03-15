@@ -3,6 +3,7 @@ from typing import Optional, Any
 from pydantic import BaseModel
 
 from db_handler.db_handler.model.column import Column
+from db_handler.db_handler.model.group_by import GroupBy
 from db_handler.db_handler.model.order_by import OrderBy
 from db_handler.db_handler.model.query_condition_group import (
     QueryConditionGroup
@@ -32,4 +33,5 @@ class SqlQuery(BaseModel):
     tableJoins: Optional[list[TableJoin]] = None
     conditionGroup: Optional[QueryConditionGroup] = None
     records: Optional[list[dict[str, Any]]] = None
+    groupBy: Optional[GroupBy] = None
     orderBy: Optional[OrderBy] = None
