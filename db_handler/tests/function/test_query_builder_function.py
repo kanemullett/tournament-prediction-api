@@ -2,6 +2,9 @@ from db_handler.db_handler.function.query_builder_function import (
     QueryBuilderFunction
 )
 from db_handler.db_handler.model.column import Column
+from db_handler.db_handler.model.function import Function
+from db_handler.db_handler.model.group_by import GroupBy
+from db_handler.db_handler.model.order_by import OrderBy
 from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.query_condition_group import (
     QueryConditionGroup
@@ -13,6 +16,7 @@ from db_handler.db_handler.model.type.condition_operator import (
     ConditionOperator
 )
 from db_handler.db_handler.model.type.condition_join import ConditionJoin
+from db_handler.db_handler.model.type.order_direction import OrderDirection
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.type.table_join_type import TableJoinType
 from predictor_common.test_resources.assertions import Assertions
@@ -461,5 +465,68 @@ class TestQueryBuilderFunction:
         Assertions.assert_equals(
             "SELECT * FROM \"test_schema\".\"test_table\" WHERE \"column1\" "
             "IN ('val', 23) ;",
+            query_string
+        )
+
+    def test_should_build_statement_with_function_and_group_by(self):
+        # Given
+        query: SqlQuery = SqlQuery(
+            operator=SqlOperator.SELECT,
+            columns=[
+                Column.of("tab", "column"),
+                Function(
+                    parts=["AGG_FUNCTION"],
+                    args=[
+                        Function(
+                            parts=["test_schema", "test_function"],
+                            args=[
+                                Column.of("tab", "integer_column"),
+                                Column.of("join", "integer_column")
+                            ]
+                        )
+                    ],
+                    alias="total"
+                )
+            ],
+            table=Table.of(
+                "test_schema",
+                "test_table",
+                "tab"
+            ),
+            tableJoins=[
+                TableJoin.of(
+                    Table.of(
+                        "test_schema",
+                        "join_table",
+                        "join"
+                    ),
+                    QueryCondition.of(
+                        Column.of("tab", "matchId"),
+                        Column.of("join", "matchId")
+                    ),
+                    TableJoinType.RIGHT
+                )
+            ],
+            groupBy=GroupBy.of(
+                Column.of("tab", "column")
+            ),
+            orderBy=OrderBy(
+                column=Column.of("total"),
+                direction=OrderDirection.DESC
+            )
+        )
+
+        # When
+        query_string: str = self.__query_builder.apply(query)
+
+        # Then
+        Assertions.assert_equals(
+            "SELECT \"tab\".\"column\", AGG_FUNCTION("
+            "\"test_schema\".test_function(\"tab\".\"integer_column\", "
+            "\"join\".\"integer_column\")) AS \"total\" FROM "
+            "\"test_schema\".\"test_table\" AS \"tab\" RIGHT JOIN "
+            "\"test_schema\".\"join_table\" AS \"join\" ON "
+            "\"tab\".\"matchId\" = \"join\".\"matchId\" GROUP BY "
+            "\"tab\".\"column\" ORDER BY \"total\" DESC ;",
             query_string
         )
