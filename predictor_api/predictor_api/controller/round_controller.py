@@ -8,8 +8,22 @@ from predictor_api.predictor_api.service.round_service import RoundService
 
 
 class RoundController:
+    """
+    Controller containing endpoints to perform round-related actions.
+
+    Attributes:
+        __service (RoundService): The round service containing round-based
+            logic.
+    """
 
     def __init__(self, round_service: RoundService) -> None:
+        """
+        Initialise the RoundController.
+
+        Attributes:
+            round_service (RoundService): The round service containing
+                round-based logic.
+        """
         self.router: APIRouter = APIRouter(
             tags=["Rounds"]
         )

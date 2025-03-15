@@ -37,15 +37,40 @@ from predictor_api.predictor_api.util.predictor_constants import (
 
 
 class RoundService:
+    """
+    Service for performing round-related actions.
+
+    Attributes:
+        __query_service (DatabaseQueryService): The database query service.
+        __tournament_service (TournamentService): The tournament service.
+    """
 
     def __init__(
             self,
             database_query_service: DatabaseQueryService,
             tournament_service: TournamentService) -> None:
+        """
+        Initialise the RoundService.
+
+        Args:
+            database_query_service (DatabaseQueryService): The database query
+                service.
+            tournament_service (TournamentService): The tournament service.
+        """
         self.__query_service = database_query_service
         self.__tournament_service = tournament_service
 
     def get_rounds(self, tournament_id: UUID) -> list[Round]:
+        """
+        Retrieve stored rounds.
+
+        Args:
+            tournament_id (UUID): The id of the tournament whose rounds are
+                to be retrieved.
+
+        Returns:
+            list[Round]: The stored rounds.
+        """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
         if not self.__tournament_has_knockout_stage(tournament_id):
@@ -79,6 +104,17 @@ class RoundService:
             self,
             tournament_id: UUID,
             rounds: list[RoundUpdate]) -> list[Round]:
+        """
+        Update existing rounds.
+
+        Args:
+            tournament_id (UUID): The id of the tournament whose rounds are
+                to be updated.
+            rounds (list[RoundUpdate]): The rounds to update.
+
+        Returns:
+            list[Round]: The newly updated rounds.
+        """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
         if not self.__tournament_has_knockout_stage(tournament_id):
@@ -137,6 +173,17 @@ class RoundService:
         )
 
     def get_round_by_id(self, tournament_id: UUID, round_id: UUID) -> Round:
+        """
+        Retrieve a single stored round by its id.
+
+        Args:
+            tournament_id (UUID): The id of the tournament the round belongs
+                to.
+            round_id (UUID): The id of the round to retrieve.
+
+        Returns:
+            Round: The retrieved round.
+        """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
         if not self.__tournament_has_knockout_stage(tournament_id):
