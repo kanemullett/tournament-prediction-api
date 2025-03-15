@@ -34,6 +34,7 @@ from predictor_api.predictor_api.model.knockout_template import (
     KnockoutTemplate
 )
 from predictor_api.predictor_api.model.league_template import LeagueTemplate
+from predictor_api.predictor_api.model.match import Match
 from predictor_api.predictor_api.model.round import Round
 from predictor_api.predictor_api.model.tournament import Tournament
 from predictor_api.predictor_api.model.tournament_template import (
@@ -166,6 +167,25 @@ class TournamentService:
         )
 
         for record in response.records:
+            self.__table_service.create_table(
+                TableDefinition(
+                    schema=PredictorConstants.PREDICTOR_SCHEMA,
+                    table=Match.get_target_table(UUID(record[StoreConstants.ID])),
+                    columns=[
+                        ColumnDefinition(
+                            name=StoreConstants.ID,
+                            dataType=SqlDataType.VARCHAR,
+                            primaryKey=True
+                        ),
+                        ColumnDefinition.of("homeTeamId", SqlDataType.VARCHAR),
+                        ColumnDefinition.of("awayTeamId", SqlDataType.VARCHAR),
+                        ColumnDefinition.of("kickoff", SqlDataType.TIMESTAMP_WITHOUT_TIME_ZONE),
+                        ColumnDefinition.of("groupId", SqlDataType.VARCHAR),
+                        ColumnDefinition.of("roundId", SqlDataType.VARCHAR)
+                    ]
+                )
+            )
+
             if record["leagueTemplateId"] is not None:
                 self.__create_group_tables(UUID(record[StoreConstants.ID]))
 
@@ -501,6 +521,13 @@ class TournamentService:
             )
 
     def __delete_tournament_tables(self, tournament_id: UUID) -> None:
+        self.__table_service.delete_table(
+            Table.of(
+                PredictorConstants.PREDICTOR_SCHEMA,
+                Match.get_target_table(tournament_id)
+            )
+        )
+
         self.__table_service.delete_table(
             Table.of(
                 PredictorConstants.PREDICTOR_SCHEMA,
