@@ -9,4 +9,4 @@ class MatchBase(DatabaseRecord):
     kickoff: Optional[datetime] = None
     groupMatchDay: Optional[int] = None
     groupId: Optional[UUID] = None
-    matchId: Optional[UUID] = None
+    roundId: Optional[UUID] = None

@@ -592,6 +592,45 @@ class TournamentService:
                 )
             )
 
+            generated_matches: list[Match] = [
+                item for sublist in
+                list(
+                    map(
+                        lambda knock:
+                        self.__generate_round_matches(knock.id, knock.teamCount),
+                        rounds
+                    )
+                )
+                for item in sublist
+            ]
+
+            self.__query_service.update_records(
+                UpdateRequest(
+                    operation=SqlOperator.INSERT,
+                    table=Table.of(
+                        PredictorConstants.PREDICTOR_SCHEMA,
+                        Match.get_target_table(tournament_id)
+                    ),
+                    records=list(
+                        map(
+                            lambda match:
+                            match.model_dump(exclude_none=True),
+                            generated_matches
+                        )
+                    )
+                )
+            )
+
+    def __generate_round_matches(self, round_id: UUID, team_count: int) -> list[Match]:
+        return [
+            Match(
+                roundId=round_id
+            )
+            for _ in range(
+                self.__calculate_matches_per_game_day(team_count)
+            )
+        ]
+
     def __delete_tournament_tables(self, tournament_id: UUID) -> None:
         self.__table_service.delete_table(
             Table.of(
