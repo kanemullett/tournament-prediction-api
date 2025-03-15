@@ -837,7 +837,7 @@ class TestGroupService:
         self.__tournament_service.get_tournament_by_id.side_effect = (
             HTTPException(
                 status_code=404,
-                detail="No teams found with a matching id."
+                detail="No tournaments found with a matching id."
             )
         )
 
@@ -851,7 +851,7 @@ class TestGroupService:
         # Then
         Assertions.assert_equals(404, httpe.value.status_code)
         Assertions.assert_equals(
-            "No teams found with a matching id.",
+            "No tournaments found with a matching id.",
             httpe.value.detail
         )
 

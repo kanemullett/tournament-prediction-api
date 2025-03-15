@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from enum import EnumMeta
 from typing import Any
@@ -344,6 +345,10 @@ class QueryBuilderFunction:
 
         if isinstance(value, Column):
             return self.__build_column(value, True)
+
+        if (isinstance(value, list) and
+                all(isinstance(item, dict) for item in value)):
+            return f"'{json.dumps(value)}'"
 
         if isinstance(value, list):
             return (

@@ -128,13 +128,13 @@ class TestTournamentService:
                 records=[
                     {
                         "id": "34e1fae2-f630-4a7b-a813-8e692d443871",
-                        "leagueTemplateId": "69b7ef49-5c3a-4419-9dbb-"
-                                            "b5beae71c6c8"
+                        "leagueTemplateId": None,
+                        "knockoutTemplateId": None
                     },
                     {
                         "id": "690d998a-14a5-4058-a6ab-25d1ddd86df5",
-                        "leagueTemplateId": "5341cff8-df9f-4068-8a42-"
-                                            "4b4288ecba87"
+                        "leagueTemplateId": None,
+                        "knockoutTemplateId": None
                     }
                 ]
             ),
@@ -439,7 +439,9 @@ class TestTournamentService:
                     {
                         "id": "c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
                         "leagueTemplateId": "69b7ef49-5c3a-4419-9dbb-"
-                                            "b5beae71c6c8"
+                                            "b5beae71c6c8",
+                        "knockoutTemplateId": "d930ce6a-eaed-47eb-9cf3-"
+                                              "c6134b344714"
                     }
                 ]
             ),
@@ -449,6 +451,56 @@ class TestTournamentService:
                 records=[
                     {
                         "groupCount": 4,
+                    }
+                ]
+            ),
+            QueryResponse(
+                referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
+                recordCount=1,
+                records=[
+                    {
+                        "rounds": [
+                            {
+                                "name": "Round of 16",
+                                "teamCount": 16,
+                                "roundOrder": 1,
+                                "twoLegs": False,
+                                "extraTime": True,
+                                "awayGoals": False
+                            },
+                            {
+                                "name": "Quarter-Finals",
+                                "teamCount": 8,
+                                "roundOrder": 2,
+                                "twoLegs": False,
+                                "extraTime": True,
+                                "awayGoals": False
+                            },
+                            {
+                                "name": "Semi-Finals",
+                                "teamCount": 4,
+                                "roundOrder": 3,
+                                "twoLegs": False,
+                                "extraTime": True,
+                                "awayGoals": False
+                            },
+                            {
+                                "name": "Third-Place Play-Off",
+                                "teamCount": 2,
+                                "roundOrder": 4,
+                                "twoLegs": False,
+                                "extraTime": True,
+                                "awayGoals": False
+                            },
+                            {
+                                "name": "Final",
+                                "teamCount": 2,
+                                "roundOrder": 5,
+                                "twoLegs": False,
+                                "extraTime": True,
+                                "awayGoals": False
+                            }
+                        ]
                     }
                 ]
             )
@@ -492,13 +544,13 @@ class TestTournamentService:
         )
         Assertions.assert_false(groups_table_column2.primaryKey)
 
-        groups_update_args, groups_update_kwargs = (
+        rounds_table_args, groups_update_kwargs = (
             self.__table_service.create_table.call_args_list
         )[1]
-        Assertions.assert_type(TableDefinition, groups_update_args[0])
+        Assertions.assert_type(TableDefinition, rounds_table_args[0])
 
         group_teams_table_definition: TableDefinition = (
-            groups_update_args
+            rounds_table_args
         )[0]
         Assertions.assert_equals(
             "predictor",
@@ -531,12 +583,12 @@ class TestTournamentService:
         )
         Assertions.assert_false(group_teams_table_column2.primaryKey)
 
-        groups_update_args, groups_update_kwargs = (
+        rounds_table_args, groups_update_kwargs = (
             self.__query_service.update_records.call_args_list
         )[1]
-        Assertions.assert_type(UpdateRequest, groups_update_args[0])
+        Assertions.assert_type(UpdateRequest, rounds_table_args[0])
 
-        groups_update_request: UpdateRequest = groups_update_args[0]
+        groups_update_request: UpdateRequest = rounds_table_args[0]
         Assertions.assert_equals(
             SqlOperator.INSERT,
             groups_update_request.operation
@@ -565,6 +617,54 @@ class TestTournamentService:
         record4: dict[str, Any] = groups_update_request.records[3]
         Assertions.assert_type(UUID, record4["id"])
         Assertions.assert_equals("Group D", record4["name"])
+
+        rounds_table_args, rounds_table_kwargs = (
+            self.__table_service.create_table.call_args_list
+        )[2]
+        Assertions.assert_type(TableDefinition, rounds_table_args[0])
+
+        rounds_definition: TableDefinition = rounds_table_args[0]
+        Assertions.assert_equals("predictor", rounds_definition.schema_)
+        Assertions.assert_equals(
+            "rounds_c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
+            rounds_definition.table
+        )
+        Assertions.assert_equals(7, len(rounds_definition.columns))
+
+        column1: ColumnDefinition = rounds_definition.columns[0]
+        Assertions.assert_equals("id", column1.name)
+        Assertions.assert_equals(SqlDataType.VARCHAR, column1.dataType)
+        Assertions.assert_true(column1.primaryKey)
+
+        column2: ColumnDefinition = rounds_definition.columns[1]
+        Assertions.assert_equals("name", column2.name)
+        Assertions.assert_equals(SqlDataType.VARCHAR, column2.dataType)
+        Assertions.assert_false(column2.primaryKey)
+
+        column3: ColumnDefinition = rounds_definition.columns[2]
+        Assertions.assert_equals("teamCount", column3.name)
+        Assertions.assert_equals(SqlDataType.INTEGER, column3.dataType)
+        Assertions.assert_false(column3.primaryKey)
+
+        column4: ColumnDefinition = rounds_definition.columns[3]
+        Assertions.assert_equals("roundOrder", column4.name)
+        Assertions.assert_equals(SqlDataType.INTEGER, column4.dataType)
+        Assertions.assert_false(column4.primaryKey)
+
+        column5: ColumnDefinition = rounds_definition.columns[4]
+        Assertions.assert_equals("twoLegs", column5.name)
+        Assertions.assert_equals(SqlDataType.BOOLEAN, column5.dataType)
+        Assertions.assert_false(column5.primaryKey)
+
+        column6: ColumnDefinition = rounds_definition.columns[5]
+        Assertions.assert_equals("extraTime", column6.name)
+        Assertions.assert_equals(SqlDataType.BOOLEAN, column6.dataType)
+        Assertions.assert_false(column6.primaryKey)
+
+        column7: ColumnDefinition = rounds_definition.columns[6]
+        Assertions.assert_equals("awayGoals", column7.name)
+        Assertions.assert_equals(SqlDataType.BOOLEAN, column7.dataType)
+        Assertions.assert_false(column7.primaryKey)
 
     def test_should_delete_tournament_tables(self):
         # When
@@ -595,4 +695,16 @@ class TestTournamentService:
         Assertions.assert_equals(
             "group-teams_c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
             group_teams_table.table
+        )
+
+        delete_rounds_table_args, delete_rounds_table_kwargs = (
+            self.__table_service.delete_table.call_args_list
+        )[2]
+        Assertions.assert_type(Table, delete_rounds_table_args[0])
+
+        rounds_table: Table = delete_rounds_table_args[0]
+        Assertions.assert_equals("predictor", rounds_table.schema_)
+        Assertions.assert_equals(
+            "rounds_c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
+            rounds_table.table
         )
