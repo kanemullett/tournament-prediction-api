@@ -211,7 +211,7 @@ class TestGroupService:
 
         Assertions.assert_none(group_request.conditionGroup)
 
-        group_order_by: OrderBy = group_request.orderBy
+        group_order_by: OrderBy = group_request.orderBy[0]
         Assertions.assert_equals(
             ["group", "name"],
             group_order_by.column.parts
@@ -302,7 +302,7 @@ class TestGroupService:
 
         Assertions.assert_none(team_request.conditionGroup)
 
-        team_order_by: OrderBy = team_request.orderBy
+        team_order_by: OrderBy = team_request.orderBy[0]
         Assertions.assert_equals(["team", "name"], team_order_by.column.parts)
         Assertions.assert_equals(OrderDirection.ASC, team_order_by.direction)
 
@@ -644,7 +644,7 @@ class TestGroupService:
             group_condition.value
         )
 
-        group_order_by: OrderBy = group_request.orderBy
+        group_order_by: OrderBy = group_request.orderBy[0]
         Assertions.assert_equals(
             ["group", "name"],
             group_order_by.column.parts
@@ -751,7 +751,7 @@ class TestGroupService:
             team_condition.value
         )
 
-        team_order_by: OrderBy = team_request.orderBy
+        team_order_by: OrderBy = team_request.orderBy[0]
         Assertions.assert_equals(["team", "name"], team_order_by.column.parts)
         Assertions.assert_equals(OrderDirection.ASC, team_order_by.direction)
 
@@ -1096,7 +1096,7 @@ class TestGroupService:
             group_condition.value
         )
 
-        group_order_by: OrderBy = group_request.orderBy
+        group_order_by: OrderBy = group_request.orderBy[0]
         Assertions.assert_equals(
             ["group", "name"],
             group_order_by.column.parts
@@ -1198,7 +1198,7 @@ class TestGroupService:
             team_condition.value
         )
 
-        team_order_by: OrderBy = team_request.orderBy
+        team_order_by: OrderBy = team_request.orderBy[0]
         Assertions.assert_equals(["team", "name"], team_order_by.column.parts)
         Assertions.assert_equals(OrderDirection.ASC, team_order_by.direction)
 
@@ -1756,7 +1756,7 @@ class TestGroupService:
             group_condition.value
         )
 
-        group_order_by: OrderBy = group_request.orderBy
+        group_order_by: OrderBy = group_request.orderBy[0]
         Assertions.assert_equals(
             ["group", "name"],
             group_order_by.column.parts
@@ -1858,7 +1858,7 @@ class TestGroupService:
             team_condition.value
         )
 
-        team_order_by: OrderBy = team_request.orderBy
+        team_order_by: OrderBy = team_request.orderBy[0]
         Assertions.assert_equals(["team", "name"], team_order_by.column.parts)
         Assertions.assert_equals(OrderDirection.ASC, team_order_by.direction)
 
@@ -2388,7 +2388,7 @@ class TestGroupService:
             group_condition.value
         )
 
-        group_order_by: OrderBy = group_request.orderBy
+        group_order_by: OrderBy = group_request.orderBy[0]
         Assertions.assert_equals(
             ["group", "name"],
             group_order_by.column.parts
@@ -2490,7 +2490,7 @@ class TestGroupService:
             team_condition.value
         )
 
-        team_order_by: OrderBy = team_request.orderBy
+        team_order_by: OrderBy = team_request.orderBy[0]
         Assertions.assert_equals(["team", "name"], team_order_by.column.parts)
         Assertions.assert_equals(OrderDirection.ASC, team_order_by.direction)
 

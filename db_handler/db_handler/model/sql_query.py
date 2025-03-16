@@ -34,4 +34,4 @@ class SqlQuery(BaseModel):
     conditionGroup: Optional[QueryConditionGroup] = None
     records: Optional[list[dict[str, Any]]] = None
     groupBy: Optional[GroupBy] = None
-    orderBy: Optional[OrderBy] = None
+    orderBy: Optional[list[OrderBy]] = None

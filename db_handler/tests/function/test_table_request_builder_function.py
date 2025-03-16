@@ -29,7 +29,7 @@ class TestTableRequestBuilderFunction:
                 ColumnDefinition.of("hasPets", SqlDataType.BOOLEAN),
                 ColumnDefinition.of(
                     "joinDate",
-                    SqlDataType.TIMESTAMP_WITH_TIME_ZONE
+                    SqlDataType.TIMESTAMP_WITHOUT_TIME_ZONE
                 )
             ]
         )
@@ -47,7 +47,7 @@ class TestTableRequestBuilderFunction:
             "\"name\" VARCHAR, "
             "\"age\" INTEGER, "
             "\"hasPets\" BOOLEAN, "
-            "\"joinDate\" TIMESTAMP WITH TIME ZONE"
+            "\"joinDate\" TIMESTAMP WITHOUT TIME ZONE"
             ") ;",
             request_string
         )

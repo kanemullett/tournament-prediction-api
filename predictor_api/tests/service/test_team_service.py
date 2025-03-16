@@ -76,7 +76,7 @@ class TestTeamService:
         Assertions.assert_equals("predictor", table.schema_)
         Assertions.assert_equals("teams", table.table)
 
-        order_by: OrderBy = request.orderBy
+        order_by: OrderBy = request.orderBy[0]
         Assertions.assert_equals(["name"], order_by.column.parts)
         Assertions.assert_equals(OrderDirection.ASC, order_by.direction)
 
@@ -157,7 +157,7 @@ class TestTeamService:
         Assertions.assert_equals(ConditionOperator.EQUAL, condition.operator)
         Assertions.assert_equals(Confederation.UEFA, condition.value)
 
-        order_by: OrderBy = request.orderBy
+        order_by: OrderBy = request.orderBy[0]
         Assertions.assert_equals(["name"], order_by.column.parts)
         Assertions.assert_equals(OrderDirection.ASC, order_by.direction)
 
@@ -338,7 +338,7 @@ class TestTeamService:
             query_condition.value
         )
 
-        query_order_by: OrderBy = query_request.orderBy
+        query_order_by: OrderBy = query_request.orderBy[0]
         Assertions.assert_equals(["name"], query_order_by.column.parts)
         Assertions.assert_equals(OrderDirection.ASC, query_order_by.direction)
 

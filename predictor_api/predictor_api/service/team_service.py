@@ -84,9 +84,11 @@ class TeamService:
                     ) if len(conditions) > 0
                     else None
                 ),
-                orderBy=OrderBy.of(
-                    Column.of("name")
-                )
+                orderBy=[
+                    OrderBy.of(
+                        Column.of("name")
+                    )
+                ]
             )
         )
 
@@ -175,9 +177,11 @@ class TeamService:
                         value=updated_ids
                     )
                 ),
-                orderBy=OrderBy.of(
-                    Column.of("name")
-                )
+                orderBy=[
+                    OrderBy.of(
+                        Column.of("name")
+                    )
+                ]
             )
         )
 

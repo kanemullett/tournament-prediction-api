@@ -76,7 +76,7 @@ class GroupService:
         """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
-        if not self.__tournament_has_group_stage(tournament_id):
+        if not self.tournament_has_group_stage(tournament_id):
             raise HTTPException(
                 status_code=404,
                 detail="The tournament with the supplied id does not have a "
@@ -102,7 +102,7 @@ class GroupService:
         """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
-        if not self.__tournament_has_group_stage(tournament_id):
+        if not self.tournament_has_group_stage(tournament_id):
             raise HTTPException(
                 status_code=404,
                 detail="The tournament with the supplied id does not have a "
@@ -157,7 +157,7 @@ class GroupService:
         """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
-        if not self.__tournament_has_group_stage(tournament_id):
+        if not self.tournament_has_group_stage(tournament_id):
             raise HTTPException(
                 status_code=404,
                 detail="The tournament with the supplied id does not have a "
@@ -214,7 +214,7 @@ class GroupService:
         """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
-        if not self.__tournament_has_group_stage(tournament_id):
+        if not self.tournament_has_group_stage(tournament_id):
             raise HTTPException(
                 status_code=404,
                 detail="The tournament with the supplied id does not have a "
@@ -404,7 +404,7 @@ class GroupService:
         """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
-        if not self.__tournament_has_group_stage(tournament_id):
+        if not self.tournament_has_group_stage(tournament_id):
             raise HTTPException(
                 status_code=404,
                 detail="The tournament with the supplied id does not have a "
@@ -456,7 +456,7 @@ class GroupService:
             )
         )[0]
 
-    def __tournament_has_group_stage(self, tournament_id: UUID) -> bool:
+    def tournament_has_group_stage(self, tournament_id: UUID) -> bool:
         """
         Determine whether a tournament has a group stage or not.
 
@@ -526,7 +526,9 @@ class GroupService:
                     "group"
                 ),
                 conditionGroup=condition_group,
-                orderBy=OrderBy.of(Column.of("group", "name"))
+                orderBy=[
+                    OrderBy.of(Column.of("group", "name"))
+                ]
             )
         )
 
@@ -579,9 +581,11 @@ class GroupService:
                     )
                 ],
                 conditionGroup=condition_group,
-                orderBy=OrderBy.of(
-                    Column.of("team", "name")
-                )
+                orderBy=[
+                    OrderBy.of(
+                        Column.of("team", "name")
+                    )
+                ]
             )
         )
 
