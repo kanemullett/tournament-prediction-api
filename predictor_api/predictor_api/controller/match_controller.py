@@ -52,4 +52,9 @@ class MatchController:
             group_id: UUID = None,
             group_match_day: int = None,
             round_id: UUID = None) -> list[Match]:
-        return self.__service.get_matches(tournament_id, group_id, group_match_day, round_id)
+        return self.__service.get_matches(
+            tournament_id,
+            group_id,
+            group_match_day,
+            round_id
+        )

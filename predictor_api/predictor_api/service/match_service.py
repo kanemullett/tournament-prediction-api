@@ -1,11 +1,12 @@
-from datetime import datetime
 from typing import Any
 from uuid import UUID
 
 from db_handler.db_handler.model.column import Column
 from db_handler.db_handler.model.order_by import OrderBy
 from db_handler.db_handler.model.query_condition import QueryCondition
-from db_handler.db_handler.model.query_condition_group import QueryConditionGroup
+from db_handler.db_handler.model.query_condition_group import (
+    QueryConditionGroup
+)
 from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_response import QueryResponse
 from db_handler.db_handler.model.table import Table
@@ -26,7 +27,9 @@ from predictor_api.predictor_api.service.round_service import RoundService
 from predictor_api.predictor_api.service.tournament_service import (
     TournamentService
 )
-from predictor_api.predictor_api.util.predictor_constants import PredictorConstants
+from predictor_api.predictor_api.util.predictor_constants import (
+    PredictorConstants
+)
 
 
 class MatchService:
