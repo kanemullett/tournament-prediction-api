@@ -73,7 +73,7 @@ class RoundService:
         """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
-        if not self.__tournament_has_knockout_stage(tournament_id):
+        if not self.tournament_has_knockout_stage(tournament_id):
             raise HTTPException(
                 status_code=404,
                 detail="The tournament with the supplied id does not have a "
@@ -119,7 +119,7 @@ class RoundService:
         """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
-        if not self.__tournament_has_knockout_stage(tournament_id):
+        if not self.tournament_has_knockout_stage(tournament_id):
             raise HTTPException(
                 status_code=404,
                 detail="The tournament with the supplied id does not have a "
@@ -190,7 +190,7 @@ class RoundService:
         """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
-        if not self.__tournament_has_knockout_stage(tournament_id):
+        if not self.tournament_has_knockout_stage(tournament_id):
             raise HTTPException(
                 status_code=404,
                 detail="The tournament with the supplied id does not have a "
@@ -220,7 +220,7 @@ class RoundService:
 
         return Round.model_validate(response.records[0])
 
-    def __tournament_has_knockout_stage(self, tournament_id: UUID) -> bool:
+    def tournament_has_knockout_stage(self, tournament_id: UUID) -> bool:
         """
         Determine whether a tournament has a knockout stage or not.
 

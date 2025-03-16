@@ -35,6 +35,7 @@ from predictor_api.predictor_api.controller.knockout_template_controller import 
 from predictor_api.predictor_api.controller.league_template_controller import (
     LeagueTemplateController
 )
+from predictor_api.predictor_api.controller.match_controller import MatchController
 from predictor_api.predictor_api.controller.round_controller import (
     RoundController
 )
@@ -57,6 +58,7 @@ from predictor_api.predictor_api.service.knockout_template_service import (
 from predictor_api.predictor_api.service.league_template_service import (
     LeagueTemplateService
 )
+from predictor_api.predictor_api.service.match_service import MatchService
 from predictor_api.predictor_api.service.round_service import RoundService
 from predictor_api.predictor_api.service.team_service import TeamService
 from predictor_api.predictor_api.service.tournament_service import (
@@ -102,6 +104,14 @@ tournament_service: TournamentService = TournamentService(
     database_query_service,
     database_table_service
 )
+group_service: GroupService = GroupService(
+    database_query_service,
+    tournament_service
+)
+round_service: RoundService = RoundService(
+    database_query_service,
+    tournament_service
+)
 
 app.include_router(
     CompetitionController(
@@ -138,17 +148,21 @@ app.include_router(
 )
 app.include_router(
     GroupController(
-        GroupService(
-            database_query_service,
-            tournament_service
-        )
+        group_service
     ).router
 )
 app.include_router(
     RoundController(
-        RoundService(
+        round_service
+    ).router
+)
+app.include_router(
+    MatchController(
+        MatchService(
             database_query_service,
-            tournament_service
+            tournament_service,
+            group_service,
+            round_service
         )
     ).router
 )
