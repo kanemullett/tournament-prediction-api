@@ -1,6 +1,8 @@
 from typing import Any
 from uuid import UUID
 
+from fastapi import HTTPException
+
 from db_handler.db_handler.model.column import Column
 from db_handler.db_handler.model.order_by import OrderBy
 from db_handler.db_handler.model.query_condition import QueryCondition
@@ -103,6 +105,25 @@ class MatchService:
                 )
             )
         )
+
+    def get_match_by_id(self, tournament_id: UUID, match_id: UUID) -> Match:
+        self.__tournament_service.get_tournament_by_id(tournament_id)
+
+        matches: list[Match] = self.__retrieve_matches(
+            tournament_id,
+            None,
+            None,
+            None,
+            [match_id]
+        )
+
+        if len(matches) == 0:
+            raise HTTPException(
+                status_code=404,
+                detail="No matches found with a matching id."
+            )
+
+        return matches[0]
 
     def __retrieve_matches(
             self,

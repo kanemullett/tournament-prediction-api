@@ -51,6 +51,36 @@ class MatchController:
                 }
             }
         )
+        self.router.add_api_route(
+            "/tournaments/{tournament_id}/matches/{match_id}",
+            self.get_match_by_id,
+            methods=["GET"],
+            responses={
+                404: {
+                    "description": "Not Found",
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "tournamentNotFound": {
+                                    "summary": "Tournament not found",
+                                    "value": {
+                                        "detail": "No tournaments found with "
+                                                  "a matching id."
+                                    }
+                                },
+                                "matchNotFound": {
+                                    "summary": "Match not found",
+                                    "value": {
+                                        "detail": "No matches found with a "
+                                                  "matching id."
+                                    }
+                                },
+                            }
+                        }
+                    }
+                }
+            }
+        )
 
     async def get_matches(
             self,
@@ -70,3 +100,9 @@ class MatchController:
             tournament_id: UUID,
             matches: list[MatchRequest]) -> list[Match]:
         return self.__service.update_matches(tournament_id, matches)
+
+    async def get_match_by_id(
+            self,
+            tournament_id: UUID,
+            match_id: UUID) -> Match:
+        return self.__service.get_match_by_id(tournament_id, match_id)
