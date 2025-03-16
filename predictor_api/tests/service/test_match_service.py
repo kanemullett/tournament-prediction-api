@@ -21,7 +21,7 @@ from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.type.table_join_type import TableJoinType
 from db_handler.db_handler.model.update_request import UpdateRequest
 from predictor_api.predictor_api.model.match import Match
-from predictor_api.predictor_api.model.match_request import MatchRequest
+from predictor_api.predictor_api.model.match_request import MatchUpdate
 from predictor_api.predictor_api.model.team import Team
 from predictor_api.predictor_api.model.type.confederation import Confederation
 from predictor_api.predictor_api.service.match_service import MatchService
@@ -1537,12 +1537,12 @@ class TestMatchService:
 
     def test_should_update_matches(self):
         # Given
-        matches: list[MatchRequest] = [
-            MatchRequest(
+        matches: list[MatchUpdate] = [
+            MatchUpdate(
                 id=UUID("8efaf853-980e-4607-9b45-d854460ec5e0"),
                 kickoff=datetime(2025, 6, 1, 14, 0, 0)
             ),
-            MatchRequest(
+            MatchUpdate(
                 id=UUID("d8b3685b-3749-438d-9d85-da29c97ebaef"),
                 kickoff=datetime(2025, 6, 1, 17, 30, 0)
             )
@@ -1938,12 +1938,12 @@ class TestMatchService:
 
     def test_should_error_tournament_not_exists_update_matches(self):
         # Given
-        matches: list[MatchRequest] = [
-            MatchRequest(
+        matches: list[MatchUpdate] = [
+            MatchUpdate(
                 id=UUID("8efaf853-980e-4607-9b45-d854460ec5e0"),
                 kickoff=datetime(2025, 6, 1, 14, 0, 0)
             ),
-            MatchRequest(
+            MatchUpdate(
                 id=UUID("d8b3685b-3749-438d-9d85-da29c97ebaef"),
                 kickoff=datetime(2025, 6, 1, 17, 30, 0)
             )

@@ -11,7 +11,7 @@ from predictor_api.predictor_api.controller.match_controller import (
     MatchController
 )
 from predictor_api.predictor_api.model.match import Match
-from predictor_api.predictor_api.model.match_request import MatchRequest
+from predictor_api.predictor_api.model.match_request import MatchUpdate
 from predictor_api.predictor_api.model.team import Team
 from predictor_api.predictor_api.model.type.confederation import Confederation
 from predictor_common.test_resources.assertions import Assertions
@@ -169,12 +169,12 @@ class TestMatchController:
     @pytest.mark.asyncio
     async def test_should_pass_updated_matches_as_response(self):
         # Given
-        matches: list[MatchRequest] = [
-            MatchRequest(
+        matches: list[MatchUpdate] = [
+            MatchUpdate(
                 id=UUID("8efaf853-980e-4607-9b45-d854460ec5e0"),
                 kickoff=datetime(2025, 6, 1, 14, 0, 0)
             ),
-            MatchRequest(
+            MatchUpdate(
                 id=UUID("d8b3685b-3749-438d-9d85-da29c97ebaef"),
                 kickoff=datetime(2025, 6, 1, 17, 30, 0)
             )
@@ -301,12 +301,12 @@ class TestMatchController:
     @pytest.mark.asyncio
     async def test_should_pass_error_update_matches(self):
         # Given
-        matches: list[MatchRequest] = [
-            MatchRequest(
+        matches: list[MatchUpdate] = [
+            MatchUpdate(
                 id=UUID("8efaf853-980e-4607-9b45-d854460ec5e0"),
                 kickoff=datetime(2025, 6, 1, 14, 0, 0)
             ),
-            MatchRequest(
+            MatchUpdate(
                 id=UUID("d8b3685b-3749-438d-9d85-da29c97ebaef"),
                 kickoff=datetime(2025, 6, 1, 17, 30, 0)
             )

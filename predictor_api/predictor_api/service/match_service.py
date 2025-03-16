@@ -26,7 +26,7 @@ from db_handler.db_handler.service.database_query_service import (
 from db_handler.db_handler.util.store_constants import StoreConstants
 from predictor_api.predictor_api.model.group import Group
 from predictor_api.predictor_api.model.match import Match
-from predictor_api.predictor_api.model.match_request import MatchRequest
+from predictor_api.predictor_api.model.match_request import MatchUpdate
 from predictor_api.predictor_api.model.round import Round
 from predictor_api.predictor_api.model.team import Team
 from predictor_api.predictor_api.model.type.confederation import Confederation
@@ -41,6 +41,15 @@ from predictor_api.predictor_api.util.predictor_constants import (
 
 
 class MatchService:
+    """
+    Service for performing match-related actions.
+
+    Attributes:
+        __query_service (DatabaseQueryService): The database query service.
+        __tournament_service (TournamentService): The tournament service.
+        __group_service (GroupService): The group service.
+        __round_service (RoundService): The round service.
+    """
 
     def __init__(
             self,
@@ -48,6 +57,16 @@ class MatchService:
             tournament_service: TournamentService,
             group_service: GroupService,
             round_service: RoundService) -> None:
+        """
+        Initialise the MatchService.
+
+        Args:
+            database_query_service (DatabaseQueryService): The database query
+                service.
+            tournament_service (TournamentService): The tournament service.
+            group_service (GroupService): The group service.
+            round_service (RoundService): The round service.
+        """
         self.__query_service = database_query_service
         self.__tournament_service = tournament_service
         self.__group_service = group_service
@@ -59,6 +78,22 @@ class MatchService:
             group_id: UUID = None,
             group_match_day: int = None,
             round_id: UUID = None) -> list[Match]:
+        """
+        Retrieve stored matches.
+
+        Args:
+            tournament_id (UUID): The id of the tournament whose matches are
+                to be retrieved.
+            group_id (UUID): The id of the group whose matches are to be
+                retrieved.
+            group_match_day (int): The match day whose matches are to be
+                retrieved.
+            round_id (UUID): The id of the round whose matches are to be
+                retrieved.
+
+        Returns:
+            list[Match]: The stored matches.
+        """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
         return self.__retrieve_matches(
@@ -72,7 +107,18 @@ class MatchService:
     def update_matches(
             self,
             tournament_id: UUID,
-            matches: list[MatchRequest]) -> list[Match]:
+            matches: list[MatchUpdate]) -> list[Match]:
+        """
+        Update existing matches.
+
+        Args:
+            tournament_id (UUID): The id of the tournament whose matches are
+                to be updated.
+            matches (list[MatchUpdate]): The matches to update.
+
+        Returns:
+            list[Match]: The newly updated matches.
+        """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
         self.__query_service.update_records(
@@ -107,6 +153,17 @@ class MatchService:
         )
 
     def get_match_by_id(self, tournament_id: UUID, match_id: UUID) -> Match:
+        """
+        Retrieve a single stored match by its id.
+
+        Args:
+            tournament_id (UUID): The id of the tournament the match belongs
+                to.
+            match_id (UUID): The id of the match to retrieve.
+
+        Returns:
+            Match: The retrieved match.
+        """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
         matches: list[Match] = self.__retrieve_matches(
