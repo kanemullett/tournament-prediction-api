@@ -1969,3 +1969,347 @@ class TestMatchService:
             "No tournaments found with a matching id.",
             httpe.value.detail
         )
+
+    def test_should_return_match(self):
+        # Given
+        self.__group_service.tournament_has_group_stage.return_value = True
+        self.__round_service.tournament_has_knockout_stage.return_value = True
+        self.__query_service.retrieve_records.return_value = (
+            QueryResponse(
+                referenceId=UUID("ac97eb18-d9b7-40b8-b406-14f90455121a"),
+                recordCount=1,
+                records=[
+                    {
+                        "matchId": "8efaf853-980e-4607-9b45-d854460ec5e0",
+                        "homeId": "bbec1707-7ea3-49cb-9791-7a1358a2b894",
+                        "homeName": "Bosnia & Herzegovina",
+                        "homeImagePath": "BIH.png",
+                        "homeConfederation": "UEFA",
+                        "awayId": "463de8d9-8520-4fa4-b30c-5aac0f3b363c",
+                        "awayName": "Nigeria",
+                        "awayImagePath": "NGA.png",
+                        "awayConfederation": "CAF",
+                        "kickoff": "2025-06-01T14:00:00",
+                        "groupMatchDay": 1,
+                        "groupId": "4c2c8046-0007-48db-a76a-865f9048d9de",
+                        "roundId": None
+                    }
+                ]
+            )
+        )
+
+        # When
+        match: Match = self.__service.get_match_by_id(
+            UUID("5341cff8-df9f-4068-8a42-4b4288ecba87"),
+            UUID("8efaf853-980e-4607-9b45-d854460ec5e0")
+        )
+
+        # Then
+        tournament_args, tournament_kwargs = (
+            self.__tournament_service.get_tournament_by_id.call_args
+        )
+        Assertions.assert_equals(
+            UUID("5341cff8-df9f-4068-8a42-4b4288ecba87"),
+            tournament_args[0]
+        )
+
+        group_args, group_kwargs = (
+            self.__group_service.tournament_has_group_stage.call_args
+        )
+        Assertions.assert_equals(
+            UUID("5341cff8-df9f-4068-8a42-4b4288ecba87"),
+            group_args[0]
+        )
+
+        round_args, round_kwargs = (
+            self.__round_service.tournament_has_knockout_stage.call_args
+        )
+        Assertions.assert_equals(
+            UUID("5341cff8-df9f-4068-8a42-4b4288ecba87"),
+            round_args[0]
+        )
+
+        match_args, match_kwargs = (
+            self.__query_service.retrieve_records.call_args
+        )
+        Assertions.assert_type(QueryRequest, match_args[0])
+
+        request: QueryRequest = match_args[0]
+        Assertions.assert_equals(13, len(request.columns))
+
+        column1: Column = request.columns[0]
+        Assertions.assert_equals(["match", "id"], column1.parts)
+        Assertions.assert_equals("matchId", column1.alias)
+
+        column2: Column = request.columns[1]
+        Assertions.assert_equals(["home", "id"], column2.parts)
+        Assertions.assert_equals("homeId", column2.alias)
+
+        column3: Column = request.columns[2]
+        Assertions.assert_equals(["home", "name"], column3.parts)
+        Assertions.assert_equals("homeName", column3.alias)
+
+        column4: Column = request.columns[3]
+        Assertions.assert_equals(["home", "imagePath"], column4.parts)
+        Assertions.assert_equals("homeImagePath", column4.alias)
+
+        column5: Column = request.columns[4]
+        Assertions.assert_equals(["home", "confederation"], column5.parts)
+        Assertions.assert_equals("homeConfederation", column5.alias)
+
+        column6: Column = request.columns[5]
+        Assertions.assert_equals(["away", "id"], column6.parts)
+        Assertions.assert_equals("awayId", column6.alias)
+
+        column7: Column = request.columns[6]
+        Assertions.assert_equals(["away", "name"], column7.parts)
+        Assertions.assert_equals("awayName", column7.alias)
+
+        column8: Column = request.columns[7]
+        Assertions.assert_equals(["away", "imagePath"], column8.parts)
+        Assertions.assert_equals("awayImagePath", column8.alias)
+
+        column9: Column = request.columns[8]
+        Assertions.assert_equals(["away", "confederation"], column9.parts)
+        Assertions.assert_equals("awayConfederation", column9.alias)
+
+        column10: Column = request.columns[9]
+        Assertions.assert_equals(["match", "kickoff"], column10.parts)
+
+        column11: Column = request.columns[10]
+        Assertions.assert_equals(["match", "groupMatchDay"], column11.parts)
+
+        column12: Column = request.columns[11]
+        Assertions.assert_equals(["match", "groupId"], column12.parts)
+
+        column13: Column = request.columns[12]
+        Assertions.assert_equals(["match", "roundId"], column13.parts)
+
+        match_table: Table = request.table
+        Assertions.assert_equals("predictor", match_table.schema_)
+        Assertions.assert_equals(
+            "matches_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            match_table.table
+        )
+        Assertions.assert_equals("match", match_table.alias)
+
+        Assertions.assert_equals(4, len(request.tableJoins))
+
+        match_join1: TableJoin = request.tableJoins[0]
+        Assertions.assert_equals(TableJoinType.LEFT, match_join1.joinType)
+
+        match_join1_table: Table = match_join1.table
+        Assertions.assert_equals("predictor", match_join1_table.schema_)
+        Assertions.assert_equals("teams", match_join1_table.table)
+        Assertions.assert_equals("home", match_join1_table.alias)
+
+        match_join1_condition: QueryCondition = match_join1.joinCondition
+        Assertions.assert_equals(
+            ["match", "homeTeamId"],
+            match_join1_condition.column.parts
+        )
+        Assertions.assert_equals(
+            ConditionOperator.EQUAL,
+            match_join1_condition.operator
+        )
+        Assertions.assert_equals(
+            ["home", "id"],
+            match_join1_condition.value.parts
+        )
+
+        match_join2: TableJoin = request.tableJoins[1]
+        Assertions.assert_equals(TableJoinType.LEFT, match_join2.joinType)
+
+        match_join2_table: Table = match_join2.table
+        Assertions.assert_equals("predictor", match_join2_table.schema_)
+        Assertions.assert_equals("teams", match_join2_table.table)
+        Assertions.assert_equals("away", match_join2_table.alias)
+
+        match_join2_condition: QueryCondition = match_join2.joinCondition
+        Assertions.assert_equals(
+            ["match", "awayTeamId"],
+            match_join2_condition.column.parts
+        )
+        Assertions.assert_equals(
+            ConditionOperator.EQUAL,
+            match_join2_condition.operator
+        )
+        Assertions.assert_equals(
+            ["away", "id"],
+            match_join2_condition.value.parts
+        )
+
+        match_join3: TableJoin = request.tableJoins[2]
+        Assertions.assert_equals(TableJoinType.LEFT, match_join3.joinType)
+
+        match_join3_table: Table = match_join3.table
+        Assertions.assert_equals("predictor", match_join3_table.schema_)
+        Assertions.assert_equals(
+            "groups_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            match_join3_table.table
+        )
+        Assertions.assert_equals("group", match_join3_table.alias)
+
+        match_join3_condition: QueryCondition = match_join3.joinCondition
+        Assertions.assert_equals(
+            ["match", "groupId"],
+            match_join3_condition.column.parts
+        )
+        Assertions.assert_equals(
+            ConditionOperator.EQUAL,
+            match_join3_condition.operator
+        )
+        Assertions.assert_equals(
+            ["group", "id"],
+            match_join3_condition.value.parts
+        )
+
+        match_join4: TableJoin = request.tableJoins[3]
+        Assertions.assert_equals(TableJoinType.LEFT, match_join4.joinType)
+
+        match_join4_table: Table = match_join4.table
+        Assertions.assert_equals("predictor", match_join4_table.schema_)
+        Assertions.assert_equals(
+            "rounds_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            match_join4_table.table
+        )
+        Assertions.assert_equals("round", match_join4_table.alias)
+
+        match_join4_condition: QueryCondition = match_join4.joinCondition
+        Assertions.assert_equals(
+            ["match", "roundId"],
+            match_join4_condition.column.parts
+        )
+        Assertions.assert_equals(
+            ConditionOperator.EQUAL,
+            match_join4_condition.operator
+        )
+        Assertions.assert_equals(
+            ["round", "id"],
+            match_join4_condition.value.parts
+        )
+
+        Assertions.assert_equals(1, len(request.conditionGroup.conditions))
+
+        match_condition: QueryCondition = request.conditionGroup.conditions[0]
+        Assertions.assert_equals(["match", "id"], match_condition.column.parts)
+        Assertions.assert_equals(
+            ConditionOperator.IN,
+            match_condition.operator
+        )
+        Assertions.assert_equals(
+            [UUID("8efaf853-980e-4607-9b45-d854460ec5e0")],
+            match_condition.value
+        )
+
+        Assertions.assert_equals(4, len(request.orderBy))
+
+        match_order_by1: OrderBy = request.orderBy[0]
+        Assertions.assert_equals(
+            ["match", "kickoff"],
+            match_order_by1.column.parts
+        )
+        Assertions.assert_equals(OrderDirection.ASC, match_order_by1.direction)
+
+        match_order_by2: OrderBy = request.orderBy[1]
+        Assertions.assert_equals(
+            ["group", "name"],
+            match_order_by2.column.parts
+        )
+        Assertions.assert_equals(OrderDirection.ASC, match_order_by2.direction)
+
+        match_order_by3: OrderBy = request.orderBy[2]
+        Assertions.assert_equals(
+            ["match", "groupMatchDay"],
+            match_order_by3.column.parts
+        )
+        Assertions.assert_equals(OrderDirection.ASC, match_order_by3.direction)
+
+        match_order_by4: OrderBy = request.orderBy[3]
+        Assertions.assert_equals(
+            ["round", "roundOrder"],
+            match_order_by4.column.parts
+        )
+        Assertions.assert_equals(OrderDirection.ASC, match_order_by4.direction)
+
+        Assertions.assert_equals(
+            UUID("8efaf853-980e-4607-9b45-d854460ec5e0"),
+            match.id
+        )
+        Assertions.assert_equals(
+            datetime(2025, 6, 1, 14, 0, 0),
+            match.kickoff
+        )
+        Assertions.assert_equals(1, match.groupMatchDay)
+        Assertions.assert_equals(
+            UUID("4c2c8046-0007-48db-a76a-865f9048d9de"),
+            match.groupId
+        )
+        Assertions.assert_none(match.roundId)
+
+        match1_home: Team = match.homeTeam
+        Assertions.assert_equals(
+            UUID("bbec1707-7ea3-49cb-9791-7a1358a2b894"),
+            match1_home.id
+        )
+        Assertions.assert_equals("Bosnia & Herzegovina", match1_home.name)
+        Assertions.assert_equals("BIH.png", match1_home.imagePath)
+        Assertions.assert_equals(Confederation.UEFA, match1_home.confederation)
+
+        match1_away: Team = match.awayTeam
+        Assertions.assert_equals(
+            UUID("463de8d9-8520-4fa4-b30c-5aac0f3b363c"),
+            match1_away.id
+        )
+        Assertions.assert_equals("Nigeria", match1_away.name)
+        Assertions.assert_equals("NGA.png", match1_away.imagePath)
+        Assertions.assert_equals(Confederation.CAF, match1_away.confederation)
+
+    def test_should_error_tournament_not_exists_get_match_by_id(self):
+        # Given
+        self.__tournament_service.get_tournament_by_id.side_effect = (
+            HTTPException(
+                status_code=404,
+                detail="No tournaments found with a matching id."
+            )
+        )
+
+        # When
+        with raises(HTTPException) as httpe:
+            self.__service.get_match_by_id(
+                UUID("5341cff8-df9f-4068-8a42-4b4288ecba87"),
+                UUID("8efaf853-980e-4607-9b45-d854460ec5e0")
+            )
+
+        # Then
+        Assertions.assert_equals(404, httpe.value.status_code)
+        Assertions.assert_equals(
+            "No tournaments found with a matching id.",
+            httpe.value.detail
+        )
+
+    def test_should_error_match_not_exists_get_match_by_id(self):
+        # Given
+        self.__group_service.tournament_has_group_stage.return_value = True
+        self.__round_service.tournament_has_knockout_stage.return_value = True
+        self.__query_service.retrieve_records.return_value = (
+            QueryResponse(
+                referenceId=UUID("ac97eb18-d9b7-40b8-b406-14f90455121a"),
+                recordCount=0,
+                records=[]
+            )
+        )
+
+        # When
+        with raises(HTTPException) as httpe:
+            self.__service.get_match_by_id(
+                UUID("5341cff8-df9f-4068-8a42-4b4288ecba87"),
+                UUID("8efaf853-980e-4607-9b45-d854460ec5e0")
+            )
+
+        # Then
+        Assertions.assert_equals(404, httpe.value.status_code)
+        Assertions.assert_equals(
+            "No matches found with a matching id.",
+            httpe.value.detail
+        )

@@ -327,3 +327,84 @@ class TestMatchController:
         # Then
         Assertions.assert_equals(404, httpe.value.status_code)
         Assertions.assert_equals("Not Found", httpe.value.detail)
+
+    @pytest.mark.asyncio
+    async def test_should_pass_match_as_response(self):
+        # Given
+        self.__service.get_match_by_id.return_value = Match(
+            id=UUID("8efaf853-980e-4607-9b45-d854460ec5e0"),
+            homeTeam=Team(
+                id=UUID("bbec1707-7ea3-49cb-9791-7a1358a2b894"),
+                name="Bosnia & Herzegovina",
+                imagePath="BIH.png",
+                confederation=Confederation.UEFA
+            ),
+            awayTeam=Team(
+                id=UUID("463de8d9-8520-4fa4-b30c-5aac0f3b363c"),
+                name="Nigeria",
+                imagePath="NGA.png",
+                confederation=Confederation.CAF
+            ),
+            kickoff=datetime(2025, 6, 1, 14, 0, 0),
+            groupMatchDay=1,
+            groupId=UUID("4c2c8046-0007-48db-a76a-865f9048d9de")
+        )
+
+        # When
+        match: Match = await self.__controller.get_match_by_id(
+            UUID("5341cff8-df9f-4068-8a42-4b4288ecba87"),
+            UUID("8efaf853-980e-4607-9b45-d854460ec5e0")
+        )
+
+        # Then
+        Assertions.assert_equals(
+            UUID("8efaf853-980e-4607-9b45-d854460ec5e0"),
+            match.id
+        )
+        Assertions.assert_equals(
+            datetime(2025, 6, 1, 14, 0, 0),
+            match.kickoff
+        )
+        Assertions.assert_equals(1, match.groupMatchDay)
+        Assertions.assert_equals(
+            UUID("4c2c8046-0007-48db-a76a-865f9048d9de"),
+            match.groupId
+        )
+        Assertions.assert_none(match.roundId)
+
+        home: Team = match.homeTeam
+        Assertions.assert_equals(
+            UUID("bbec1707-7ea3-49cb-9791-7a1358a2b894"),
+            home.id
+        )
+        Assertions.assert_equals("Bosnia & Herzegovina", home.name)
+        Assertions.assert_equals("BIH.png", home.imagePath)
+        Assertions.assert_equals(Confederation.UEFA, home.confederation)
+
+        away: Team = match.awayTeam
+        Assertions.assert_equals(
+            UUID("463de8d9-8520-4fa4-b30c-5aac0f3b363c"),
+            away.id
+        )
+        Assertions.assert_equals("Nigeria", away.name)
+        Assertions.assert_equals("NGA.png", away.imagePath)
+        Assertions.assert_equals(Confederation.CAF, away.confederation)
+
+    @pytest.mark.asyncio
+    async def test_should_pass_error_get_match_by_id(self):
+        # Given
+        self.__service.get_match_by_id.side_effect = HTTPException(
+            status_code=404,
+            detail="Not Found"
+        )
+
+        # When
+        with raises(HTTPException) as httpe:
+            await self.__controller.get_match_by_id(
+                UUID("1c29f6c3-9f98-41a8-ba0f-e07013742797"),
+                UUID("8efaf853-980e-4607-9b45-d854460ec5e0")
+            )
+
+        # Then
+        Assertions.assert_equals(404, httpe.value.status_code)
+        Assertions.assert_equals("Not Found", httpe.value.detail)
