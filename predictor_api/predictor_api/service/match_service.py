@@ -139,7 +139,7 @@ class MatchService:
         if group_id is not None:
             conditions.append(
                 QueryCondition.of(
-                    Column.of("group", StoreConstants.ID),
+                    Column.of("match", "groupId"),
                     group_id
                 )
             )
@@ -155,7 +155,7 @@ class MatchService:
         if round_id is not None:
             conditions.append(
                 QueryCondition.of(
-                    Column.of("round", StoreConstants.ID),
+                    Column.of("match", "roundId"),
                     round_id
                 )
             )

@@ -23,22 +23,9 @@ class MatchController:
                     "description": "Not Found",
                     "content": {
                         "application/json": {
-                            "examples": {
-                                "tournamentNotFound": {
-                                    "summary": "Tournament not found",
-                                    "value": {
-                                        "detail": "No tournaments found with "
-                                                  "a matching id."
-                                    }
-                                },
-                                "noGroupStage": {
-                                    "summary": "Tournament has no group stage",
-                                    "value": {
-                                        "detail": "The tournament with the "
-                                                  "supplied id does not have "
-                                                  "a group stage."
-                                    }
-                                }
+                            "example": {
+                                "detail": "No tournaments found with a "
+                                          "matching id."
                             }
                         }
                     }
@@ -46,7 +33,7 @@ class MatchController:
             }
         )
 
-    def get_matches(
+    async def get_matches(
             self,
             tournament_id: UUID,
             group_id: UUID = None,
