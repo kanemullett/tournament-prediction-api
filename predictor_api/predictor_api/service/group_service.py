@@ -526,7 +526,9 @@ class GroupService:
                     "group"
                 ),
                 conditionGroup=condition_group,
-                orderBy=OrderBy.of(Column.of("group", "name"))
+                orderBy=[
+                    OrderBy.of(Column.of("group", "name"))
+                ]
             )
         )
 
@@ -579,9 +581,11 @@ class GroupService:
                     )
                 ],
                 conditionGroup=condition_group,
-                orderBy=OrderBy.of(
-                    Column.of("team", "name")
-                )
+                orderBy=[
+                    OrderBy.of(
+                        Column.of("team", "name")
+                    )
+                ]
             )
         )
 

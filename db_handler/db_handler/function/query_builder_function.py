@@ -8,6 +8,7 @@ from fastapi import HTTPException
 
 from db_handler.db_handler.model.column import Column
 from db_handler.db_handler.model.function import Function
+from db_handler.db_handler.model.order_by import OrderBy
 from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.query_condition_group import (
     QueryConditionGroup
@@ -119,12 +120,15 @@ class QueryBuilderFunction:
 
         if sql_query.orderBy is not None:
             string_parts.append("ORDER BY")
-            string_parts.append(
-                self.__build_column(
-                    sql_query.orderBy.column,
-                    True)
-            )
-            string_parts.append(sql_query.orderBy.direction.value)
+            string_parts.append(", ".join(
+                list(
+                    map(
+                        lambda order_by:
+                        self.__build_order_by(order_by),
+                        sql_query.orderBy
+                    )
+                )
+            ))
 
         return string_parts
 
@@ -586,3 +590,7 @@ class QueryBuilderFunction:
         return (f"WHEN \"{StoreConstants.ID}\" = "
                 f"'{record[StoreConstants.ID]}' THEN "
                 f"{self.__build_value(record[column])}")
+
+    def __build_order_by(self, order_by: OrderBy) -> str:
+        return (f"{self.__build_column(order_by.column, True)} "
+                f"{order_by.direction.value}")

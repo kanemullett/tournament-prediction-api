@@ -182,7 +182,7 @@ class TestRoundService:
             group_table.table
         )
 
-        group_order_by: OrderBy = group_request.orderBy
+        group_order_by: OrderBy = group_request.orderBy[0]
         Assertions.assert_equals(
             ["roundOrder"],
             group_order_by.column.parts
@@ -463,7 +463,7 @@ class TestRoundService:
             round_condition.value
         )
 
-        round_order_by: OrderBy = round_request.orderBy
+        round_order_by: OrderBy = round_request.orderBy[0]
         Assertions.assert_equals(
             ["roundOrder"],
             round_order_by.column.parts

@@ -86,9 +86,11 @@ class RoundService:
                     PredictorConstants.PREDICTOR_SCHEMA,
                     Round.get_target_table(tournament_id)
                 ),
-                orderBy=OrderBy.of(
-                    Column.of("roundOrder")
-                )
+                orderBy=[
+                    OrderBy.of(
+                        Column.of("roundOrder")
+                    )
+                ]
             )
         )
 
@@ -160,7 +162,9 @@ class RoundService:
                         )
                     )
                 ),
-                orderBy=OrderBy.of(Column.of("roundOrder"))
+                orderBy=[
+                    OrderBy.of(Column.of("roundOrder"))
+                ]
             )
         )
 

@@ -28,4 +28,4 @@ class QueryRequest(BaseModel):
     tableJoins: Optional[list[TableJoin]] = None
     conditionGroup: Optional[QueryConditionGroup] = None
     groupBy: Optional[GroupBy] = None
-    orderBy: Optional[OrderBy] = None
+    orderBy: Optional[list[OrderBy]] = None

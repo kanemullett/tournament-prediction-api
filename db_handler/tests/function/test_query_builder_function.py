@@ -510,10 +510,12 @@ class TestQueryBuilderFunction:
             groupBy=GroupBy.of(
                 Column.of("tab", "column")
             ),
-            orderBy=OrderBy(
-                column=Column.of("total"),
-                direction=OrderDirection.DESC
-            )
+            orderBy=[
+                OrderBy(
+                    column=Column.of("total"),
+                    direction=OrderDirection.DESC
+                )
+            ]
         )
 
         # When
