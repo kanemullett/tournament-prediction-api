@@ -3,6 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter
 
 from predictor_api.predictor_api.model.match import Match
+from predictor_api.predictor_api.model.match_request import MatchRequest
 from predictor_api.predictor_api.service.match_service import MatchService
 
 
@@ -32,6 +33,24 @@ class MatchController:
                 }
             }
         )
+        self.router.add_api_route(
+            "/tournaments/{tournament_id}/matches",
+            self.update_matches,
+            methods=["PUT"],
+            responses={
+                404: {
+                    "description": "Not Found",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "detail": "No tournaments found with a "
+                                          "matching id."
+                            }
+                        }
+                    }
+                }
+            }
+        )
 
     async def get_matches(
             self,
@@ -45,3 +64,9 @@ class MatchController:
             group_match_day,
             round_id
         )
+
+    async def update_matches(
+            self,
+            tournament_id: UUID,
+            matches: list[MatchRequest]) -> list[Match]:
+        return self.__service.update_matches(tournament_id, matches)

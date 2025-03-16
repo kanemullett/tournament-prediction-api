@@ -12,13 +12,19 @@ from db_handler.db_handler.model.query_response import QueryResponse
 from db_handler.db_handler.model.table import Table
 from db_handler.db_handler.model.table_join import TableJoin
 from db_handler.db_handler.model.type.condition_join import ConditionJoin
+from db_handler.db_handler.model.type.condition_operator import (
+    ConditionOperator
+)
+from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.type.table_join_type import TableJoinType
+from db_handler.db_handler.model.update_request import UpdateRequest
 from db_handler.db_handler.service.database_query_service import (
     DatabaseQueryService
 )
 from db_handler.db_handler.util.store_constants import StoreConstants
 from predictor_api.predictor_api.model.group import Group
 from predictor_api.predictor_api.model.match import Match
+from predictor_api.predictor_api.model.match_request import MatchRequest
 from predictor_api.predictor_api.model.round import Round
 from predictor_api.predictor_api.model.team import Team
 from predictor_api.predictor_api.model.type.confederation import Confederation
@@ -53,6 +59,58 @@ class MatchService:
             round_id: UUID = None) -> list[Match]:
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
+        return self.__retrieve_matches(
+            tournament_id,
+            group_id,
+            group_match_day,
+            round_id,
+            None
+        )
+
+    def update_matches(
+            self,
+            tournament_id: UUID,
+            matches: list[MatchRequest]) -> list[Match]:
+        self.__tournament_service.get_tournament_by_id(tournament_id)
+
+        self.__query_service.update_records(
+            UpdateRequest(
+                operation=SqlOperator.UPDATE,
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Match.get_target_table(tournament_id)
+                ),
+                records=list(
+                    map(
+                        lambda match:
+                        match.model_dump(exclude_none=True),
+                        matches
+                    )
+                )
+            )
+        )
+
+        return self.__retrieve_matches(
+            tournament_id,
+            None,
+            None,
+            None,
+            list(
+                map(
+                    lambda match:
+                    match.id,
+                    matches
+                )
+            )
+        )
+
+    def __retrieve_matches(
+            self,
+            tournament_id: UUID,
+            group_id: UUID = None,
+            group_match_day: int = None,
+            round_id: UUID = None,
+            match_ids: list[UUID] = None) -> list[Match]:
         table_joins: list[TableJoin] = [
             TableJoin.of(
                 Table.of(
@@ -157,6 +215,15 @@ class MatchService:
                 QueryCondition.of(
                     Column.of("match", "roundId"),
                     round_id
+                )
+            )
+
+        if match_ids is not None:
+            conditions.append(
+                QueryCondition(
+                    column=Column.of("match", StoreConstants.ID),
+                    operator=ConditionOperator.IN,
+                    value=match_ids
                 )
             )
 
