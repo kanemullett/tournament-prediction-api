@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 from unittest.mock import MagicMock
 from uuid import UUID
 
@@ -16,7 +17,9 @@ from db_handler.db_handler.model.type.condition_operator import (
     ConditionOperator
 )
 from db_handler.db_handler.model.type.order_direction import OrderDirection
+from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.type.table_join_type import TableJoinType
+from db_handler.db_handler.model.update_request import UpdateRequest
 from predictor_api.predictor_api.model.match import Match
 from predictor_api.predictor_api.model.match_request import MatchRequest
 from predictor_api.predictor_api.model.team import Team
@@ -1603,6 +1606,39 @@ class TestMatchService:
 
         update_args, update_kwargs = (
             self.__query_service.update_records.call_args
+        )
+        Assertions.assert_type(UpdateRequest, update_args[0])
+
+        update: UpdateRequest = update_args[0]
+        Assertions.assert_equals(SqlOperator.UPDATE, update.operation)
+
+        update_table: Table = update.table
+        Assertions.assert_equals("predictor", update_table.schema_)
+        Assertions.assert_equals(
+            "matches_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            update_table.table
+        )
+
+        Assertions.assert_equals(2, len(update.records))
+
+        record1: dict[str, Any] = update.records[0]
+        Assertions.assert_equals(
+            UUID("8efaf853-980e-4607-9b45-d854460ec5e0"),
+            record1["id"]
+        )
+        Assertions.assert_equals(
+            datetime(2025, 6, 1, 14, 0, 0),
+            record1["kickoff"]
+        )
+
+        record2: dict[str, Any] = update.records[1]
+        Assertions.assert_equals(
+            UUID("d8b3685b-3749-438d-9d85-da29c97ebaef"),
+            record2["id"]
+        )
+        Assertions.assert_equals(
+            datetime(2025, 6, 1, 17, 30, 0),
+            record2["kickoff"]
         )
 
         group_args, group_kwargs = (
