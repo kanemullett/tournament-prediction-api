@@ -540,37 +540,37 @@ class TestQueryBuilderFunction:
         query: SqlQuery = SqlQuery(
             distinct=True,
             columns=[
-                Column.of("team", "id"),
-                Column.of("team", "name"),
-                Column.of("team", "imagePath"),
-                Column.of("team", "confederation")
+                Column.of("test_alias", "id"),
+                Column.of("test_alias", "column1"),
+                Column.of("test_alias", "column2"),
+                Column.of("test_alias", "column3")
             ],
             table=Table.of(
-                "predictor",
-                "teams",
-                "team"
+                "test_schema",
+                "test_table",
+                "test_alias"
             ),
             joins=[
                 QueryJoin(
                     query=SqlQuery(
                         distinct=True,
                         columns=[
-                            Column.of("teamId")
+                            Column.of("fkId")
                         ],
                         table=Table.of(
-                            "predictor",
-                            "group-teams_e091d1d6-1a71-446c-934a-a048423c46ec"
+                            "test_schema",
+                            "table1"
                         ),
                         joins=[
                             QueryJoin(
                                 query=SqlQuery(
                                     distinct=True,
                                     columns=[
-                                        Column.of("homeTeamId")
+                                        Column.of("firstFkId")
                                     ],
                                     table=Table.of(
-                                        "predictor",
-                                        "matches_e091d1d6-1a71-446c-934a-a048423c46ec"
+                                        "test_schema",
+                                        "table2"
                                     )
                                 ),
                                 joinType=JoinType.UNION
@@ -579,22 +579,22 @@ class TestQueryBuilderFunction:
                                 query=SqlQuery(
                                     distinct=True,
                                     columns=[
-                                        Column.of("awayTeamId")
+                                        Column.of("secondFkId")
                                     ],
                                     table=Table.of(
-                                        "predictor",
-                                        "matches_e091d1d6-1a71-446c-934a-a048423c46ec"
+                                        "test_schema",
+                                        "table2"
                                     )
                                 ),
                                 joinType=JoinType.UNION
                             )
                         ]
                     ),
-                    alias="teamIds",
+                    alias="ids",
                     joinType=JoinType.INNER,
                     joinCondition=QueryCondition.of(
-                        Column.of("team", "id"),
-                        Column.of("teamIds", "teamId")
+                        Column.of("test_alias", "id"),
+                        Column.of("ids", "fkId")
                     )
                 )
             ]
@@ -605,16 +605,13 @@ class TestQueryBuilderFunction:
 
         # Then
         Assertions.assert_equals(
-            "SELECT DISTINCT \"team\".\"id\", \"team\".\"name\", "
-            "\"team\".\"imagePath\", \"team\".\"confederation\" FROM "
-            "\"predictor\".\"teams\" \"team\" JOIN (SELECT DISTINCT "
-            "\"teamId\" FROM "
-            "\"predictor\"."
-            "\"group-teams_e091d1d6-1a71-446c-934a-a048423c46ec\" UNION "
-            "SELECT DISTINCT \"homeTeamId\" FROM "
-            "\"predictor\".\"matches_e091d1d6-1a71-446c-934a-a048423c46ec\" "
-            "UNION SELECT DISTINCT \"awayTeamId\" FROM "
-            "\"predictor\".\"matches_e091d1d6-1a71-446c-934a-a048423c46ec\") "
-            "\"teamIds\" ON \"team\".\"id\" = \"teamIds\".\"teamId\";",
+            "SELECT DISTINCT \"test_alias\".\"id\", "
+            "\"test_alias\".\"column1\", \"test_alias\".\"column2\", "
+            "\"test_alias\".\"column3\" FROM \"test_schema\".\"test_table\" "
+            "AS \"test_alias\" INNER JOIN (SELECT DISTINCT \"fkId\" FROM "
+            "\"test_schema\".\"table1\" UNION SELECT DISTINCT \"firstFkId\" "
+            "FROM \"test_schema\".\"table2\" UNION SELECT DISTINCT "
+            "\"secondFkId\" FROM \"test_schema\".\"table2\") AS \"ids\" ON "
+            "\"test_alias\".\"id\" = \"ids\".\"fkId\" ;",
             query_string
         )
