@@ -1,30 +1,24 @@
-from pydantic import BaseModel
-
+from db_handler.db_handler.model.join import Join
 from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.table import Table
-from db_handler.db_handler.model.type.table_join_type import TableJoinType
+from db_handler.db_handler.model.type.join_type import JoinType
 
 
-class TableJoin(BaseModel):
+class TableJoin(Join):
     """
     Object representing a join between two database tables.
 
     Attributes:
         table (Table): The table to join to the base table.
-        joinCondition (QueryCondition): The condition upon which to join the
-            tables.
-        joinType (TableJoinType): The way in which to join the tables.
     """
     table: Table
-    joinCondition: QueryCondition
-    joinType: TableJoinType
 
     @classmethod
     def of(
             cls,
             table: Table,
             join_condition: QueryCondition,
-            join_type: TableJoinType):
+            join_type: JoinType):
         return TableJoin(
             table=table,
             joinCondition=join_condition,

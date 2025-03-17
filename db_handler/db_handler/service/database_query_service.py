@@ -63,7 +63,7 @@ class DatabaseQueryService:
             operator=SqlOperator.SELECT,
             table=query_request.table,
             columns=query_request.columns,
-            tableJoins=query_request.tableJoins,
+            joins=query_request.joins,
             conditionGroup=query_request.conditionGroup,
             orderBy=query_request.orderBy
         )

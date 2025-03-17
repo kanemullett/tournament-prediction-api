@@ -9,6 +9,7 @@ from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.query_condition_group import (
     QueryConditionGroup
 )
+from db_handler.db_handler.model.query_join import QueryJoin
 from db_handler.db_handler.model.sql_query import SqlQuery
 from db_handler.db_handler.model.table import Table
 from db_handler.db_handler.model.table_join import TableJoin
@@ -18,7 +19,7 @@ from db_handler.db_handler.model.type.condition_operator import (
 from db_handler.db_handler.model.type.condition_join import ConditionJoin
 from db_handler.db_handler.model.type.order_direction import OrderDirection
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
-from db_handler.db_handler.model.type.table_join_type import TableJoinType
+from db_handler.db_handler.model.type.join_type import JoinType
 from predictor_common.test_resources.assertions import Assertions
 
 from fastapi import HTTPException
@@ -185,14 +186,14 @@ class TestQueryBuilderFunction:
                     alias="user_name"
                 )
             ],
-            tableJoins=[
+            joins=[
                 TableJoin.of(
                     Table.of("test_schema", "join_table_one", "first_joiner"),
                     QueryCondition.of(
                         Column.of("my_table", "id"),
                         Column.of("first_joiner", "baseId")
                     ),
-                    TableJoinType.INNER
+                    JoinType.INNER
                 ),
                 TableJoin.of(
                     Table.of("test_schema", "join_table_two", "second_joiner"),
@@ -200,7 +201,7 @@ class TestQueryBuilderFunction:
                         Column.of("my_table", "id"),
                         Column.of("second_joiner", "baseId")
                     ),
-                    TableJoinType.LEFT
+                    JoinType.LEFT
                 )
             ],
             conditionGroup=QueryConditionGroup(
@@ -493,7 +494,7 @@ class TestQueryBuilderFunction:
                 "test_table",
                 "tab"
             ),
-            tableJoins=[
+            joins=[
                 TableJoin.of(
                     Table.of(
                         "test_schema",
@@ -504,7 +505,7 @@ class TestQueryBuilderFunction:
                         Column.of("tab", "matchId"),
                         Column.of("join", "matchId")
                     ),
-                    TableJoinType.RIGHT
+                    JoinType.RIGHT
                 )
             ],
             groupBy=GroupBy.of(
@@ -530,5 +531,86 @@ class TestQueryBuilderFunction:
             "\"test_schema\".\"join_table\" AS \"join\" ON "
             "\"tab\".\"matchId\" = \"join\".\"matchId\" GROUP BY "
             "\"tab\".\"column\" ORDER BY \"total\" DESC ;",
+            query_string
+        )
+
+    def test(self):
+        # Given
+        query: SqlQuery = SqlQuery(
+            distinct=True,
+            columns=[
+                Column.of("test_alias", "id"),
+                Column.of("test_alias", "column1"),
+                Column.of("test_alias", "column2"),
+                Column.of("test_alias", "column3")
+            ],
+            table=Table.of(
+                "test_schema",
+                "test_table",
+                "test_alias"
+            ),
+            joins=[
+                QueryJoin(
+                    query=SqlQuery(
+                        distinct=True,
+                        columns=[
+                            Column.of("fkId")
+                        ],
+                        table=Table.of(
+                            "test_schema",
+                            "table1"
+                        ),
+                        joins=[
+                            QueryJoin(
+                                query=SqlQuery(
+                                    distinct=True,
+                                    columns=[
+                                        Column.of("firstFkId")
+                                    ],
+                                    table=Table.of(
+                                        "test_schema",
+                                        "table2"
+                                    )
+                                ),
+                                joinType=JoinType.UNION
+                            ),
+                            QueryJoin(
+                                query=SqlQuery(
+                                    distinct=True,
+                                    columns=[
+                                        Column.of("secondFkId")
+                                    ],
+                                    table=Table.of(
+                                        "test_schema",
+                                        "table2"
+                                    )
+                                ),
+                                joinType=JoinType.UNION
+                            )
+                        ]
+                    ),
+                    alias="ids",
+                    joinType=JoinType.INNER,
+                    joinCondition=QueryCondition.of(
+                        Column.of("test_alias", "id"),
+                        Column.of("ids", "fkId")
+                    )
+                )
+            ]
+        )
+
+        # When
+        query_string: str = self.__query_builder.apply(query)
+
+        # Then
+        Assertions.assert_equals(
+            "SELECT DISTINCT \"test_alias\".\"id\", "
+            "\"test_alias\".\"column1\", \"test_alias\".\"column2\", "
+            "\"test_alias\".\"column3\" FROM \"test_schema\".\"test_table\" "
+            "AS \"test_alias\" INNER JOIN (SELECT DISTINCT \"fkId\" FROM "
+            "\"test_schema\".\"table1\" UNION SELECT DISTINCT \"firstFkId\" "
+            "FROM \"test_schema\".\"table2\" UNION SELECT DISTINCT "
+            "\"secondFkId\" FROM \"test_schema\".\"table2\") AS \"ids\" ON "
+            "\"test_alias\".\"id\" = \"ids\".\"fkId\" ;",
             query_string
         )

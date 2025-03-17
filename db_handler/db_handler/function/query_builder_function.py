@@ -8,11 +8,13 @@ from fastapi import HTTPException
 
 from db_handler.db_handler.model.column import Column
 from db_handler.db_handler.model.function import Function
+from db_handler.db_handler.model.join import Join
 from db_handler.db_handler.model.order_by import OrderBy
 from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.query_condition_group import (
     QueryConditionGroup
 )
+from db_handler.db_handler.model.query_join import QueryJoin
 from db_handler.db_handler.model.sql_query import SqlQuery
 from db_handler.db_handler.model.table import Table
 from db_handler.db_handler.model.table_join import TableJoin
@@ -28,12 +30,16 @@ class QueryBuilderFunction:
     Function for building SQL query strings from SqlQuery objects.
     """
 
-    def apply(self, sql_query: SqlQuery) -> str:
+    def apply(
+            self,
+            sql_query: SqlQuery,
+            exclude_semicolon: bool = False) -> str:
         """
         Convert a SqlQuery object into a SQL query string.
 
         Args:
             sql_query (SqlQuery): The SqlQuery object to be converted.
+            exclude_semicolon (bool): True if semicolon should be excluded.
 
         Returns:
             str: The SQL query string.
@@ -61,7 +67,8 @@ class QueryBuilderFunction:
                 string_parts
             )
 
-        string_parts.append(";")
+        if not exclude_semicolon:
+            string_parts.append(";")
 
         return " ".join(string_parts)
 
@@ -84,6 +91,9 @@ class QueryBuilderFunction:
         Examples:
             - SELECT * FROM example_schema.example_table ;
         """
+        if sql_query.distinct:
+            string_parts.append("DISTINCT")
+
         string_parts.append("*" if sql_query.columns is None else ", ".join(
             list(
                 map(
@@ -96,8 +106,8 @@ class QueryBuilderFunction:
         string_parts.append("FROM")
         string_parts.append(self.__build_table(sql_query.table))
 
-        if sql_query.tableJoins is not None and len(sql_query.tableJoins) > 0:
-            string_parts.append(self.__build_table_joins(sql_query.tableJoins))
+        if sql_query.joins is not None and len(sql_query.joins) > 0:
+            string_parts.append(self.__build_joins(sql_query.joins))
 
         if (sql_query.conditionGroup is not None and
                 len(sql_query.conditionGroup.conditions) > 0):
@@ -241,12 +251,12 @@ class QueryBuilderFunction:
 
         return f'"{table.schema_}"."{table.table}" AS "{table.alias}"'
 
-    def __build_table_joins(self, table_joins: list[TableJoin]) -> str:
+    def __build_joins(self, joins: list[Join]) -> str:
         """
         Convert a list of TableJoin objects into a SQL string.
 
         Args:
-            table_joins (list[TableJoin]): The list of TableJoin objects to
+            joins (list[Join]): The list of TableJoin objects to
                 be converted.
 
         Returns:
@@ -255,12 +265,21 @@ class QueryBuilderFunction:
         join_strings: list[str] = list(
             map(
                 lambda join:
-                self.__build_table_join(join),
-                table_joins
+                self.__build_join(join),
+                joins
             )
         )
 
         return " ".join(join_strings)
+
+    def __build_join(self, join: Join) -> str:
+        if isinstance(join, TableJoin):
+            return self.__build_table_join(join)
+
+        if isinstance(join, QueryJoin):
+            return self.__build_query_join(join)
+
+        return ""
 
     def __build_table_join(self, table_join: TableJoin) -> str:
         """
@@ -279,6 +298,23 @@ class QueryBuilderFunction:
         return (f"{table_join.joinType.value} "
                 f"{self.__build_table(table_join.table)} ON "
                 f"{self.__build_condition(table_join.joinCondition)}")
+
+    def __build_query_join(self, query_join: QueryJoin):
+        join_statement: str = (f"{query_join.joinType.value} "
+                               f"{self.apply(query_join.query, True)}")
+
+        if query_join.alias is not None:
+            join_statement = (f'{query_join.joinType.value} '
+                              f'({self.apply(query_join.query, True)}) AS '
+                              f'"{query_join.alias}"')
+
+        if query_join.joinCondition is not None:
+            join_statement = (f"{join_statement} ON " +
+                              self.__build_condition(
+                                  query_join.joinCondition
+                              ))
+
+        return join_statement
 
     def __build_conditions(
             self,

@@ -18,7 +18,7 @@ from db_handler.db_handler.model.type.condition_operator import (
 )
 from db_handler.db_handler.model.type.order_direction import OrderDirection
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
-from db_handler.db_handler.model.type.table_join_type import TableJoinType
+from db_handler.db_handler.model.type.join_type import JoinType
 from db_handler.db_handler.model.update_request import UpdateRequest
 from predictor_api.predictor_api.model.match import Match
 from predictor_api.predictor_api.model.match_request import MatchUpdate
@@ -187,10 +187,10 @@ class TestMatchService:
         )
         Assertions.assert_equals("match", match_table.alias)
 
-        Assertions.assert_equals(4, len(request.tableJoins))
+        Assertions.assert_equals(4, len(request.joins))
 
-        match_join1: TableJoin = request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join1.joinType)
+        match_join1: TableJoin = request.joins[0]
+        Assertions.assert_equals(JoinType.LEFT, match_join1.joinType)
 
         match_join1_table: Table = match_join1.table
         Assertions.assert_equals("predictor", match_join1_table.schema_)
@@ -211,8 +211,8 @@ class TestMatchService:
             match_join1_condition.value.parts
         )
 
-        match_join2: TableJoin = request.tableJoins[1]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join2.joinType)
+        match_join2: TableJoin = request.joins[1]
+        Assertions.assert_equals(JoinType.LEFT, match_join2.joinType)
 
         match_join2_table: Table = match_join2.table
         Assertions.assert_equals("predictor", match_join2_table.schema_)
@@ -233,8 +233,8 @@ class TestMatchService:
             match_join2_condition.value.parts
         )
 
-        match_join3: TableJoin = request.tableJoins[2]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join3.joinType)
+        match_join3: TableJoin = request.joins[2]
+        Assertions.assert_equals(JoinType.LEFT, match_join3.joinType)
 
         match_join3_table: Table = match_join3.table
         Assertions.assert_equals("predictor", match_join3_table.schema_)
@@ -258,8 +258,8 @@ class TestMatchService:
             match_join3_condition.value.parts
         )
 
-        match_join4: TableJoin = request.tableJoins[3]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join4.joinType)
+        match_join4: TableJoin = request.joins[3]
+        Assertions.assert_equals(JoinType.LEFT, match_join4.joinType)
 
         match_join4_table: Table = match_join4.table
         Assertions.assert_equals("predictor", match_join4_table.schema_)
@@ -512,10 +512,10 @@ class TestMatchService:
         )
         Assertions.assert_equals("match", match_table.alias)
 
-        Assertions.assert_equals(4, len(request.tableJoins))
+        Assertions.assert_equals(4, len(request.joins))
 
-        match_join1: TableJoin = request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join1.joinType)
+        match_join1: TableJoin = request.joins[0]
+        Assertions.assert_equals(JoinType.LEFT, match_join1.joinType)
 
         match_join1_table: Table = match_join1.table
         Assertions.assert_equals("predictor", match_join1_table.schema_)
@@ -536,8 +536,8 @@ class TestMatchService:
             match_join1_condition.value.parts
         )
 
-        match_join2: TableJoin = request.tableJoins[1]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join2.joinType)
+        match_join2: TableJoin = request.joins[1]
+        Assertions.assert_equals(JoinType.LEFT, match_join2.joinType)
 
         match_join2_table: Table = match_join2.table
         Assertions.assert_equals("predictor", match_join2_table.schema_)
@@ -558,8 +558,8 @@ class TestMatchService:
             match_join2_condition.value.parts
         )
 
-        match_join3: TableJoin = request.tableJoins[2]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join3.joinType)
+        match_join3: TableJoin = request.joins[2]
+        Assertions.assert_equals(JoinType.LEFT, match_join3.joinType)
 
         match_join3_table: Table = match_join3.table
         Assertions.assert_equals("predictor", match_join3_table.schema_)
@@ -583,8 +583,8 @@ class TestMatchService:
             match_join3_condition.value.parts
         )
 
-        match_join4: TableJoin = request.tableJoins[3]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join4.joinType)
+        match_join4: TableJoin = request.joins[3]
+        Assertions.assert_equals(JoinType.LEFT, match_join4.joinType)
 
         match_join4_table: Table = match_join4.table
         Assertions.assert_equals("predictor", match_join4_table.schema_)
@@ -823,10 +823,10 @@ class TestMatchService:
         )
         Assertions.assert_equals("match", match_table.alias)
 
-        Assertions.assert_equals(4, len(request.tableJoins))
+        Assertions.assert_equals(4, len(request.joins))
 
-        match_join1: TableJoin = request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join1.joinType)
+        match_join1: TableJoin = request.joins[0]
+        Assertions.assert_equals(JoinType.LEFT, match_join1.joinType)
 
         match_join1_table: Table = match_join1.table
         Assertions.assert_equals("predictor", match_join1_table.schema_)
@@ -847,8 +847,8 @@ class TestMatchService:
             match_join1_condition.value.parts
         )
 
-        match_join2: TableJoin = request.tableJoins[1]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join2.joinType)
+        match_join2: TableJoin = request.joins[1]
+        Assertions.assert_equals(JoinType.LEFT, match_join2.joinType)
 
         match_join2_table: Table = match_join2.table
         Assertions.assert_equals("predictor", match_join2_table.schema_)
@@ -869,8 +869,8 @@ class TestMatchService:
             match_join2_condition.value.parts
         )
 
-        match_join3: TableJoin = request.tableJoins[2]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join3.joinType)
+        match_join3: TableJoin = request.joins[2]
+        Assertions.assert_equals(JoinType.LEFT, match_join3.joinType)
 
         match_join3_table: Table = match_join3.table
         Assertions.assert_equals("predictor", match_join3_table.schema_)
@@ -894,8 +894,8 @@ class TestMatchService:
             match_join3_condition.value.parts
         )
 
-        match_join4: TableJoin = request.tableJoins[3]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join4.joinType)
+        match_join4: TableJoin = request.joins[3]
+        Assertions.assert_equals(JoinType.LEFT, match_join4.joinType)
 
         match_join4_table: Table = match_join4.table
         Assertions.assert_equals("predictor", match_join4_table.schema_)
@@ -1126,10 +1126,10 @@ class TestMatchService:
         )
         Assertions.assert_equals("match", match_table.alias)
 
-        Assertions.assert_equals(3, len(request.tableJoins))
+        Assertions.assert_equals(3, len(request.joins))
 
-        match_join1: TableJoin = request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join1.joinType)
+        match_join1: TableJoin = request.joins[0]
+        Assertions.assert_equals(JoinType.LEFT, match_join1.joinType)
 
         match_join1_table: Table = match_join1.table
         Assertions.assert_equals("predictor", match_join1_table.schema_)
@@ -1150,8 +1150,8 @@ class TestMatchService:
             match_join1_condition.value.parts
         )
 
-        match_join2: TableJoin = request.tableJoins[1]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join2.joinType)
+        match_join2: TableJoin = request.joins[1]
+        Assertions.assert_equals(JoinType.LEFT, match_join2.joinType)
 
         match_join2_table: Table = match_join2.table
         Assertions.assert_equals("predictor", match_join2_table.schema_)
@@ -1172,8 +1172,8 @@ class TestMatchService:
             match_join2_condition.value.parts
         )
 
-        match_join3: TableJoin = request.tableJoins[2]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join3.joinType)
+        match_join3: TableJoin = request.joins[2]
+        Assertions.assert_equals(JoinType.LEFT, match_join3.joinType)
 
         match_join3_table: Table = match_join3.table
         Assertions.assert_equals("predictor", match_join3_table.schema_)
@@ -1382,10 +1382,10 @@ class TestMatchService:
         )
         Assertions.assert_equals("match", match_table.alias)
 
-        Assertions.assert_equals(3, len(request.tableJoins))
+        Assertions.assert_equals(3, len(request.joins))
 
-        match_join1: TableJoin = request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join1.joinType)
+        match_join1: TableJoin = request.joins[0]
+        Assertions.assert_equals(JoinType.LEFT, match_join1.joinType)
 
         match_join1_table: Table = match_join1.table
         Assertions.assert_equals("predictor", match_join1_table.schema_)
@@ -1406,8 +1406,8 @@ class TestMatchService:
             match_join1_condition.value.parts
         )
 
-        match_join2: TableJoin = request.tableJoins[1]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join2.joinType)
+        match_join2: TableJoin = request.joins[1]
+        Assertions.assert_equals(JoinType.LEFT, match_join2.joinType)
 
         match_join2_table: Table = match_join2.table
         Assertions.assert_equals("predictor", match_join2_table.schema_)
@@ -1428,8 +1428,8 @@ class TestMatchService:
             match_join2_condition.value.parts
         )
 
-        match_join3: TableJoin = request.tableJoins[2]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join3.joinType)
+        match_join3: TableJoin = request.joins[2]
+        Assertions.assert_equals(JoinType.LEFT, match_join3.joinType)
 
         match_join3_table: Table = match_join3.table
         Assertions.assert_equals("predictor", match_join3_table.schema_)
@@ -1721,10 +1721,10 @@ class TestMatchService:
         )
         Assertions.assert_equals("match", match_table.alias)
 
-        Assertions.assert_equals(4, len(request.tableJoins))
+        Assertions.assert_equals(4, len(request.joins))
 
-        match_join1: TableJoin = request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join1.joinType)
+        match_join1: TableJoin = request.joins[0]
+        Assertions.assert_equals(JoinType.LEFT, match_join1.joinType)
 
         match_join1_table: Table = match_join1.table
         Assertions.assert_equals("predictor", match_join1_table.schema_)
@@ -1745,8 +1745,8 @@ class TestMatchService:
             match_join1_condition.value.parts
         )
 
-        match_join2: TableJoin = request.tableJoins[1]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join2.joinType)
+        match_join2: TableJoin = request.joins[1]
+        Assertions.assert_equals(JoinType.LEFT, match_join2.joinType)
 
         match_join2_table: Table = match_join2.table
         Assertions.assert_equals("predictor", match_join2_table.schema_)
@@ -1767,8 +1767,8 @@ class TestMatchService:
             match_join2_condition.value.parts
         )
 
-        match_join3: TableJoin = request.tableJoins[2]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join3.joinType)
+        match_join3: TableJoin = request.joins[2]
+        Assertions.assert_equals(JoinType.LEFT, match_join3.joinType)
 
         match_join3_table: Table = match_join3.table
         Assertions.assert_equals("predictor", match_join3_table.schema_)
@@ -1792,8 +1792,8 @@ class TestMatchService:
             match_join3_condition.value.parts
         )
 
-        match_join4: TableJoin = request.tableJoins[3]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join4.joinType)
+        match_join4: TableJoin = request.joins[3]
+        Assertions.assert_equals(JoinType.LEFT, match_join4.joinType)
 
         match_join4_table: Table = match_join4.table
         Assertions.assert_equals("predictor", match_join4_table.schema_)
@@ -2093,10 +2093,10 @@ class TestMatchService:
         )
         Assertions.assert_equals("match", match_table.alias)
 
-        Assertions.assert_equals(4, len(request.tableJoins))
+        Assertions.assert_equals(4, len(request.joins))
 
-        match_join1: TableJoin = request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join1.joinType)
+        match_join1: TableJoin = request.joins[0]
+        Assertions.assert_equals(JoinType.LEFT, match_join1.joinType)
 
         match_join1_table: Table = match_join1.table
         Assertions.assert_equals("predictor", match_join1_table.schema_)
@@ -2117,8 +2117,8 @@ class TestMatchService:
             match_join1_condition.value.parts
         )
 
-        match_join2: TableJoin = request.tableJoins[1]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join2.joinType)
+        match_join2: TableJoin = request.joins[1]
+        Assertions.assert_equals(JoinType.LEFT, match_join2.joinType)
 
         match_join2_table: Table = match_join2.table
         Assertions.assert_equals("predictor", match_join2_table.schema_)
@@ -2139,8 +2139,8 @@ class TestMatchService:
             match_join2_condition.value.parts
         )
 
-        match_join3: TableJoin = request.tableJoins[2]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join3.joinType)
+        match_join3: TableJoin = request.joins[2]
+        Assertions.assert_equals(JoinType.LEFT, match_join3.joinType)
 
         match_join3_table: Table = match_join3.table
         Assertions.assert_equals("predictor", match_join3_table.schema_)
@@ -2164,8 +2164,8 @@ class TestMatchService:
             match_join3_condition.value.parts
         )
 
-        match_join4: TableJoin = request.tableJoins[3]
-        Assertions.assert_equals(TableJoinType.LEFT, match_join4.joinType)
+        match_join4: TableJoin = request.joins[3]
+        Assertions.assert_equals(JoinType.LEFT, match_join4.joinType)
 
         match_join4_table: Table = match_join4.table
         Assertions.assert_equals("predictor", match_join4_table.schema_)

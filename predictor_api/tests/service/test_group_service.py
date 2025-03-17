@@ -17,7 +17,7 @@ from db_handler.db_handler.model.type.condition_operator import (
 )
 from db_handler.db_handler.model.type.order_direction import OrderDirection
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
-from db_handler.db_handler.model.type.table_join_type import TableJoinType
+from db_handler.db_handler.model.type.join_type import JoinType
 from db_handler.db_handler.model.update_request import UpdateRequest
 from predictor_api.predictor_api.model.group import Group
 from predictor_api.predictor_api.model.group_update import GroupUpdate
@@ -146,10 +146,10 @@ class TestGroupService:
         Assertions.assert_equals("tournaments", template_table.table)
         Assertions.assert_equals("tourn", template_table.alias)
 
-        Assertions.assert_equals(1, len(template_request.tableJoins))
+        Assertions.assert_equals(1, len(template_request.joins))
 
-        template_join: TableJoin = template_request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.INNER, template_join.joinType)
+        template_join: TableJoin = template_request.joins[0]
+        Assertions.assert_equals(JoinType.INNER, template_join.joinType)
 
         template_join_table: Table = template_join.table
         Assertions.assert_equals("predictor", template_join_table.schema_)
@@ -251,10 +251,10 @@ class TestGroupService:
         )
         Assertions.assert_equals("gt", team_table.alias)
 
-        Assertions.assert_equals(2, len(team_request.tableJoins))
+        Assertions.assert_equals(2, len(team_request.joins))
 
-        team_join1: TableJoin = team_request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.INNER, team_join1.joinType)
+        team_join1: TableJoin = team_request.joins[0]
+        Assertions.assert_equals(JoinType.INNER, team_join1.joinType)
 
         team_join1_table: Table = team_join1.table
         Assertions.assert_equals("predictor", team_join1_table.schema_)
@@ -275,8 +275,8 @@ class TestGroupService:
             team_join1_condition.value.parts
         )
 
-        team_join2: TableJoin = team_request.tableJoins[1]
-        Assertions.assert_equals(TableJoinType.INNER, team_join2.joinType)
+        team_join2: TableJoin = team_request.joins[1]
+        Assertions.assert_equals(JoinType.INNER, team_join2.joinType)
 
         team_join2_table: Table = team_join2.table
         Assertions.assert_equals("predictor", team_join2_table.schema_)
@@ -529,10 +529,10 @@ class TestGroupService:
         Assertions.assert_equals("tournaments", template_table.table)
         Assertions.assert_equals("tourn", template_table.alias)
 
-        Assertions.assert_equals(1, len(template_request.tableJoins))
+        Assertions.assert_equals(1, len(template_request.joins))
 
-        template_join: TableJoin = template_request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.INNER, template_join.joinType)
+        template_join: TableJoin = template_request.joins[0]
+        Assertions.assert_equals(JoinType.INNER, template_join.joinType)
 
         template_join_table: Table = template_join.table
         Assertions.assert_equals("predictor", template_join_table.schema_)
@@ -684,10 +684,10 @@ class TestGroupService:
         )
         Assertions.assert_equals("gt", team_table.alias)
 
-        Assertions.assert_equals(2, len(team_request.tableJoins))
+        Assertions.assert_equals(2, len(team_request.joins))
 
-        team_join1: TableJoin = team_request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.INNER, team_join1.joinType)
+        team_join1: TableJoin = team_request.joins[0]
+        Assertions.assert_equals(JoinType.INNER, team_join1.joinType)
 
         team_join1_table: Table = team_join1.table
         Assertions.assert_equals("predictor", team_join1_table.schema_)
@@ -708,8 +708,8 @@ class TestGroupService:
             team_join1_condition.value.parts
         )
 
-        team_join2: TableJoin = team_request.tableJoins[1]
-        Assertions.assert_equals(TableJoinType.INNER, team_join2.joinType)
+        team_join2: TableJoin = team_request.joins[1]
+        Assertions.assert_equals(JoinType.INNER, team_join2.joinType)
 
         team_join2_table: Table = team_join2.table
         Assertions.assert_equals("predictor", team_join2_table.schema_)
@@ -983,10 +983,10 @@ class TestGroupService:
         Assertions.assert_equals("tournaments", template_table.table)
         Assertions.assert_equals("tourn", template_table.alias)
 
-        Assertions.assert_equals(1, len(template_request.tableJoins))
+        Assertions.assert_equals(1, len(template_request.joins))
 
-        template_join: TableJoin = template_request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.INNER, template_join.joinType)
+        template_join: TableJoin = template_request.joins[0]
+        Assertions.assert_equals(JoinType.INNER, template_join.joinType)
 
         template_join_table: Table = template_join.table
         Assertions.assert_equals("predictor", template_join_table.schema_)
@@ -1136,10 +1136,10 @@ class TestGroupService:
         )
         Assertions.assert_equals("gt", team_table.alias)
 
-        Assertions.assert_equals(2, len(team_request.tableJoins))
+        Assertions.assert_equals(2, len(team_request.joins))
 
-        team_join1: TableJoin = team_request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.INNER, team_join1.joinType)
+        team_join1: TableJoin = team_request.joins[0]
+        Assertions.assert_equals(JoinType.INNER, team_join1.joinType)
 
         team_join1_table: Table = team_join1.table
         Assertions.assert_equals("predictor", team_join1_table.schema_)
@@ -1160,8 +1160,8 @@ class TestGroupService:
             team_join1_condition.value.parts
         )
 
-        team_join2: TableJoin = team_request.tableJoins[1]
-        Assertions.assert_equals(TableJoinType.INNER, team_join2.joinType)
+        team_join2: TableJoin = team_request.joins[1]
+        Assertions.assert_equals(JoinType.INNER, team_join2.joinType)
 
         team_join2_table: Table = team_join2.table
         Assertions.assert_equals("predictor", team_join2_table.schema_)
@@ -1445,10 +1445,10 @@ class TestGroupService:
         Assertions.assert_equals("tournaments", template_table.table)
         Assertions.assert_equals("tourn", template_table.alias)
 
-        Assertions.assert_equals(1, len(template_request.tableJoins))
+        Assertions.assert_equals(1, len(template_request.joins))
 
-        template_join: TableJoin = template_request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.INNER, template_join.joinType)
+        template_join: TableJoin = template_request.joins[0]
+        Assertions.assert_equals(JoinType.INNER, template_join.joinType)
 
         template_join_table: Table = template_join.table
         Assertions.assert_equals("predictor", template_join_table.schema_)
@@ -1604,11 +1604,11 @@ class TestGroupService:
         Assertions.assert_equals("tournaments", team_count_table.table)
         Assertions.assert_equals("tourn", team_count_table.alias)
 
-        Assertions.assert_equals(2, len(team_count_request.tableJoins))
+        Assertions.assert_equals(2, len(team_count_request.joins))
 
-        team_count_join1: TableJoin = team_count_request.tableJoins[0]
+        team_count_join1: TableJoin = team_count_request.joins[0]
         Assertions.assert_equals(
-            TableJoinType.INNER,
+            JoinType.INNER,
             team_count_join1.joinType
         )
 
@@ -1636,9 +1636,9 @@ class TestGroupService:
             team_count_join1_condition.value.parts
         )
 
-        team_count_join2: TableJoin = team_count_request.tableJoins[1]
+        team_count_join2: TableJoin = team_count_request.joins[1]
         Assertions.assert_equals(
-            TableJoinType.INNER,
+            JoinType.INNER,
             team_count_join2.joinType
         )
 
@@ -1796,10 +1796,10 @@ class TestGroupService:
         )
         Assertions.assert_equals("gt", team_table.alias)
 
-        Assertions.assert_equals(2, len(team_request.tableJoins))
+        Assertions.assert_equals(2, len(team_request.joins))
 
-        team_join1: TableJoin = team_request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.INNER, team_join1.joinType)
+        team_join1: TableJoin = team_request.joins[0]
+        Assertions.assert_equals(JoinType.INNER, team_join1.joinType)
 
         team_join1_table: Table = team_join1.table
         Assertions.assert_equals("predictor", team_join1_table.schema_)
@@ -1820,8 +1820,8 @@ class TestGroupService:
             team_join1_condition.value.parts
         )
 
-        team_join2: TableJoin = team_request.tableJoins[1]
-        Assertions.assert_equals(TableJoinType.INNER, team_join2.joinType)
+        team_join2: TableJoin = team_request.joins[1]
+        Assertions.assert_equals(JoinType.INNER, team_join2.joinType)
 
         team_join2_table: Table = team_join2.table
         Assertions.assert_equals("predictor", team_join2_table.schema_)
@@ -2229,10 +2229,10 @@ class TestGroupService:
         Assertions.assert_equals("tournaments", template_table.table)
         Assertions.assert_equals("tourn", template_table.alias)
 
-        Assertions.assert_equals(1, len(template_request.tableJoins))
+        Assertions.assert_equals(1, len(template_request.joins))
 
-        template_join: TableJoin = template_request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.INNER, template_join.joinType)
+        template_join: TableJoin = template_request.joins[0]
+        Assertions.assert_equals(JoinType.INNER, template_join.joinType)
 
         template_join_table: Table = template_join.table
         Assertions.assert_equals("predictor", template_join_table.schema_)
@@ -2428,10 +2428,10 @@ class TestGroupService:
         )
         Assertions.assert_equals("gt", team_table.alias)
 
-        Assertions.assert_equals(2, len(team_request.tableJoins))
+        Assertions.assert_equals(2, len(team_request.joins))
 
-        team_join1: TableJoin = team_request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.INNER, team_join1.joinType)
+        team_join1: TableJoin = team_request.joins[0]
+        Assertions.assert_equals(JoinType.INNER, team_join1.joinType)
 
         team_join1_table: Table = team_join1.table
         Assertions.assert_equals("predictor", team_join1_table.schema_)
@@ -2452,8 +2452,8 @@ class TestGroupService:
             team_join1_condition.value.parts
         )
 
-        team_join2: TableJoin = team_request.tableJoins[1]
-        Assertions.assert_equals(TableJoinType.INNER, team_join2.joinType)
+        team_join2: TableJoin = team_request.joins[1]
+        Assertions.assert_equals(JoinType.INNER, team_join2.joinType)
 
         team_join2_table: Table = team_join2.table
         Assertions.assert_equals("predictor", team_join2_table.schema_)

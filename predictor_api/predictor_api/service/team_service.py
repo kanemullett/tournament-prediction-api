@@ -8,18 +8,22 @@ from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.query_condition_group import (
     QueryConditionGroup
 )
+from db_handler.db_handler.model.query_join import QueryJoin
 from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_response import QueryResponse
+from db_handler.db_handler.model.sql_query import SqlQuery
 from db_handler.db_handler.model.table import Table
 from db_handler.db_handler.model.type.condition_operator import (
     ConditionOperator
 )
+from db_handler.db_handler.model.type.join_type import JoinType
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.update_request import UpdateRequest
 from db_handler.db_handler.service.database_query_service import (
     DatabaseQueryService
 )
 from db_handler.db_handler.util.store_constants import StoreConstants
+from predictor_api.predictor_api.model.match import Match
 from predictor_api.predictor_api.model.team import Team
 from predictor_api.predictor_api.model.type.confederation import Confederation
 from predictor_api.predictor_api.util.predictor_constants import (
@@ -55,13 +59,6 @@ class TeamService:
         Returns:
             list[Team]: The stored teams.
         """
-        if tournament_id is not None:
-            raise HTTPException(
-                status_code=501,
-                detail="Filtering teams by tournamentId is not yet "
-                       "implemented."
-            )
-
         conditions: list[QueryCondition] = []
 
         if confederation is not None:
@@ -72,25 +69,110 @@ class TeamService:
                 )
             )
 
-        response: QueryResponse = self.__query_service.retrieve_records(
-            QueryRequest(
-                table=Table.of(
-                    PredictorConstants.PREDICTOR_SCHEMA,
-                    Team.TARGET_TABLE
-                ),
-                conditionGroup=(
-                    QueryConditionGroup(
-                        conditions=conditions
-                    ) if len(conditions) > 0
-                    else None
-                ),
-                orderBy=[
-                    OrderBy.of(
-                        Column.of("name")
-                    )
-                ]
+        if tournament_id is not None:
+            response: QueryResponse = self.__query_service.retrieve_records(
+                QueryRequest(
+                    distinct=True,
+                    columns=[
+                        Column.of("team", StoreConstants.ID),
+                        Column.of("team", "name"),
+                        Column.of("team", "imagePath"),
+                        Column.of("team", "confederation")
+                    ],
+                    table=Table.of(
+                        PredictorConstants.PREDICTOR_SCHEMA,
+                        Team.TARGET_TABLE,
+                        "team"
+                    ),
+                    joins=[
+                        QueryJoin(
+                            query=SqlQuery(
+                                distinct=True,
+                                columns=[
+                                    Column.of("teamId")
+                                ],
+                                table=Table.of(
+                                    PredictorConstants.PREDICTOR_SCHEMA,
+                                    PredictorConstants.get_group_teams_table(
+                                        tournament_id
+                                    )
+                                ),
+                                joins=[
+                                    QueryJoin(
+                                        query=SqlQuery(
+                                            distinct=True,
+                                            columns=[
+                                                Column.of("homeTeamId")
+                                            ],
+                                            table=Table.of(
+                                                PredictorConstants.
+                                                PREDICTOR_SCHEMA,
+                                                Match.get_target_table(
+                                                    tournament_id
+                                                )
+                                            )
+                                        ),
+                                        joinType=JoinType.UNION
+                                    ),
+                                    QueryJoin(
+                                        query=SqlQuery(
+                                            distinct=True,
+                                            columns=[
+                                                Column.of("awayTeamId")
+                                            ],
+                                            table=Table.of(
+                                                PredictorConstants.
+                                                PREDICTOR_SCHEMA,
+                                                Match.get_target_table(
+                                                    tournament_id
+                                                )
+                                            )
+                                        ),
+                                        joinType=JoinType.UNION
+                                    )
+                                ]
+                            ),
+                            alias="teamIds",
+                            joinType=JoinType.INNER,
+                            joinCondition=QueryCondition.of(
+                                Column.of("team", StoreConstants.ID),
+                                Column.of("teamIds", "teamId")
+                            )
+                        )
+                    ],
+                    conditionGroup=(
+                        QueryConditionGroup(
+                            conditions=conditions
+                        ) if len(conditions) > 0
+                        else None
+                    ),
+                    orderBy=[
+                        OrderBy.of(
+                            Column.of("name")
+                        )
+                    ]
+                )
             )
-        )
+        else:
+            response: QueryResponse = self.__query_service.retrieve_records(
+                QueryRequest(
+                    table=Table.of(
+                        PredictorConstants.PREDICTOR_SCHEMA,
+                        Team.TARGET_TABLE
+                    ),
+                    conditionGroup=(
+                        QueryConditionGroup(
+                            conditions=conditions
+                        ) if len(conditions) > 0
+                        else None
+                    ),
+                    orderBy=[
+                        OrderBy.of(
+                            Column.of("name")
+                        )
+                    ]
+                )
+            )
 
         return list(
             map(

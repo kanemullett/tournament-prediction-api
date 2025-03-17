@@ -5,14 +5,18 @@ from uuid import UUID
 from fastapi import HTTPException
 from pytest import raises
 
+from db_handler.db_handler.model.column import Column
 from db_handler.db_handler.model.order_by import OrderBy
 from db_handler.db_handler.model.query_condition import QueryCondition
+from db_handler.db_handler.model.query_join import QueryJoin
 from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.query_response import QueryResponse
+from db_handler.db_handler.model.sql_query import SqlQuery
 from db_handler.db_handler.model.table import Table
 from db_handler.db_handler.model.type.condition_operator import (
     ConditionOperator
 )
+from db_handler.db_handler.model.type.join_type import JoinType
 from db_handler.db_handler.model.type.order_direction import OrderDirection
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.update_request import UpdateRequest
@@ -156,6 +160,175 @@ class TestTeamService:
         Assertions.assert_equals(["confederation"], condition.column.parts)
         Assertions.assert_equals(ConditionOperator.EQUAL, condition.operator)
         Assertions.assert_equals(Confederation.UEFA, condition.value)
+
+        order_by: OrderBy = request.orderBy[0]
+        Assertions.assert_equals(["name"], order_by.column.parts)
+        Assertions.assert_equals(OrderDirection.ASC, order_by.direction)
+
+        Assertions.assert_equals(2, len(teams))
+
+        team1: Team = teams[0]
+        Assertions.assert_equals(
+            UUID("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4"),
+            team1.id
+        )
+        Assertions.assert_equals("Bosnia & Herzegovina", team1.name)
+        Assertions.assert_equals("BIH.png", team1.imagePath)
+        Assertions.assert_equals(Confederation.UEFA, team1.confederation)
+
+        team2: Team = teams[1]
+        Assertions.assert_equals(
+            UUID("e107d069-b277-4902-bdad-7091a494a8b3"),
+            team2.id
+        )
+        Assertions.assert_equals("England", team2.name)
+        Assertions.assert_equals("ENG.png", team2.imagePath)
+        Assertions.assert_equals(Confederation.UEFA, team2.confederation)
+
+    def test_returns_teams_in_tournament(self):
+        # Given
+        self.__database_query_service.retrieve_records.return_value = (
+            QueryResponse(
+                referenceId="90a6637a-e534-46bd-8715-33c6f2afdd7a",
+                recordCount=2,
+                records=[
+                    {
+                        "id": "c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
+                        "name": "Bosnia & Herzegovina",
+                        "imagePath": "BIH.png",
+                        "confederation": "UEFA"
+                    },
+                    {
+                        "id": "e107d069-b277-4902-bdad-7091a494a8b3",
+                        "name": "England",
+                        "imagePath": "ENG.png",
+                        "confederation": "UEFA"
+                    }
+                ]
+            )
+        )
+
+        # When
+        teams: list[Team] = self.__service.get_teams(
+            None,
+            UUID("7a5d1149-7be0-4cdd-a651-e54ee8cd4051")
+        )
+
+        # Then
+        teams_args, teams_kwargs = (
+            self.__database_query_service.retrieve_records.call_args
+        )
+        Assertions.assert_type(QueryRequest, teams_args[0])
+
+        request: QueryRequest = teams_args[0]
+        Assertions.assert_true(request.distinct)
+        Assertions.assert_equals(4, len(request.columns))
+
+        column1: Column = request.columns[0]
+        Assertions.assert_equals(["team", "id"], column1.parts)
+
+        column2: Column = request.columns[1]
+        Assertions.assert_equals(["team", "name"], column2.parts)
+
+        column3: Column = request.columns[2]
+        Assertions.assert_equals(["team", "imagePath"], column3.parts)
+
+        column4: Column = request.columns[3]
+        Assertions.assert_equals(["team", "confederation"], column4.parts)
+
+        table: Table = request.table
+        Assertions.assert_equals("predictor", table.schema_)
+        Assertions.assert_equals("teams", table.table)
+        Assertions.assert_equals("team", table.alias)
+
+        Assertions.assert_equals(1, len(request.joins))
+        Assertions.assert_type(QueryJoin, request.joins[0])
+
+        query_join: QueryJoin = request.joins[0]
+        Assertions.assert_equals("teamIds", query_join.alias)
+        Assertions.assert_equals(JoinType.INNER, query_join.joinType)
+
+        join_query: SqlQuery = query_join.query
+        Assertions.assert_true(join_query.distinct)
+        Assertions.assert_equals(1, len(join_query.columns))
+
+        join_query_column: Column = join_query.columns[0]
+        Assertions.assert_equals(["teamId"], join_query_column.parts)
+
+        join_query_table: Table = join_query.table
+        Assertions.assert_equals("predictor", join_query_table.schema_)
+        Assertions.assert_equals(
+            "group-teams_7a5d1149-7be0-4cdd-a651-e54ee8cd4051",
+            join_query_table.table
+        )
+
+        Assertions.assert_equals(2, len(join_query.joins))
+        Assertions.assert_type(QueryJoin, join_query.joins[0])
+
+        join_query_join1: QueryJoin = join_query.joins[0]
+        Assertions.assert_equals(JoinType.UNION, join_query_join1.joinType)
+
+        join_query_join1_query: SqlQuery = join_query_join1.query
+        Assertions.assert_true(join_query_join1_query.distinct)
+        Assertions.assert_equals(1, len(join_query_join1_query.columns))
+
+        join_query_join1_query_column: Column = (
+            join_query_join1_query.columns
+        )[0]
+        Assertions.assert_equals(
+            ["homeTeamId"],
+            join_query_join1_query_column.parts
+        )
+
+        join_query_join1_query_table: Table = join_query_join1_query.table
+        Assertions.assert_equals(
+            "predictor",
+            join_query_join1_query_table.schema_
+        )
+        Assertions.assert_equals(
+            "matches_7a5d1149-7be0-4cdd-a651-e54ee8cd4051",
+            join_query_join1_query_table.table
+        )
+
+        Assertions.assert_type(QueryJoin, join_query.joins[1])
+
+        join_query_join1: QueryJoin = join_query.joins[1]
+        Assertions.assert_equals(JoinType.UNION, join_query_join1.joinType)
+
+        join_query_join1_query: SqlQuery = join_query_join1.query
+        Assertions.assert_true(join_query_join1_query.distinct)
+        Assertions.assert_equals(1, len(join_query_join1_query.columns))
+
+        join_query_join1_query_column: Column = (
+            join_query_join1_query.columns
+        )[0]
+        Assertions.assert_equals(
+            ["awayTeamId"],
+            join_query_join1_query_column.parts
+        )
+
+        join_query_join1_query_table: Table = join_query_join1_query.table
+        Assertions.assert_equals(
+            "predictor",
+            join_query_join1_query_table.schema_
+        )
+        Assertions.assert_equals(
+            "matches_7a5d1149-7be0-4cdd-a651-e54ee8cd4051",
+            join_query_join1_query_table.table
+        )
+
+        query_join_condition: QueryCondition = query_join.joinCondition
+        Assertions.assert_equals(
+            ["team", "id"],
+            query_join_condition.column.parts
+        )
+        Assertions.assert_equals(
+            ["teamIds", "teamId"],
+            query_join_condition.value.parts
+        )
+
+        Assertions.assert_none(request.conditionGroup)
+        Assertions.assert_equals(1, len(request.orderBy))
 
         order_by: OrderBy = request.orderBy[0]
         Assertions.assert_equals(["name"], order_by.column.parts)
