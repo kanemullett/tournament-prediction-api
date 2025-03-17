@@ -10,7 +10,6 @@ from db_handler.db_handler.model.query_condition_group import (
     QueryConditionGroup
 )
 from db_handler.db_handler.model.query_join import QueryJoin
-from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.sql_query import SqlQuery
 from db_handler.db_handler.model.table import Table
 from db_handler.db_handler.model.table_join import TableJoin

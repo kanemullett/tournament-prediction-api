@@ -30,7 +30,10 @@ class QueryBuilderFunction:
     Function for building SQL query strings from SqlQuery objects.
     """
 
-    def apply(self, sql_query: SqlQuery, exclude_semicolon: bool = False) -> str:
+    def apply(
+            self,
+            sql_query: SqlQuery,
+            exclude_semicolon: bool = False) -> str:
         """
         Convert a SqlQuery object into a SQL query string.
 
@@ -297,13 +300,19 @@ class QueryBuilderFunction:
                 f"{self.__build_condition(table_join.joinCondition)}")
 
     def __build_query_join(self, query_join: QueryJoin):
-        join_statement: str = f"{query_join.joinType.value} {self.apply(query_join.query, True)}"
+        join_statement: str = (f"{query_join.joinType.value} "
+                               f"{self.apply(query_join.query, True)}")
 
         if query_join.alias is not None:
-            join_statement = f'{query_join.joinType.value} ({self.apply(query_join.query, True)}) AS "{query_join.alias}"'
+            join_statement = (f'{query_join.joinType.value} '
+                              f'({self.apply(query_join.query, True)}) AS '
+                              f'"{query_join.alias}"')
 
         if query_join.joinCondition is not None:
-            join_statement = f"{join_statement} ON {self.__build_condition(query_join.joinCondition)}"
+            join_statement = (f"{join_statement} ON " +
+                              self.__build_condition(
+                                  query_join.joinCondition
+                              ))
 
         return join_statement
 

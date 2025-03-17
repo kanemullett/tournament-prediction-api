@@ -1,5 +1,3 @@
-from pydantic import BaseModel
-
 from db_handler.db_handler.model.join import Join
 from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.table import Table
