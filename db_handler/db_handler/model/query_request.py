@@ -17,11 +17,14 @@ class QueryRequest(BaseModel):
     Object representing a query to be sent to the database.
 
     Attributes:
+        distinct (bool): True if only distinct values should be retrieved.
         table (Table): The table to query.
         columns (Optional[list[Column]]): The columns to retrieve.
-        joins (Optional[list[Join]]): The tables to join.
+        joins (Optional[list[Join]]): The tables/queries to join.
         conditionGroup (QueryConditionGroup): The filtering conditions to
             apply.
+        groupBy (Optional[GroupBy]): The column to group records by.
+        orderBy (Optional[list[OrderBy]]): The column to order records by.
     """
     distinct: bool = False
     table: Table

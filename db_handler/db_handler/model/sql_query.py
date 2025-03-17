@@ -19,12 +19,15 @@ class SqlQuery(BaseModel):
 
     Attributes:
         operator (SqlOperator): The sql query operator.
+        distinct (bool): True if only distinct values should be retrieved.
         table (Table): The table to query.
         columns (Optional[list[Column]]): The columns to retrieve.
         joins (Optional[list[Join]]): The tables to join.
         conditionGroup (QueryConditionGroup): The filtering conditions to
             apply.
         records (Optional[list[dict[str, Any]]]): The records to create/update.
+        groupBy (Optional[GroupBy]): The column to group records by.
+        orderBy (Optional[list[OrderBy]]): The column to order records by.
     """
 
     operator: SqlOperator = SqlOperator.SELECT
