@@ -9,6 +9,8 @@ from db_handler.db_handler.model.query_condition import QueryCondition
 from db_handler.db_handler.model.query_condition_group import (
     QueryConditionGroup
 )
+from db_handler.db_handler.model.query_join import QueryJoin
+from db_handler.db_handler.model.query_request import QueryRequest
 from db_handler.db_handler.model.sql_query import SqlQuery
 from db_handler.db_handler.model.table import Table
 from db_handler.db_handler.model.table_join import TableJoin
@@ -18,7 +20,7 @@ from db_handler.db_handler.model.type.condition_operator import (
 from db_handler.db_handler.model.type.condition_join import ConditionJoin
 from db_handler.db_handler.model.type.order_direction import OrderDirection
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
-from db_handler.db_handler.model.type.table_join_type import TableJoinType
+from db_handler.db_handler.model.type.join_type import JoinType
 from predictor_common.test_resources.assertions import Assertions
 
 from fastapi import HTTPException
@@ -185,14 +187,14 @@ class TestQueryBuilderFunction:
                     alias="user_name"
                 )
             ],
-            tableJoins=[
+            joins=[
                 TableJoin.of(
                     Table.of("test_schema", "join_table_one", "first_joiner"),
                     QueryCondition.of(
                         Column.of("my_table", "id"),
                         Column.of("first_joiner", "baseId")
                     ),
-                    TableJoinType.INNER
+                    JoinType.INNER
                 ),
                 TableJoin.of(
                     Table.of("test_schema", "join_table_two", "second_joiner"),
@@ -200,7 +202,7 @@ class TestQueryBuilderFunction:
                         Column.of("my_table", "id"),
                         Column.of("second_joiner", "baseId")
                     ),
-                    TableJoinType.LEFT
+                    JoinType.LEFT
                 )
             ],
             conditionGroup=QueryConditionGroup(
@@ -493,7 +495,7 @@ class TestQueryBuilderFunction:
                 "test_table",
                 "tab"
             ),
-            tableJoins=[
+            joins=[
                 TableJoin.of(
                     Table.of(
                         "test_schema",
@@ -504,7 +506,7 @@ class TestQueryBuilderFunction:
                         Column.of("tab", "matchId"),
                         Column.of("join", "matchId")
                     ),
-                    TableJoinType.RIGHT
+                    JoinType.RIGHT
                 )
             ],
             groupBy=GroupBy.of(
@@ -530,5 +532,89 @@ class TestQueryBuilderFunction:
             "\"test_schema\".\"join_table\" AS \"join\" ON "
             "\"tab\".\"matchId\" = \"join\".\"matchId\" GROUP BY "
             "\"tab\".\"column\" ORDER BY \"total\" DESC ;",
+            query_string
+        )
+
+    def test(self):
+        # Given
+        query: SqlQuery = SqlQuery(
+            distinct=True,
+            columns=[
+                Column.of("team", "id"),
+                Column.of("team", "name"),
+                Column.of("team", "imagePath"),
+                Column.of("team", "confederation")
+            ],
+            table=Table.of(
+                "predictor",
+                "teams",
+                "team"
+            ),
+            joins=[
+                QueryJoin(
+                    query=SqlQuery(
+                        distinct=True,
+                        columns=[
+                            Column.of("teamId")
+                        ],
+                        table=Table.of(
+                            "predictor",
+                            "group-teams_e091d1d6-1a71-446c-934a-a048423c46ec"
+                        ),
+                        joins=[
+                            QueryJoin(
+                                query=SqlQuery(
+                                    distinct=True,
+                                    columns=[
+                                        Column.of("homeTeamId")
+                                    ],
+                                    table=Table.of(
+                                        "predictor",
+                                        "matches_e091d1d6-1a71-446c-934a-a048423c46ec"
+                                    )
+                                ),
+                                joinType=JoinType.UNION
+                            ),
+                            QueryJoin(
+                                query=SqlQuery(
+                                    distinct=True,
+                                    columns=[
+                                        Column.of("awayTeamId")
+                                    ],
+                                    table=Table.of(
+                                        "predictor",
+                                        "matches_e091d1d6-1a71-446c-934a-a048423c46ec"
+                                    )
+                                ),
+                                joinType=JoinType.UNION
+                            )
+                        ]
+                    ),
+                    alias="teamIds",
+                    joinType=JoinType.INNER,
+                    joinCondition=QueryCondition.of(
+                        Column.of("team", "id"),
+                        Column.of("teamIds", "teamId")
+                    )
+                )
+            ]
+        )
+
+        # When
+        query_string: str = self.__query_builder.apply(query)
+
+        # Then
+        Assertions.assert_equals(
+            "SELECT DISTINCT \"team\".\"id\", \"team\".\"name\", "
+            "\"team\".\"imagePath\", \"team\".\"confederation\" FROM "
+            "\"predictor\".\"teams\" \"team\" JOIN (SELECT DISTINCT "
+            "\"teamId\" FROM "
+            "\"predictor\"."
+            "\"group-teams_e091d1d6-1a71-446c-934a-a048423c46ec\" UNION "
+            "SELECT DISTINCT \"homeTeamId\" FROM "
+            "\"predictor\".\"matches_e091d1d6-1a71-446c-934a-a048423c46ec\" "
+            "UNION SELECT DISTINCT \"awayTeamId\" FROM "
+            "\"predictor\".\"matches_e091d1d6-1a71-446c-934a-a048423c46ec\") "
+            "\"teamIds\" ON \"team\".\"id\" = \"teamIds\".\"teamId\";",
             query_string
         )

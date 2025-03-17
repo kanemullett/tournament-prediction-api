@@ -4,12 +4,12 @@ from pydantic import BaseModel
 
 from db_handler.db_handler.model.column import Column
 from db_handler.db_handler.model.group_by import GroupBy
+from db_handler.db_handler.model.join import Join
 from db_handler.db_handler.model.order_by import OrderBy
 from db_handler.db_handler.model.query_condition_group import (
     QueryConditionGroup
 )
 from db_handler.db_handler.model.table import Table
-from db_handler.db_handler.model.table_join import TableJoin
 
 
 class QueryRequest(BaseModel):
@@ -19,13 +19,14 @@ class QueryRequest(BaseModel):
     Attributes:
         table (Table): The table to query.
         columns (Optional[list[Column]]): The columns to retrieve.
-        tableJoins (Optional[list[TableJoin]]): The tables to join.
+        joins (Optional[list[Join]]): The tables to join.
         conditionGroup (QueryConditionGroup): The filtering conditions to
             apply.
     """
+    distinct: bool = False
     table: Table
     columns: Optional[list[Column]] = None
-    tableJoins: Optional[list[TableJoin]] = None
+    joins: Optional[list[Join]] = None
     conditionGroup: Optional[QueryConditionGroup] = None
     groupBy: Optional[GroupBy] = None
     orderBy: Optional[list[OrderBy]] = None

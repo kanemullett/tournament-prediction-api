@@ -17,7 +17,7 @@ from db_handler.db_handler.model.type.condition_operator import (
 )
 from db_handler.db_handler.model.type.order_direction import OrderDirection
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
-from db_handler.db_handler.model.type.table_join_type import TableJoinType
+from db_handler.db_handler.model.type.join_type import JoinType
 from db_handler.db_handler.model.update_request import UpdateRequest
 from predictor_api.predictor_api.model.round import Round
 from predictor_api.predictor_api.model.round_update import RoundUpdate
@@ -120,10 +120,10 @@ class TestRoundService:
         Assertions.assert_equals("tournaments", template_table.table)
         Assertions.assert_equals("tourn", template_table.alias)
 
-        Assertions.assert_equals(1, len(template_request.tableJoins))
+        Assertions.assert_equals(1, len(template_request.joins))
 
-        template_join: TableJoin = template_request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.INNER, template_join.joinType)
+        template_join: TableJoin = template_request.joins[0]
+        Assertions.assert_equals(JoinType.INNER, template_join.joinType)
 
         template_join_table: Table = template_join.table
         Assertions.assert_equals("predictor", template_join_table.schema_)
@@ -349,10 +349,10 @@ class TestRoundService:
         Assertions.assert_equals("tournaments", template_table.table)
         Assertions.assert_equals("tourn", template_table.alias)
 
-        Assertions.assert_equals(1, len(template_request.tableJoins))
+        Assertions.assert_equals(1, len(template_request.joins))
 
-        template_join: TableJoin = template_request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.INNER, template_join.joinType)
+        template_join: TableJoin = template_request.joins[0]
+        Assertions.assert_equals(JoinType.INNER, template_join.joinType)
 
         template_join_table: Table = template_join.table
         Assertions.assert_equals("predictor", template_join_table.schema_)
@@ -634,10 +634,10 @@ class TestRoundService:
         Assertions.assert_equals("tournaments", template_table.table)
         Assertions.assert_equals("tourn", template_table.alias)
 
-        Assertions.assert_equals(1, len(template_request.tableJoins))
+        Assertions.assert_equals(1, len(template_request.joins))
 
-        template_join: TableJoin = template_request.tableJoins[0]
-        Assertions.assert_equals(TableJoinType.INNER, template_join.joinType)
+        template_join: TableJoin = template_request.joins[0]
+        Assertions.assert_equals(JoinType.INNER, template_join.joinType)
 
         template_join_table: Table = template_join.table
         Assertions.assert_equals("predictor", template_join_table.schema_)

@@ -16,7 +16,7 @@ from db_handler.db_handler.model.type.condition_operator import (
     ConditionOperator
 )
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
-from db_handler.db_handler.model.type.table_join_type import TableJoinType
+from db_handler.db_handler.model.type.join_type import JoinType
 from db_handler.db_handler.model.update_request import UpdateRequest
 from db_handler.db_handler.service.database_query_service import (
     DatabaseQueryService
@@ -97,7 +97,7 @@ class TournamentTemplateService:
                 TournamentTemplate.TARGET_TABLE,
                 "tourn"
             ),
-            tableJoins=[
+            joins=[
                 TableJoin.of(
                     Table.of(
                         PredictorConstants.PREDICTOR_SCHEMA,
@@ -108,7 +108,7 @@ class TournamentTemplateService:
                         Column.of("tourn", "leagueTemplateId"),
                         Column.of("league", StoreConstants.ID)
                     ),
-                    TableJoinType.LEFT
+                    JoinType.LEFT
                 )
             ]
         )
@@ -191,7 +191,7 @@ class TournamentTemplateService:
                 TournamentTemplate.TARGET_TABLE,
                 "tourn"
             ),
-            tableJoins=[
+            joins=[
                 TableJoin.of(
                     Table.of(
                         PredictorConstants.PREDICTOR_SCHEMA,
@@ -202,7 +202,7 @@ class TournamentTemplateService:
                         Column.of("tourn", "leagueTemplateId"),
                         Column.of("league", StoreConstants.ID)
                     ),
-                    TableJoinType.LEFT
+                    JoinType.LEFT
                 )
             ],
             conditionGroup=QueryConditionGroup.of(
@@ -264,7 +264,7 @@ class TournamentTemplateService:
                 TournamentTemplate.TARGET_TABLE,
                 "tourn"
             ),
-            tableJoins=[
+            joins=[
                 TableJoin.of(
                     Table.of(
                         PredictorConstants.PREDICTOR_SCHEMA,
@@ -275,7 +275,7 @@ class TournamentTemplateService:
                         Column.of("tourn", "leagueTemplateId"),
                         Column.of("league", StoreConstants.ID)
                     ),
-                    TableJoinType.LEFT
+                    JoinType.LEFT
                 )
             ],
             conditionGroup=QueryConditionGroup.of(

@@ -96,8 +96,8 @@ class QueryBuilderFunction:
         string_parts.append("FROM")
         string_parts.append(self.__build_table(sql_query.table))
 
-        if sql_query.tableJoins is not None and len(sql_query.tableJoins) > 0:
-            string_parts.append(self.__build_table_joins(sql_query.tableJoins))
+        if sql_query.joins is not None and len(sql_query.joins) > 0:
+            string_parts.append(self.__build_table_joins(sql_query.joins))
 
         if (sql_query.conditionGroup is not None and
                 len(sql_query.conditionGroup.conditions) > 0):

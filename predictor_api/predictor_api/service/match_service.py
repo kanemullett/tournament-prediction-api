@@ -18,7 +18,7 @@ from db_handler.db_handler.model.type.condition_operator import (
     ConditionOperator
 )
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
-from db_handler.db_handler.model.type.table_join_type import TableJoinType
+from db_handler.db_handler.model.type.join_type import JoinType
 from db_handler.db_handler.model.update_request import UpdateRequest
 from db_handler.db_handler.service.database_query_service import (
     DatabaseQueryService
@@ -200,7 +200,7 @@ class MatchService:
                     Column.of("match", "homeTeamId"),
                     Column.of("home", StoreConstants.ID)
                 ),
-                TableJoinType.LEFT
+                JoinType.LEFT
             ),
             TableJoin.of(
                 Table.of(
@@ -212,7 +212,7 @@ class MatchService:
                     Column.of("match", "awayTeamId"),
                     Column.of("away", StoreConstants.ID)
                 ),
-                TableJoinType.LEFT
+                JoinType.LEFT
             )
         ]
 
@@ -237,7 +237,7 @@ class MatchService:
                         Column.of("match", "groupId"),
                         Column.of("group", StoreConstants.ID)
                     ),
-                    TableJoinType.LEFT
+                    JoinType.LEFT
                 )
             )
 
@@ -260,7 +260,7 @@ class MatchService:
                         Column.of("match", "roundId"),
                         Column.of("round", StoreConstants.ID)
                     ),
-                    TableJoinType.LEFT
+                    JoinType.LEFT
                 )
             )
 
@@ -362,7 +362,7 @@ class MatchService:
                     Match.get_target_table(tournament_id),
                     "match"
                 ),
-                tableJoins=table_joins,
+                joins=table_joins,
                 conditionGroup=condition_group,
                 orderBy=order_by
             )

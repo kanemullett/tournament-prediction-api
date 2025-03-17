@@ -16,7 +16,7 @@ from db_handler.db_handler.model.type.condition_operator import (
     ConditionOperator
 )
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
-from db_handler.db_handler.model.type.table_join_type import TableJoinType
+from db_handler.db_handler.model.type.join_type import JoinType
 from db_handler.db_handler.model.update_request import UpdateRequest
 from db_handler.db_handler.service.database_query_service import (
     DatabaseQueryService
@@ -240,7 +240,7 @@ class RoundService:
                     Tournament.TARGET_TABLE,
                     "tourn"
                 ),
-                tableJoins=[
+                joins=[
                     TableJoin.of(
                         Table.of(
                             PredictorConstants.PREDICTOR_SCHEMA,
@@ -251,7 +251,7 @@ class RoundService:
                             Column.of("tourn", "templateId"),
                             Column.of("temp", StoreConstants.ID)
                         ),
-                        TableJoinType.INNER
+                        JoinType.INNER
                     )
                 ],
                 conditionGroup=QueryConditionGroup.of(

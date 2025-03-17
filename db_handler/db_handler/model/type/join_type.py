@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class TableJoinType(Enum):
+class JoinType(Enum):
     """
     Defines SQL table join types.
 
@@ -19,3 +19,4 @@ class TableJoinType(Enum):
     LEFT = "LEFT JOIN"
     RIGHT = "RIGHT JOIN"
     OUTER = "FULL JOIN"
+    UNION = "UNION"

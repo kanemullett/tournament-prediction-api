@@ -15,7 +15,7 @@ from db_handler.db_handler.model.type.condition_operator import (
     ConditionOperator
 )
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
-from db_handler.db_handler.model.type.table_join_type import TableJoinType
+from db_handler.db_handler.model.type.join_type import JoinType
 from db_handler.db_handler.model.update_request import UpdateRequest
 from predictor_api.predictor_api.model.round_template import RoundTemplate
 from predictor_api.predictor_api.model.knockout_template import (
@@ -192,11 +192,11 @@ class TestTournamentTemplateService:
         Assertions.assert_equals("tournament-templates", table.table)
         Assertions.assert_equals("tourn", table.alias)
 
-        table_joins: list[TableJoin] = query_request.tableJoins
+        table_joins: list[TableJoin] = query_request.joins
         Assertions.assert_equals(1, len(table_joins))
 
         join1: TableJoin = table_joins[0]
-        Assertions.assert_equals(TableJoinType.LEFT, join1.joinType)
+        Assertions.assert_equals(JoinType.LEFT, join1.joinType)
 
         join1_table: Table = join1.table
         Assertions.assert_equals("predictor", join1_table.schema_)
@@ -656,11 +656,11 @@ class TestTournamentTemplateService:
         Assertions.assert_equals("tournament-templates", table.table)
         Assertions.assert_equals("tourn", table.alias)
 
-        table_joins: list[TableJoin] = query_request.tableJoins
+        table_joins: list[TableJoin] = query_request.joins
         Assertions.assert_equals(1, len(table_joins))
 
         join1: TableJoin = table_joins[0]
-        Assertions.assert_equals(TableJoinType.LEFT, join1.joinType)
+        Assertions.assert_equals(JoinType.LEFT, join1.joinType)
 
         join1_table: Table = join1.table
         Assertions.assert_equals("predictor", join1_table.schema_)
