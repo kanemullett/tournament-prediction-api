@@ -2,6 +2,7 @@ from typing import Any
 
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from db_handler.db_handler.function.query_builder_function import (
@@ -81,6 +82,23 @@ class ExcludeNoneJSONResponse(JSONResponse):
 
 
 app = FastAPI(default_response_class=ExcludeNoneJSONResponse)
+
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:2821",
+    "http://127.0.0.1:2821",
+    "http://ui",
+    "http://ui:80",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Update this for production
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allow all headers
+)
 
 database_initializer_service: DatabaseInitializerService = (
     DatabaseInitializerService(
