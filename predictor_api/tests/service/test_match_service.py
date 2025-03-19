@@ -69,7 +69,11 @@ class TestMatchService:
                         "kickoff": "2025-06-01T14:00:00",
                         "groupMatchDay": 1,
                         "groupId": "4c2c8046-0007-48db-a76a-865f9048d9de",
-                        "roundId": None
+                        "roundId": None,
+                        "homeGoals": 2,
+                        "awayGoals": 1,
+                        "afterExtraTime": False,
+                        "afterPenalties": False
                     },
                     {
                         "matchId": "d8b3685b-3749-438d-9d85-da29c97ebaef",
@@ -84,7 +88,11 @@ class TestMatchService:
                         "kickoff": "2025-06-01T17:30:00",
                         "groupMatchDay": None,
                         "groupId": None,
-                        "roundId": "322ab9d0-ae46-49ac-89b3-c789a0d9d889"
+                        "roundId": "322ab9d0-ae46-49ac-89b3-c789a0d9d889",
+                        "homeGoals": 2,
+                        "awayGoals": 1,
+                        "afterExtraTime": False,
+                        "afterPenalties": False
                     }
                 ]
             )
@@ -129,7 +137,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(13, len(request.columns))
+        Assertions.assert_equals(17, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -179,6 +187,18 @@ class TestMatchService:
         column13: Column = request.columns[12]
         Assertions.assert_equals(["match", "roundId"], column13.parts)
 
+        column14: Column = request.columns[13]
+        Assertions.assert_equals(["result", "homeGoals"], column14.parts)
+
+        column15: Column = request.columns[14]
+        Assertions.assert_equals(["result", "awayGoals"], column15.parts)
+
+        column16: Column = request.columns[15]
+        Assertions.assert_equals(["result", "afterExtraTime"], column16.parts)
+
+        column17: Column = request.columns[16]
+        Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
+
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
         Assertions.assert_equals(
@@ -187,7 +207,7 @@ class TestMatchService:
         )
         Assertions.assert_equals("match", match_table.alias)
 
-        Assertions.assert_equals(4, len(request.joins))
+        Assertions.assert_equals(5, len(request.joins))
 
         match_join1: TableJoin = request.joins[0]
         Assertions.assert_equals(JoinType.LEFT, match_join1.joinType)
@@ -239,14 +259,14 @@ class TestMatchService:
         match_join3_table: Table = match_join3.table
         Assertions.assert_equals("predictor", match_join3_table.schema_)
         Assertions.assert_equals(
-            "groups_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            "results_5341cff8-df9f-4068-8a42-4b4288ecba87",
             match_join3_table.table
         )
-        Assertions.assert_equals("group", match_join3_table.alias)
+        Assertions.assert_equals("result", match_join3_table.alias)
 
         match_join3_condition: QueryCondition = match_join3.joinCondition
         Assertions.assert_equals(
-            ["match", "groupId"],
+            ["match", "id"],
             match_join3_condition.column.parts
         )
         Assertions.assert_equals(
@@ -254,7 +274,7 @@ class TestMatchService:
             match_join3_condition.operator
         )
         Assertions.assert_equals(
-            ["group", "id"],
+            ["result", "id"],
             match_join3_condition.value.parts
         )
 
@@ -264,14 +284,14 @@ class TestMatchService:
         match_join4_table: Table = match_join4.table
         Assertions.assert_equals("predictor", match_join4_table.schema_)
         Assertions.assert_equals(
-            "rounds_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            "groups_5341cff8-df9f-4068-8a42-4b4288ecba87",
             match_join4_table.table
         )
-        Assertions.assert_equals("round", match_join4_table.alias)
+        Assertions.assert_equals("group", match_join4_table.alias)
 
         match_join4_condition: QueryCondition = match_join4.joinCondition
         Assertions.assert_equals(
-            ["match", "roundId"],
+            ["match", "groupId"],
             match_join4_condition.column.parts
         )
         Assertions.assert_equals(
@@ -279,8 +299,33 @@ class TestMatchService:
             match_join4_condition.operator
         )
         Assertions.assert_equals(
-            ["round", "id"],
+            ["group", "id"],
             match_join4_condition.value.parts
+        )
+
+        match_join5: TableJoin = request.joins[4]
+        Assertions.assert_equals(JoinType.LEFT, match_join5.joinType)
+
+        match_join5_table: Table = match_join5.table
+        Assertions.assert_equals("predictor", match_join5_table.schema_)
+        Assertions.assert_equals(
+            "rounds_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            match_join5_table.table
+        )
+        Assertions.assert_equals("round", match_join5_table.alias)
+
+        match_join5_condition: QueryCondition = match_join5.joinCondition
+        Assertions.assert_equals(
+            ["match", "roundId"],
+            match_join5_condition.column.parts
+        )
+        Assertions.assert_equals(
+            ConditionOperator.EQUAL,
+            match_join5_condition.operator
+        )
+        Assertions.assert_equals(
+            ["round", "id"],
+            match_join5_condition.value.parts
         )
 
         Assertions.assert_none(request.conditionGroup)
@@ -409,7 +454,11 @@ class TestMatchService:
                         "kickoff": "2025-06-01T14:00:00",
                         "groupMatchDay": 1,
                         "groupId": "4c2c8046-0007-48db-a76a-865f9048d9de",
-                        "roundId": None
+                        "roundId": None,
+                        "homeGoals": 2,
+                        "awayGoals": 1,
+                        "afterExtraTime": False,
+                        "afterPenalties": False
                     }
                 ]
             )
@@ -454,7 +503,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(13, len(request.columns))
+        Assertions.assert_equals(17, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -504,6 +553,18 @@ class TestMatchService:
         column13: Column = request.columns[12]
         Assertions.assert_equals(["match", "roundId"], column13.parts)
 
+        column14: Column = request.columns[13]
+        Assertions.assert_equals(["result", "homeGoals"], column14.parts)
+
+        column15: Column = request.columns[14]
+        Assertions.assert_equals(["result", "awayGoals"], column15.parts)
+
+        column16: Column = request.columns[15]
+        Assertions.assert_equals(["result", "afterExtraTime"], column16.parts)
+
+        column17: Column = request.columns[16]
+        Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
+
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
         Assertions.assert_equals(
@@ -512,7 +573,7 @@ class TestMatchService:
         )
         Assertions.assert_equals("match", match_table.alias)
 
-        Assertions.assert_equals(4, len(request.joins))
+        Assertions.assert_equals(5, len(request.joins))
 
         match_join1: TableJoin = request.joins[0]
         Assertions.assert_equals(JoinType.LEFT, match_join1.joinType)
@@ -564,14 +625,14 @@ class TestMatchService:
         match_join3_table: Table = match_join3.table
         Assertions.assert_equals("predictor", match_join3_table.schema_)
         Assertions.assert_equals(
-            "groups_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            "results_5341cff8-df9f-4068-8a42-4b4288ecba87",
             match_join3_table.table
         )
-        Assertions.assert_equals("group", match_join3_table.alias)
+        Assertions.assert_equals("result", match_join3_table.alias)
 
         match_join3_condition: QueryCondition = match_join3.joinCondition
         Assertions.assert_equals(
-            ["match", "groupId"],
+            ["match", "id"],
             match_join3_condition.column.parts
         )
         Assertions.assert_equals(
@@ -579,7 +640,7 @@ class TestMatchService:
             match_join3_condition.operator
         )
         Assertions.assert_equals(
-            ["group", "id"],
+            ["result", "id"],
             match_join3_condition.value.parts
         )
 
@@ -589,14 +650,14 @@ class TestMatchService:
         match_join4_table: Table = match_join4.table
         Assertions.assert_equals("predictor", match_join4_table.schema_)
         Assertions.assert_equals(
-            "rounds_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            "groups_5341cff8-df9f-4068-8a42-4b4288ecba87",
             match_join4_table.table
         )
-        Assertions.assert_equals("round", match_join4_table.alias)
+        Assertions.assert_equals("group", match_join4_table.alias)
 
         match_join4_condition: QueryCondition = match_join4.joinCondition
         Assertions.assert_equals(
-            ["match", "roundId"],
+            ["match", "groupId"],
             match_join4_condition.column.parts
         )
         Assertions.assert_equals(
@@ -604,8 +665,33 @@ class TestMatchService:
             match_join4_condition.operator
         )
         Assertions.assert_equals(
-            ["round", "id"],
+            ["group", "id"],
             match_join4_condition.value.parts
+        )
+
+        match_join5: TableJoin = request.joins[4]
+        Assertions.assert_equals(JoinType.LEFT, match_join5.joinType)
+
+        match_join5_table: Table = match_join5.table
+        Assertions.assert_equals("predictor", match_join5_table.schema_)
+        Assertions.assert_equals(
+            "rounds_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            match_join5_table.table
+        )
+        Assertions.assert_equals("round", match_join5_table.alias)
+
+        match_join5_condition: QueryCondition = match_join5.joinCondition
+        Assertions.assert_equals(
+            ["match", "roundId"],
+            match_join5_condition.column.parts
+        )
+        Assertions.assert_equals(
+            ConditionOperator.EQUAL,
+            match_join5_condition.operator
+        )
+        Assertions.assert_equals(
+            ["round", "id"],
+            match_join5_condition.value.parts
         )
 
         Assertions.assert_equals(2, len(request.conditionGroup.conditions))
@@ -720,7 +806,11 @@ class TestMatchService:
                         "kickoff": "2025-06-01T17:30:00",
                         "groupMatchDay": None,
                         "groupId": None,
-                        "roundId": "322ab9d0-ae46-49ac-89b3-c789a0d9d889"
+                        "roundId": "322ab9d0-ae46-49ac-89b3-c789a0d9d889",
+                        "homeGoals": 2,
+                        "awayGoals": 1,
+                        "afterExtraTime": False,
+                        "afterPenalties": False
                     }
                 ]
             )
@@ -765,7 +855,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(13, len(request.columns))
+        Assertions.assert_equals(17, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -815,6 +905,18 @@ class TestMatchService:
         column13: Column = request.columns[12]
         Assertions.assert_equals(["match", "roundId"], column13.parts)
 
+        column14: Column = request.columns[13]
+        Assertions.assert_equals(["result", "homeGoals"], column14.parts)
+
+        column15: Column = request.columns[14]
+        Assertions.assert_equals(["result", "awayGoals"], column15.parts)
+
+        column16: Column = request.columns[15]
+        Assertions.assert_equals(["result", "afterExtraTime"], column16.parts)
+
+        column17: Column = request.columns[16]
+        Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
+
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
         Assertions.assert_equals(
@@ -823,7 +925,7 @@ class TestMatchService:
         )
         Assertions.assert_equals("match", match_table.alias)
 
-        Assertions.assert_equals(4, len(request.joins))
+        Assertions.assert_equals(5, len(request.joins))
 
         match_join1: TableJoin = request.joins[0]
         Assertions.assert_equals(JoinType.LEFT, match_join1.joinType)
@@ -875,14 +977,14 @@ class TestMatchService:
         match_join3_table: Table = match_join3.table
         Assertions.assert_equals("predictor", match_join3_table.schema_)
         Assertions.assert_equals(
-            "groups_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            "results_5341cff8-df9f-4068-8a42-4b4288ecba87",
             match_join3_table.table
         )
-        Assertions.assert_equals("group", match_join3_table.alias)
+        Assertions.assert_equals("result", match_join3_table.alias)
 
         match_join3_condition: QueryCondition = match_join3.joinCondition
         Assertions.assert_equals(
-            ["match", "groupId"],
+            ["match", "id"],
             match_join3_condition.column.parts
         )
         Assertions.assert_equals(
@@ -890,7 +992,7 @@ class TestMatchService:
             match_join3_condition.operator
         )
         Assertions.assert_equals(
-            ["group", "id"],
+            ["result", "id"],
             match_join3_condition.value.parts
         )
 
@@ -900,14 +1002,14 @@ class TestMatchService:
         match_join4_table: Table = match_join4.table
         Assertions.assert_equals("predictor", match_join4_table.schema_)
         Assertions.assert_equals(
-            "rounds_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            "groups_5341cff8-df9f-4068-8a42-4b4288ecba87",
             match_join4_table.table
         )
-        Assertions.assert_equals("round", match_join4_table.alias)
+        Assertions.assert_equals("group", match_join4_table.alias)
 
         match_join4_condition: QueryCondition = match_join4.joinCondition
         Assertions.assert_equals(
-            ["match", "roundId"],
+            ["match", "groupId"],
             match_join4_condition.column.parts
         )
         Assertions.assert_equals(
@@ -915,8 +1017,33 @@ class TestMatchService:
             match_join4_condition.operator
         )
         Assertions.assert_equals(
-            ["round", "id"],
+            ["group", "id"],
             match_join4_condition.value.parts
+        )
+
+        match_join5: TableJoin = request.joins[4]
+        Assertions.assert_equals(JoinType.LEFT, match_join5.joinType)
+
+        match_join5_table: Table = match_join5.table
+        Assertions.assert_equals("predictor", match_join5_table.schema_)
+        Assertions.assert_equals(
+            "rounds_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            match_join5_table.table
+        )
+        Assertions.assert_equals("round", match_join5_table.alias)
+
+        match_join5_condition: QueryCondition = match_join5.joinCondition
+        Assertions.assert_equals(
+            ["match", "roundId"],
+            match_join5_condition.column.parts
+        )
+        Assertions.assert_equals(
+            ConditionOperator.EQUAL,
+            match_join5_condition.operator
+        )
+        Assertions.assert_equals(
+            ["round", "id"],
+            match_join5_condition.value.parts
         )
 
         Assertions.assert_equals(1, len(request.conditionGroup.conditions))
@@ -1023,7 +1150,11 @@ class TestMatchService:
                         "kickoff": "2025-06-01T17:30:00",
                         "groupMatchDay": None,
                         "groupId": None,
-                        "roundId": "322ab9d0-ae46-49ac-89b3-c789a0d9d889"
+                        "roundId": "322ab9d0-ae46-49ac-89b3-c789a0d9d889",
+                        "homeGoals": 2,
+                        "awayGoals": 1,
+                        "afterExtraTime": False,
+                        "afterPenalties": False
                     }
                 ]
             )
@@ -1068,7 +1199,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(13, len(request.columns))
+        Assertions.assert_equals(17, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -1118,6 +1249,18 @@ class TestMatchService:
         column13: Column = request.columns[12]
         Assertions.assert_equals(["match", "roundId"], column13.parts)
 
+        column14: Column = request.columns[13]
+        Assertions.assert_equals(["result", "homeGoals"], column14.parts)
+
+        column15: Column = request.columns[14]
+        Assertions.assert_equals(["result", "awayGoals"], column15.parts)
+
+        column16: Column = request.columns[15]
+        Assertions.assert_equals(["result", "afterExtraTime"], column16.parts)
+
+        column17: Column = request.columns[16]
+        Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
+
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
         Assertions.assert_equals(
@@ -1126,7 +1269,7 @@ class TestMatchService:
         )
         Assertions.assert_equals("match", match_table.alias)
 
-        Assertions.assert_equals(3, len(request.joins))
+        Assertions.assert_equals(4, len(request.joins))
 
         match_join1: TableJoin = request.joins[0]
         Assertions.assert_equals(JoinType.LEFT, match_join1.joinType)
@@ -1178,14 +1321,14 @@ class TestMatchService:
         match_join3_table: Table = match_join3.table
         Assertions.assert_equals("predictor", match_join3_table.schema_)
         Assertions.assert_equals(
-            "rounds_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            "results_5341cff8-df9f-4068-8a42-4b4288ecba87",
             match_join3_table.table
         )
-        Assertions.assert_equals("round", match_join3_table.alias)
+        Assertions.assert_equals("result", match_join3_table.alias)
 
         match_join3_condition: QueryCondition = match_join3.joinCondition
         Assertions.assert_equals(
-            ["match", "roundId"],
+            ["match", "id"],
             match_join3_condition.column.parts
         )
         Assertions.assert_equals(
@@ -1193,8 +1336,33 @@ class TestMatchService:
             match_join3_condition.operator
         )
         Assertions.assert_equals(
-            ["round", "id"],
+            ["result", "id"],
             match_join3_condition.value.parts
+        )
+
+        match_join4: TableJoin = request.joins[3]
+        Assertions.assert_equals(JoinType.LEFT, match_join4.joinType)
+
+        match_join4_table: Table = match_join4.table
+        Assertions.assert_equals("predictor", match_join4_table.schema_)
+        Assertions.assert_equals(
+            "rounds_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            match_join4_table.table
+        )
+        Assertions.assert_equals("round", match_join4_table.alias)
+
+        match_join4_condition: QueryCondition = match_join4.joinCondition
+        Assertions.assert_equals(
+            ["match", "roundId"],
+            match_join4_condition.column.parts
+        )
+        Assertions.assert_equals(
+            ConditionOperator.EQUAL,
+            match_join4_condition.operator
+        )
+        Assertions.assert_equals(
+            ["round", "id"],
+            match_join4_condition.value.parts
         )
 
         Assertions.assert_none(request.conditionGroup)
@@ -1279,7 +1447,11 @@ class TestMatchService:
                         "kickoff": "2025-06-01T14:00:00",
                         "groupMatchDay": 1,
                         "groupId": "4c2c8046-0007-48db-a76a-865f9048d9de",
-                        "roundId": None
+                        "roundId": None,
+                        "homeGoals": 2,
+                        "awayGoals": 1,
+                        "afterExtraTime": False,
+                        "afterPenalties": False
                     }
                 ]
             )
@@ -1324,7 +1496,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(13, len(request.columns))
+        Assertions.assert_equals(17, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -1374,6 +1546,18 @@ class TestMatchService:
         column13: Column = request.columns[12]
         Assertions.assert_equals(["match", "roundId"], column13.parts)
 
+        column14: Column = request.columns[13]
+        Assertions.assert_equals(["result", "homeGoals"], column14.parts)
+
+        column15: Column = request.columns[14]
+        Assertions.assert_equals(["result", "awayGoals"], column15.parts)
+
+        column16: Column = request.columns[15]
+        Assertions.assert_equals(["result", "afterExtraTime"], column16.parts)
+
+        column17: Column = request.columns[16]
+        Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
+
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
         Assertions.assert_equals(
@@ -1382,7 +1566,7 @@ class TestMatchService:
         )
         Assertions.assert_equals("match", match_table.alias)
 
-        Assertions.assert_equals(3, len(request.joins))
+        Assertions.assert_equals(4, len(request.joins))
 
         match_join1: TableJoin = request.joins[0]
         Assertions.assert_equals(JoinType.LEFT, match_join1.joinType)
@@ -1434,14 +1618,14 @@ class TestMatchService:
         match_join3_table: Table = match_join3.table
         Assertions.assert_equals("predictor", match_join3_table.schema_)
         Assertions.assert_equals(
-            "groups_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            "results_5341cff8-df9f-4068-8a42-4b4288ecba87",
             match_join3_table.table
         )
-        Assertions.assert_equals("group", match_join3_table.alias)
+        Assertions.assert_equals("result", match_join3_table.alias)
 
         match_join3_condition: QueryCondition = match_join3.joinCondition
         Assertions.assert_equals(
-            ["match", "groupId"],
+            ["match", "id"],
             match_join3_condition.column.parts
         )
         Assertions.assert_equals(
@@ -1449,8 +1633,33 @@ class TestMatchService:
             match_join3_condition.operator
         )
         Assertions.assert_equals(
-            ["group", "id"],
+            ["result", "id"],
             match_join3_condition.value.parts
+        )
+
+        match_join4: TableJoin = request.joins[3]
+        Assertions.assert_equals(JoinType.LEFT, match_join4.joinType)
+
+        match_join4_table: Table = match_join4.table
+        Assertions.assert_equals("predictor", match_join4_table.schema_)
+        Assertions.assert_equals(
+            "groups_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            match_join4_table.table
+        )
+        Assertions.assert_equals("group", match_join4_table.alias)
+
+        match_join4_condition: QueryCondition = match_join4.joinCondition
+        Assertions.assert_equals(
+            ["match", "groupId"],
+            match_join4_condition.column.parts
+        )
+        Assertions.assert_equals(
+            ConditionOperator.EQUAL,
+            match_join4_condition.operator
+        )
+        Assertions.assert_equals(
+            ["group", "id"],
+            match_join4_condition.value.parts
         )
 
         Assertions.assert_none(request.conditionGroup)
@@ -1568,7 +1777,11 @@ class TestMatchService:
                         "kickoff": "2025-06-01T14:00:00",
                         "groupMatchDay": 1,
                         "groupId": "4c2c8046-0007-48db-a76a-865f9048d9de",
-                        "roundId": None
+                        "roundId": None,
+                        "homeGoals": 2,
+                        "awayGoals": 1,
+                        "afterExtraTime": False,
+                        "afterPenalties": False
                     },
                     {
                         "matchId": "d8b3685b-3749-438d-9d85-da29c97ebaef",
@@ -1583,7 +1796,11 @@ class TestMatchService:
                         "kickoff": "2025-06-01T17:30:00",
                         "groupMatchDay": None,
                         "groupId": None,
-                        "roundId": "322ab9d0-ae46-49ac-89b3-c789a0d9d889"
+                        "roundId": "322ab9d0-ae46-49ac-89b3-c789a0d9d889",
+                        "homeGoals": 2,
+                        "awayGoals": 1,
+                        "afterExtraTime": False,
+                        "afterPenalties": False
                     }
                 ]
             )
@@ -1663,7 +1880,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(13, len(request.columns))
+        Assertions.assert_equals(17, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -1713,6 +1930,18 @@ class TestMatchService:
         column13: Column = request.columns[12]
         Assertions.assert_equals(["match", "roundId"], column13.parts)
 
+        column14: Column = request.columns[13]
+        Assertions.assert_equals(["result", "homeGoals"], column14.parts)
+
+        column15: Column = request.columns[14]
+        Assertions.assert_equals(["result", "awayGoals"], column15.parts)
+
+        column16: Column = request.columns[15]
+        Assertions.assert_equals(["result", "afterExtraTime"], column16.parts)
+
+        column17: Column = request.columns[16]
+        Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
+
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
         Assertions.assert_equals(
@@ -1721,7 +1950,7 @@ class TestMatchService:
         )
         Assertions.assert_equals("match", match_table.alias)
 
-        Assertions.assert_equals(4, len(request.joins))
+        Assertions.assert_equals(5, len(request.joins))
 
         match_join1: TableJoin = request.joins[0]
         Assertions.assert_equals(JoinType.LEFT, match_join1.joinType)
@@ -1773,14 +2002,14 @@ class TestMatchService:
         match_join3_table: Table = match_join3.table
         Assertions.assert_equals("predictor", match_join3_table.schema_)
         Assertions.assert_equals(
-            "groups_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            "results_5341cff8-df9f-4068-8a42-4b4288ecba87",
             match_join3_table.table
         )
-        Assertions.assert_equals("group", match_join3_table.alias)
+        Assertions.assert_equals("result", match_join3_table.alias)
 
         match_join3_condition: QueryCondition = match_join3.joinCondition
         Assertions.assert_equals(
-            ["match", "groupId"],
+            ["match", "id"],
             match_join3_condition.column.parts
         )
         Assertions.assert_equals(
@@ -1788,7 +2017,7 @@ class TestMatchService:
             match_join3_condition.operator
         )
         Assertions.assert_equals(
-            ["group", "id"],
+            ["result", "id"],
             match_join3_condition.value.parts
         )
 
@@ -1798,14 +2027,14 @@ class TestMatchService:
         match_join4_table: Table = match_join4.table
         Assertions.assert_equals("predictor", match_join4_table.schema_)
         Assertions.assert_equals(
-            "rounds_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            "groups_5341cff8-df9f-4068-8a42-4b4288ecba87",
             match_join4_table.table
         )
-        Assertions.assert_equals("round", match_join4_table.alias)
+        Assertions.assert_equals("group", match_join4_table.alias)
 
         match_join4_condition: QueryCondition = match_join4.joinCondition
         Assertions.assert_equals(
-            ["match", "roundId"],
+            ["match", "groupId"],
             match_join4_condition.column.parts
         )
         Assertions.assert_equals(
@@ -1813,8 +2042,33 @@ class TestMatchService:
             match_join4_condition.operator
         )
         Assertions.assert_equals(
-            ["round", "id"],
+            ["group", "id"],
             match_join4_condition.value.parts
+        )
+
+        match_join5: TableJoin = request.joins[4]
+        Assertions.assert_equals(JoinType.LEFT, match_join5.joinType)
+
+        match_join5_table: Table = match_join5.table
+        Assertions.assert_equals("predictor", match_join5_table.schema_)
+        Assertions.assert_equals(
+            "rounds_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            match_join5_table.table
+        )
+        Assertions.assert_equals("round", match_join5_table.alias)
+
+        match_join5_condition: QueryCondition = match_join5.joinCondition
+        Assertions.assert_equals(
+            ["match", "roundId"],
+            match_join5_condition.column.parts
+        )
+        Assertions.assert_equals(
+            ConditionOperator.EQUAL,
+            match_join5_condition.operator
+        )
+        Assertions.assert_equals(
+            ["round", "id"],
+            match_join5_condition.value.parts
         )
 
         Assertions.assert_equals(1, len(request.conditionGroup.conditions))
@@ -1992,7 +2246,11 @@ class TestMatchService:
                         "kickoff": "2025-06-01T14:00:00",
                         "groupMatchDay": 1,
                         "groupId": "4c2c8046-0007-48db-a76a-865f9048d9de",
-                        "roundId": None
+                        "roundId": None,
+                        "homeGoals": 2,
+                        "awayGoals": 1,
+                        "afterExtraTime": False,
+                        "afterPenalties": False
                     }
                 ]
             )
@@ -2035,7 +2293,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(13, len(request.columns))
+        Assertions.assert_equals(17, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -2085,6 +2343,18 @@ class TestMatchService:
         column13: Column = request.columns[12]
         Assertions.assert_equals(["match", "roundId"], column13.parts)
 
+        column14: Column = request.columns[13]
+        Assertions.assert_equals(["result", "homeGoals"], column14.parts)
+
+        column15: Column = request.columns[14]
+        Assertions.assert_equals(["result", "awayGoals"], column15.parts)
+
+        column16: Column = request.columns[15]
+        Assertions.assert_equals(["result", "afterExtraTime"], column16.parts)
+
+        column17: Column = request.columns[16]
+        Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
+
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
         Assertions.assert_equals(
@@ -2093,7 +2363,7 @@ class TestMatchService:
         )
         Assertions.assert_equals("match", match_table.alias)
 
-        Assertions.assert_equals(4, len(request.joins))
+        Assertions.assert_equals(5, len(request.joins))
 
         match_join1: TableJoin = request.joins[0]
         Assertions.assert_equals(JoinType.LEFT, match_join1.joinType)
@@ -2145,14 +2415,14 @@ class TestMatchService:
         match_join3_table: Table = match_join3.table
         Assertions.assert_equals("predictor", match_join3_table.schema_)
         Assertions.assert_equals(
-            "groups_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            "results_5341cff8-df9f-4068-8a42-4b4288ecba87",
             match_join3_table.table
         )
-        Assertions.assert_equals("group", match_join3_table.alias)
+        Assertions.assert_equals("result", match_join3_table.alias)
 
         match_join3_condition: QueryCondition = match_join3.joinCondition
         Assertions.assert_equals(
-            ["match", "groupId"],
+            ["match", "id"],
             match_join3_condition.column.parts
         )
         Assertions.assert_equals(
@@ -2160,7 +2430,7 @@ class TestMatchService:
             match_join3_condition.operator
         )
         Assertions.assert_equals(
-            ["group", "id"],
+            ["result", "id"],
             match_join3_condition.value.parts
         )
 
@@ -2170,14 +2440,14 @@ class TestMatchService:
         match_join4_table: Table = match_join4.table
         Assertions.assert_equals("predictor", match_join4_table.schema_)
         Assertions.assert_equals(
-            "rounds_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            "groups_5341cff8-df9f-4068-8a42-4b4288ecba87",
             match_join4_table.table
         )
-        Assertions.assert_equals("round", match_join4_table.alias)
+        Assertions.assert_equals("group", match_join4_table.alias)
 
         match_join4_condition: QueryCondition = match_join4.joinCondition
         Assertions.assert_equals(
-            ["match", "roundId"],
+            ["match", "groupId"],
             match_join4_condition.column.parts
         )
         Assertions.assert_equals(
@@ -2185,8 +2455,33 @@ class TestMatchService:
             match_join4_condition.operator
         )
         Assertions.assert_equals(
-            ["round", "id"],
+            ["group", "id"],
             match_join4_condition.value.parts
+        )
+
+        match_join5: TableJoin = request.joins[4]
+        Assertions.assert_equals(JoinType.LEFT, match_join5.joinType)
+
+        match_join5_table: Table = match_join5.table
+        Assertions.assert_equals("predictor", match_join5_table.schema_)
+        Assertions.assert_equals(
+            "rounds_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            match_join5_table.table
+        )
+        Assertions.assert_equals("round", match_join5_table.alias)
+
+        match_join5_condition: QueryCondition = match_join5.joinCondition
+        Assertions.assert_equals(
+            ["match", "roundId"],
+            match_join5_condition.column.parts
+        )
+        Assertions.assert_equals(
+            ConditionOperator.EQUAL,
+            match_join5_condition.operator
+        )
+        Assertions.assert_equals(
+            ["round", "id"],
+            match_join5_condition.value.parts
         )
 
         Assertions.assert_equals(1, len(request.conditionGroup.conditions))
