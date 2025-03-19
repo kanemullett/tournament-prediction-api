@@ -27,6 +27,8 @@ from db_handler.db_handler.util.store_constants import StoreConstants
 from predictor_api.predictor_api.model.group import Group
 from predictor_api.predictor_api.model.match import Match
 from predictor_api.predictor_api.model.match_request import MatchUpdate
+from predictor_api.predictor_api.model.result import Result
+from predictor_api.predictor_api.model.result_response import ResultResponse
 from predictor_api.predictor_api.model.round import Round
 from predictor_api.predictor_api.model.team import Team
 from predictor_api.predictor_api.model.type.confederation import Confederation
@@ -213,6 +215,18 @@ class MatchService:
                     Column.of("away", StoreConstants.ID)
                 ),
                 JoinType.LEFT
+            ),
+            TableJoin.of(
+                Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Result.get_target_table(tournament_id),
+                    "result"
+                ),
+                QueryCondition.of(
+                    Column.of("match", StoreConstants.ID),
+                    Column.of("result", StoreConstants.ID)
+                ),
+                JoinType.LEFT
             )
         ]
 
@@ -355,7 +369,11 @@ class MatchService:
                     Column.of("match", "kickoff"),
                     Column.of("match", "groupMatchDay"),
                     Column.of("match", "groupId"),
-                    Column.of("match", "roundId")
+                    Column.of("match", "roundId"),
+                    Column.of("result", "homeGoals"),
+                    Column.of("result", "awayGoals"),
+                    Column.of("result", "afterExtraTime"),
+                    Column.of("result", "afterPenalties")
                 ],
                 table=Table.of(
                     PredictorConstants.PREDICTOR_SCHEMA,
@@ -396,6 +414,15 @@ class MatchService:
                 confederation=Confederation(record["awayConfederation"])
             )
 
+        result: ResultResponse | None = None
+        if record["homeGoals"] is not None and record["awayGoals"] is not None:
+            result = ResultResponse(
+                homeGoals=record["homeGoals"],
+                awayGoals=record["awayGoals"],
+                afterExtraTime=record["afterExtraTime"],
+                afterPenalties=record["afterPenalties"]
+            )
+
         return Match(
             id=record["matchId"],
             homeTeam=home,
@@ -403,5 +430,6 @@ class MatchService:
             kickoff=record.get("kickoff"),
             groupMatchDay=record.get("groupMatchDay"),
             groupId=record.get("groupId"),
-            roundId=record.get("roundId")
+            roundId=record.get("roundId"),
+            result=result
         )

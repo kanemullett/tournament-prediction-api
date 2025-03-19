@@ -2,6 +2,7 @@ from typing import Optional
 from uuid import UUID
 
 from predictor_api.predictor_api.model.match_base import MatchBase
+from predictor_api.predictor_api.model.result_response import ResultResponse
 from predictor_api.predictor_api.model.team import Team
 
 
@@ -27,6 +28,7 @@ class Match(MatchBase):
     groupMatchDay: Optional[int] = None
     groupId: Optional[UUID] = None
     roundId: Optional[UUID] = None
+    result: Optional[ResultResponse] = None
 
     @classmethod
     def get_target_table(cls, tournament_id: UUID) -> str:
