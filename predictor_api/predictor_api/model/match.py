@@ -1,8 +1,10 @@
 from typing import Optional
 from uuid import UUID
 
+from predictor_api.predictor_api.model.group import Group
 from predictor_api.predictor_api.model.match_base import MatchBase
 from predictor_api.predictor_api.model.result_response import ResultResponse
+from predictor_api.predictor_api.model.round import Round
 from predictor_api.predictor_api.model.team import Team
 
 
@@ -26,6 +28,8 @@ class Match(MatchBase):
     homeTeam: Optional[Team] = None
     awayTeam: Optional[Team] = None
     groupMatchDay: Optional[int] = None
+    group: Optional[Group] = None
+    round: Optional[Round] = None
     groupId: Optional[UUID] = None
     roundId: Optional[UUID] = None
     result: Optional[ResultResponse] = None

@@ -191,6 +191,53 @@ class MatchService:
             group_match_day: int = None,
             round_id: UUID = None,
             match_ids: list[UUID] = None) -> list[Match]:
+        columns: list[Column] = [
+            Column(
+                parts=["match", StoreConstants.ID],
+                alias="matchId"
+            ),
+            Column(
+                parts=["home", StoreConstants.ID],
+                alias="homeId"
+            ),
+            Column(
+                parts=["home", "name"],
+                alias="homeName"
+            ),
+            Column(
+                parts=["home", "imagePath"],
+                alias="homeImagePath"
+            ),
+            Column(
+                parts=["home", "confederation"],
+                alias="homeConfederation"
+            ),
+            Column(
+                parts=["away", StoreConstants.ID],
+                alias="awayId"
+            ),
+            Column(
+                parts=["away", "name"],
+                alias="awayName"
+            ),
+            Column(
+                parts=["away", "imagePath"],
+                alias="awayImagePath"
+            ),
+            Column(
+                parts=["away", "confederation"],
+                alias="awayConfederation"
+            ),
+            Column.of("match", "kickoff"),
+            Column.of("match", "groupMatchDay"),
+            Column.of("match", "groupId"),
+            Column.of("match", "roundId"),
+            Column.of("result", "homeGoals"),
+            Column.of("result", "awayGoals"),
+            Column.of("result", "afterExtraTime"),
+            Column.of("result", "afterPenalties")
+        ]
+
         table_joins: list[TableJoin] = [
             TableJoin.of(
                 Table.of(
@@ -240,6 +287,13 @@ class MatchService:
         ]
 
         if self.__group_service.tournament_has_group_stage(tournament_id):
+            columns.append(
+                Column(
+                    parts=["group", "name"],
+                    alias="groupName"
+                )
+            )
+
             table_joins.append(
                 TableJoin.of(
                     Table.of(
@@ -263,6 +317,31 @@ class MatchService:
             )
 
         if self.__round_service.tournament_has_knockout_stage(tournament_id):
+            columns.append(
+                Column(
+                    parts=["round", "name"],
+                    alias="roundName"
+                )
+            )
+            columns.append(
+                Column.of("round", "teamCount")
+            )
+            columns.append(
+                Column.of("round", "roundOrder")
+            )
+            columns.append(
+                Column.of("round", "twoLegs")
+            )
+            columns.append(
+                Column.of("round", "extraTime")
+            )
+            columns.append(
+                Column(
+                    parts=["round", "awayGoals"],
+                    alias="awayGoalsDecider"
+                )
+            )
+
             table_joins.append(
                 TableJoin.of(
                     Table.of(
@@ -329,52 +408,7 @@ class MatchService:
 
         response: QueryResponse = self.__query_service.retrieve_records(
             QueryRequest(
-                columns=[
-                    Column(
-                        parts=["match", StoreConstants.ID],
-                        alias="matchId"
-                    ),
-                    Column(
-                        parts=["home", StoreConstants.ID],
-                        alias="homeId"
-                    ),
-                    Column(
-                        parts=["home", "name"],
-                        alias="homeName"
-                    ),
-                    Column(
-                        parts=["home", "imagePath"],
-                        alias="homeImagePath"
-                    ),
-                    Column(
-                        parts=["home", "confederation"],
-                        alias="homeConfederation"
-                    ),
-                    Column(
-                        parts=["away", StoreConstants.ID],
-                        alias="awayId"
-                    ),
-                    Column(
-                        parts=["away", "name"],
-                        alias="awayName"
-                    ),
-                    Column(
-                        parts=["away", "imagePath"],
-                        alias="awayImagePath"
-                    ),
-                    Column(
-                        parts=["away", "confederation"],
-                        alias="awayConfederation"
-                    ),
-                    Column.of("match", "kickoff"),
-                    Column.of("match", "groupMatchDay"),
-                    Column.of("match", "groupId"),
-                    Column.of("match", "roundId"),
-                    Column.of("result", "homeGoals"),
-                    Column.of("result", "awayGoals"),
-                    Column.of("result", "afterExtraTime"),
-                    Column.of("result", "afterPenalties")
-                ],
+                columns=columns,
                 table=Table.of(
                     PredictorConstants.PREDICTOR_SCHEMA,
                     Match.get_target_table(tournament_id),
@@ -423,13 +457,32 @@ class MatchService:
                 afterPenalties=record["afterPenalties"]
             )
 
+        group: Group | None = None
+        if record["groupId"] is not None:
+            group = Group(
+                id=UUID(record["groupId"]),
+                name=record["groupName"]
+            )
+
+        knock_round: Round | None = None
+        if record["roundId"] is not None:
+            knock_round = Round(
+                id=UUID(record["roundId"]),
+                name=record["roundName"],
+                teamCount=record["teamCount"],
+                roundOrder=record["roundOrder"],
+                twoLegs=record["twoLegs"],
+                extraTime=record["extraTime"],
+                awayGoals=record["awayGoalsDecider"]
+            )
+
         return Match(
             id=record["matchId"],
             homeTeam=home,
             awayTeam=away,
             kickoff=record.get("kickoff"),
             groupMatchDay=record.get("groupMatchDay"),
-            groupId=record.get("groupId"),
-            roundId=record.get("roundId"),
+            group=group,
+            round=knock_round,
             result=result
         )

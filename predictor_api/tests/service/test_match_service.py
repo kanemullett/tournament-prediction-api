@@ -20,8 +20,10 @@ from db_handler.db_handler.model.type.order_direction import OrderDirection
 from db_handler.db_handler.model.type.sql_operator import SqlOperator
 from db_handler.db_handler.model.type.join_type import JoinType
 from db_handler.db_handler.model.update_request import UpdateRequest
+from predictor_api.predictor_api.model.group import Group
 from predictor_api.predictor_api.model.match import Match
 from predictor_api.predictor_api.model.match_request import MatchUpdate
+from predictor_api.predictor_api.model.round import Round
 from predictor_api.predictor_api.model.team import Team
 from predictor_api.predictor_api.model.type.confederation import Confederation
 from predictor_api.predictor_api.service.match_service import MatchService
@@ -73,7 +75,14 @@ class TestMatchService:
                         "homeGoals": 2,
                         "awayGoals": 1,
                         "afterExtraTime": False,
-                        "afterPenalties": False
+                        "afterPenalties": False,
+                        "groupName": "Group A",
+                        "roundName": None,
+                        "teamCount": None,
+                        "roundOrder": None,
+                        "twoLegs": None,
+                        "extraTime": None,
+                        "awayGoalsDecider": None
                     },
                     {
                         "matchId": "d8b3685b-3749-438d-9d85-da29c97ebaef",
@@ -92,7 +101,14 @@ class TestMatchService:
                         "homeGoals": 2,
                         "awayGoals": 1,
                         "afterExtraTime": False,
-                        "afterPenalties": False
+                        "afterPenalties": False,
+                        "groupName": None,
+                        "roundName": "Round of 16",
+                        "teamCount": 16,
+                        "roundOrder": 1,
+                        "twoLegs": False,
+                        "extraTime": True,
+                        "awayGoalsDecider": False
                     }
                 ]
             )
@@ -137,7 +153,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(17, len(request.columns))
+        Assertions.assert_equals(24, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -198,6 +214,30 @@ class TestMatchService:
 
         column17: Column = request.columns[16]
         Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
+
+        column18: Column = request.columns[17]
+        Assertions.assert_equals(["group", "name"], column18.parts)
+        Assertions.assert_equals("groupName", column18.alias)
+
+        column19: Column = request.columns[18]
+        Assertions.assert_equals(["round", "name"], column19.parts)
+        Assertions.assert_equals("roundName", column19.alias)
+
+        column20: Column = request.columns[19]
+        Assertions.assert_equals(["round", "teamCount"], column20.parts)
+
+        column21: Column = request.columns[20]
+        Assertions.assert_equals(["round", "roundOrder"], column21.parts)
+
+        column22: Column = request.columns[21]
+        Assertions.assert_equals(["round", "twoLegs"], column22.parts)
+
+        column23: Column = request.columns[22]
+        Assertions.assert_equals(["round", "extraTime"], column23.parts)
+
+        column24: Column = request.columns[23]
+        Assertions.assert_equals(["round", "awayGoals"], column24.parts)
+        Assertions.assert_equals("awayGoalsDecider", column24.alias)
 
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
@@ -371,11 +411,9 @@ class TestMatchService:
             match1.kickoff
         )
         Assertions.assert_equals(1, match1.groupMatchDay)
-        Assertions.assert_equals(
-            UUID("4c2c8046-0007-48db-a76a-865f9048d9de"),
-            match1.groupId
-        )
+        Assertions.assert_none(match1.groupId)
         Assertions.assert_none(match1.roundId)
+        Assertions.assert_none(match1.round)
 
         match1_home: Team = match1.homeTeam
         Assertions.assert_equals(
@@ -395,6 +433,13 @@ class TestMatchService:
         Assertions.assert_equals("NGA.png", match1_away.imagePath)
         Assertions.assert_equals(Confederation.CAF, match1_away.confederation)
 
+        match1_group: Group = match1.group
+        Assertions.assert_equals(
+            UUID("4c2c8046-0007-48db-a76a-865f9048d9de"),
+            match1_group.id
+        )
+        Assertions.assert_equals("Group A", match1_group.name)
+
         match2: Match = matches[1]
         Assertions.assert_equals(
             UUID("d8b3685b-3749-438d-9d85-da29c97ebaef"),
@@ -406,10 +451,8 @@ class TestMatchService:
         )
         Assertions.assert_none(match2.groupMatchDay)
         Assertions.assert_none(match2.groupId)
-        Assertions.assert_equals(
-            UUID("322ab9d0-ae46-49ac-89b3-c789a0d9d889"),
-            match2.roundId
-        )
+        Assertions.assert_none(match2.roundId)
+        Assertions.assert_none(match2.group)
 
         match2_home: Team = match2.homeTeam
         Assertions.assert_equals(
@@ -431,6 +474,18 @@ class TestMatchService:
         Assertions.assert_equals("Iran", match2_away.name)
         Assertions.assert_equals("IRI.png", match2_away.imagePath)
         Assertions.assert_equals(Confederation.AFC, match2_away.confederation)
+
+        match2_round: Round = match2.round
+        Assertions.assert_equals(
+            UUID("322ab9d0-ae46-49ac-89b3-c789a0d9d889"),
+            match2_round.id
+        )
+        Assertions.assert_equals("Round of 16", match2_round.name)
+        Assertions.assert_equals(16, match2_round.teamCount)
+        Assertions.assert_equals(1, match2_round.roundOrder)
+        Assertions.assert_false(match2_round.twoLegs)
+        Assertions.assert_true(match2_round.extraTime)
+        Assertions.assert_false(match2_round.awayGoals)
 
     def test_should_return_group_match_day_matches(self):
         # Given
@@ -458,7 +513,14 @@ class TestMatchService:
                         "homeGoals": 2,
                         "awayGoals": 1,
                         "afterExtraTime": False,
-                        "afterPenalties": False
+                        "afterPenalties": False,
+                        "groupName": "Group A",
+                        "roundName": None,
+                        "teamCount": None,
+                        "roundOrder": None,
+                        "twoLegs": None,
+                        "extraTime": None,
+                        "awayGoalsDecider": None
                     }
                 ]
             )
@@ -503,7 +565,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(17, len(request.columns))
+        Assertions.assert_equals(24, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -564,6 +626,30 @@ class TestMatchService:
 
         column17: Column = request.columns[16]
         Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
+
+        column18: Column = request.columns[17]
+        Assertions.assert_equals(["group", "name"], column18.parts)
+        Assertions.assert_equals("groupName", column18.alias)
+
+        column19: Column = request.columns[18]
+        Assertions.assert_equals(["round", "name"], column19.parts)
+        Assertions.assert_equals("roundName", column19.alias)
+
+        column20: Column = request.columns[19]
+        Assertions.assert_equals(["round", "teamCount"], column20.parts)
+
+        column21: Column = request.columns[20]
+        Assertions.assert_equals(["round", "roundOrder"], column21.parts)
+
+        column22: Column = request.columns[21]
+        Assertions.assert_equals(["round", "twoLegs"], column22.parts)
+
+        column23: Column = request.columns[22]
+        Assertions.assert_equals(["round", "extraTime"], column23.parts)
+
+        column24: Column = request.columns[23]
+        Assertions.assert_equals(["round", "awayGoals"], column24.parts)
+        Assertions.assert_equals("awayGoalsDecider", column24.alias)
 
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
@@ -760,11 +846,9 @@ class TestMatchService:
         )
         Assertions.assert_equals(datetime(2025, 6, 1, 14, 0, 0), match.kickoff)
         Assertions.assert_equals(1, match.groupMatchDay)
-        Assertions.assert_equals(
-            UUID("4c2c8046-0007-48db-a76a-865f9048d9de"),
-            match.groupId
-        )
+        Assertions.assert_none(match.groupId)
         Assertions.assert_none(match.roundId)
+        Assertions.assert_none(match.round)
 
         home: Team = match.homeTeam
         Assertions.assert_equals(
@@ -783,6 +867,13 @@ class TestMatchService:
         Assertions.assert_equals("Nigeria", away.name)
         Assertions.assert_equals("NGA.png", away.imagePath)
         Assertions.assert_equals(Confederation.CAF, away.confederation)
+
+        group: Group = match.group
+        Assertions.assert_equals(
+            UUID("4c2c8046-0007-48db-a76a-865f9048d9de"),
+            group.id
+        )
+        Assertions.assert_equals("Group A", group.name)
 
     def test_should_return_round_matches(self):
         # Given
@@ -810,7 +901,14 @@ class TestMatchService:
                         "homeGoals": 2,
                         "awayGoals": 1,
                         "afterExtraTime": False,
-                        "afterPenalties": False
+                        "afterPenalties": False,
+                        "groupName": None,
+                        "roundName": "Round of 16",
+                        "teamCount": 16,
+                        "roundOrder": 1,
+                        "twoLegs": False,
+                        "extraTime": True,
+                        "awayGoalsDecider": False
                     }
                 ]
             )
@@ -855,7 +953,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(17, len(request.columns))
+        Assertions.assert_equals(24, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -916,6 +1014,30 @@ class TestMatchService:
 
         column17: Column = request.columns[16]
         Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
+
+        column18: Column = request.columns[17]
+        Assertions.assert_equals(["group", "name"], column18.parts)
+        Assertions.assert_equals("groupName", column18.alias)
+
+        column19: Column = request.columns[18]
+        Assertions.assert_equals(["round", "name"], column19.parts)
+        Assertions.assert_equals("roundName", column19.alias)
+
+        column20: Column = request.columns[19]
+        Assertions.assert_equals(["round", "teamCount"], column20.parts)
+
+        column21: Column = request.columns[20]
+        Assertions.assert_equals(["round", "roundOrder"], column21.parts)
+
+        column22: Column = request.columns[21]
+        Assertions.assert_equals(["round", "twoLegs"], column22.parts)
+
+        column23: Column = request.columns[22]
+        Assertions.assert_equals(["round", "extraTime"], column23.parts)
+
+        column24: Column = request.columns[23]
+        Assertions.assert_equals(["round", "awayGoals"], column24.parts)
+        Assertions.assert_equals("awayGoalsDecider", column24.alias)
 
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
@@ -1105,10 +1227,8 @@ class TestMatchService:
         )
         Assertions.assert_none(match.groupMatchDay)
         Assertions.assert_none(match.groupId)
-        Assertions.assert_equals(
-            UUID("322ab9d0-ae46-49ac-89b3-c789a0d9d889"),
-            match.roundId
-        )
+        Assertions.assert_none(match.roundId)
+        Assertions.assert_none(match.group)
 
         home: Team = match.homeTeam
         Assertions.assert_equals(
@@ -1127,6 +1247,18 @@ class TestMatchService:
         Assertions.assert_equals("Iran", away.name)
         Assertions.assert_equals("IRI.png", away.imagePath)
         Assertions.assert_equals(Confederation.AFC, away.confederation)
+
+        knock_round: Round = match.round
+        Assertions.assert_equals(
+            UUID("322ab9d0-ae46-49ac-89b3-c789a0d9d889"),
+            knock_round.id
+        )
+        Assertions.assert_equals("Round of 16", knock_round.name)
+        Assertions.assert_equals(16, knock_round.teamCount)
+        Assertions.assert_equals(1, knock_round.roundOrder)
+        Assertions.assert_false(knock_round.twoLegs)
+        Assertions.assert_true(knock_round.extraTime)
+        Assertions.assert_false(knock_round.awayGoals)
 
     def test_should_return_matches_no_group_stage(self):
         # Given
@@ -1154,7 +1286,13 @@ class TestMatchService:
                         "homeGoals": 2,
                         "awayGoals": 1,
                         "afterExtraTime": False,
-                        "afterPenalties": False
+                        "afterPenalties": False,
+                        "roundName": "Round of 16",
+                        "teamCount": 16,
+                        "roundOrder": 1,
+                        "twoLegs": False,
+                        "extraTime": True,
+                        "awayGoalsDecider": False
                     }
                 ]
             )
@@ -1199,7 +1337,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(17, len(request.columns))
+        Assertions.assert_equals(23, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -1260,6 +1398,26 @@ class TestMatchService:
 
         column17: Column = request.columns[16]
         Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
+
+        column18: Column = request.columns[17]
+        Assertions.assert_equals(["round", "name"], column18.parts)
+        Assertions.assert_equals("roundName", column18.alias)
+
+        column19: Column = request.columns[18]
+        Assertions.assert_equals(["round", "teamCount"], column19.parts)
+
+        column20: Column = request.columns[19]
+        Assertions.assert_equals(["round", "roundOrder"], column20.parts)
+
+        column21: Column = request.columns[20]
+        Assertions.assert_equals(["round", "twoLegs"], column21.parts)
+
+        column22: Column = request.columns[21]
+        Assertions.assert_equals(["round", "extraTime"], column22.parts)
+
+        column23: Column = request.columns[22]
+        Assertions.assert_equals(["round", "awayGoals"], column23.parts)
+        Assertions.assert_equals("awayGoalsDecider", column23.alias)
 
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
@@ -1402,10 +1560,8 @@ class TestMatchService:
         )
         Assertions.assert_none(match.groupMatchDay)
         Assertions.assert_none(match.groupId)
-        Assertions.assert_equals(
-            UUID("322ab9d0-ae46-49ac-89b3-c789a0d9d889"),
-            match.roundId
-        )
+        Assertions.assert_none(match.roundId)
+        Assertions.assert_none(match.group)
 
         home: Team = match.homeTeam
         Assertions.assert_equals(
@@ -1424,6 +1580,18 @@ class TestMatchService:
         Assertions.assert_equals("Iran", away.name)
         Assertions.assert_equals("IRI.png", away.imagePath)
         Assertions.assert_equals(Confederation.AFC, away.confederation)
+
+        knock_round: Round = match.round
+        Assertions.assert_equals(
+            UUID("322ab9d0-ae46-49ac-89b3-c789a0d9d889"),
+            knock_round.id
+        )
+        Assertions.assert_equals("Round of 16", knock_round.name)
+        Assertions.assert_equals(16, knock_round.teamCount)
+        Assertions.assert_equals(1, knock_round.roundOrder)
+        Assertions.assert_false(knock_round.twoLegs)
+        Assertions.assert_true(knock_round.extraTime)
+        Assertions.assert_false(knock_round.awayGoals)
 
     def test_should_return_matches_no_knockout_stage(self):
         # Given
@@ -1451,7 +1619,8 @@ class TestMatchService:
                         "homeGoals": 2,
                         "awayGoals": 1,
                         "afterExtraTime": False,
-                        "afterPenalties": False
+                        "afterPenalties": False,
+                        "groupName": "Group A"
                     }
                 ]
             )
@@ -1496,7 +1665,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(17, len(request.columns))
+        Assertions.assert_equals(18, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -1557,6 +1726,10 @@ class TestMatchService:
 
         column17: Column = request.columns[16]
         Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
+
+        column18: Column = request.columns[17]
+        Assertions.assert_equals(["group", "name"], column18.parts)
+        Assertions.assert_equals("groupName", column18.alias)
 
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
@@ -1695,11 +1868,9 @@ class TestMatchService:
         )
         Assertions.assert_equals(datetime(2025, 6, 1, 14, 0, 0), match.kickoff)
         Assertions.assert_equals(1, match.groupMatchDay)
-        Assertions.assert_equals(
-            UUID("4c2c8046-0007-48db-a76a-865f9048d9de"),
-            match.groupId
-        )
+        Assertions.assert_none(match.groupId)
         Assertions.assert_none(match.roundId)
+        Assertions.assert_none(match.round)
 
         home: Team = match.homeTeam
         Assertions.assert_equals(
@@ -1718,6 +1889,13 @@ class TestMatchService:
         Assertions.assert_equals("Nigeria", away.name)
         Assertions.assert_equals("NGA.png", away.imagePath)
         Assertions.assert_equals(Confederation.CAF, away.confederation)
+
+        group: Group = match.group
+        Assertions.assert_equals(
+            UUID("4c2c8046-0007-48db-a76a-865f9048d9de"),
+            group.id
+        )
+        Assertions.assert_equals("Group A", group.name)
 
     def test_should_error_tournament_not_exists_get_matches(self):
         # Given
@@ -1781,7 +1959,14 @@ class TestMatchService:
                         "homeGoals": 2,
                         "awayGoals": 1,
                         "afterExtraTime": False,
-                        "afterPenalties": False
+                        "afterPenalties": False,
+                        "groupName": "Group A",
+                        "roundName": None,
+                        "teamCount": None,
+                        "roundOrder": None,
+                        "twoLegs": None,
+                        "extraTime": None,
+                        "awayGoalsDecider": None
                     },
                     {
                         "matchId": "d8b3685b-3749-438d-9d85-da29c97ebaef",
@@ -1800,7 +1985,14 @@ class TestMatchService:
                         "homeGoals": 2,
                         "awayGoals": 1,
                         "afterExtraTime": False,
-                        "afterPenalties": False
+                        "afterPenalties": False,
+                        "groupName": None,
+                        "roundName": "Round of 16",
+                        "teamCount": 16,
+                        "roundOrder": 1,
+                        "twoLegs": False,
+                        "extraTime": True,
+                        "awayGoalsDecider": False
                     }
                 ]
             )
@@ -1880,7 +2072,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(17, len(request.columns))
+        Assertions.assert_equals(24, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -1941,6 +2133,30 @@ class TestMatchService:
 
         column17: Column = request.columns[16]
         Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
+
+        column18: Column = request.columns[17]
+        Assertions.assert_equals(["group", "name"], column18.parts)
+        Assertions.assert_equals("groupName", column18.alias)
+
+        column19: Column = request.columns[18]
+        Assertions.assert_equals(["round", "name"], column19.parts)
+        Assertions.assert_equals("roundName", column19.alias)
+
+        column20: Column = request.columns[19]
+        Assertions.assert_equals(["round", "teamCount"], column20.parts)
+
+        column21: Column = request.columns[20]
+        Assertions.assert_equals(["round", "roundOrder"], column21.parts)
+
+        column22: Column = request.columns[21]
+        Assertions.assert_equals(["round", "twoLegs"], column22.parts)
+
+        column23: Column = request.columns[22]
+        Assertions.assert_equals(["round", "extraTime"], column23.parts)
+
+        column24: Column = request.columns[23]
+        Assertions.assert_equals(["round", "awayGoals"], column24.parts)
+        Assertions.assert_equals("awayGoalsDecider", column24.alias)
 
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
@@ -2129,11 +2345,9 @@ class TestMatchService:
             match1.kickoff
         )
         Assertions.assert_equals(1, match1.groupMatchDay)
-        Assertions.assert_equals(
-            UUID("4c2c8046-0007-48db-a76a-865f9048d9de"),
-            match1.groupId
-        )
+        Assertions.assert_none(match1.groupId)
         Assertions.assert_none(match1.roundId)
+        Assertions.assert_none(match1.round)
 
         match1_home: Team = match1.homeTeam
         Assertions.assert_equals(
@@ -2153,6 +2367,13 @@ class TestMatchService:
         Assertions.assert_equals("NGA.png", match1_away.imagePath)
         Assertions.assert_equals(Confederation.CAF, match1_away.confederation)
 
+        match1_group: Group = match1.group
+        Assertions.assert_equals(
+            UUID("4c2c8046-0007-48db-a76a-865f9048d9de"),
+            match1_group.id
+        )
+        Assertions.assert_equals("Group A", match1_group.name)
+
         match2: Match = matches[1]
         Assertions.assert_equals(
             UUID("d8b3685b-3749-438d-9d85-da29c97ebaef"),
@@ -2164,10 +2385,8 @@ class TestMatchService:
         )
         Assertions.assert_none(match2.groupMatchDay)
         Assertions.assert_none(match2.groupId)
-        Assertions.assert_equals(
-            UUID("322ab9d0-ae46-49ac-89b3-c789a0d9d889"),
-            match2.roundId
-        )
+        Assertions.assert_none(match2.roundId)
+        Assertions.assert_none(match2.group)
 
         match2_home: Team = match2.homeTeam
         Assertions.assert_equals(
@@ -2189,6 +2408,18 @@ class TestMatchService:
         Assertions.assert_equals("Iran", match2_away.name)
         Assertions.assert_equals("IRI.png", match2_away.imagePath)
         Assertions.assert_equals(Confederation.AFC, match2_away.confederation)
+
+        match2_round: Round = match2.round
+        Assertions.assert_equals(
+            UUID("322ab9d0-ae46-49ac-89b3-c789a0d9d889"),
+            match2_round.id
+        )
+        Assertions.assert_equals("Round of 16", match2_round.name)
+        Assertions.assert_equals(16, match2_round.teamCount)
+        Assertions.assert_equals(1, match2_round.roundOrder)
+        Assertions.assert_false(match2_round.twoLegs)
+        Assertions.assert_true(match2_round.extraTime)
+        Assertions.assert_false(match2_round.awayGoals)
 
     def test_should_error_tournament_not_exists_update_matches(self):
         # Given
@@ -2250,7 +2481,14 @@ class TestMatchService:
                         "homeGoals": 2,
                         "awayGoals": 1,
                         "afterExtraTime": False,
-                        "afterPenalties": False
+                        "afterPenalties": False,
+                        "groupName": "Group A",
+                        "roundName": None,
+                        "teamCount": None,
+                        "roundOrder": None,
+                        "twoLegs": None,
+                        "extraTime": None,
+                        "awayGoalsDecider": None
                     }
                 ]
             )
@@ -2293,7 +2531,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(17, len(request.columns))
+        Assertions.assert_equals(24, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -2354,6 +2592,30 @@ class TestMatchService:
 
         column17: Column = request.columns[16]
         Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
+
+        column18: Column = request.columns[17]
+        Assertions.assert_equals(["group", "name"], column18.parts)
+        Assertions.assert_equals("groupName", column18.alias)
+
+        column19: Column = request.columns[18]
+        Assertions.assert_equals(["round", "name"], column19.parts)
+        Assertions.assert_equals("roundName", column19.alias)
+
+        column20: Column = request.columns[19]
+        Assertions.assert_equals(["round", "teamCount"], column20.parts)
+
+        column21: Column = request.columns[20]
+        Assertions.assert_equals(["round", "roundOrder"], column21.parts)
+
+        column22: Column = request.columns[21]
+        Assertions.assert_equals(["round", "twoLegs"], column22.parts)
+
+        column23: Column = request.columns[22]
+        Assertions.assert_equals(["round", "extraTime"], column23.parts)
+
+        column24: Column = request.columns[23]
+        Assertions.assert_equals(["round", "awayGoals"], column24.parts)
+        Assertions.assert_equals("awayGoalsDecider", column24.alias)
 
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
@@ -2536,29 +2798,34 @@ class TestMatchService:
             match.kickoff
         )
         Assertions.assert_equals(1, match.groupMatchDay)
-        Assertions.assert_equals(
-            UUID("4c2c8046-0007-48db-a76a-865f9048d9de"),
-            match.groupId
-        )
+        Assertions.assert_none(match.groupId)
         Assertions.assert_none(match.roundId)
+        Assertions.assert_none(match.round)
 
-        match1_home: Team = match.homeTeam
+        home: Team = match.homeTeam
         Assertions.assert_equals(
             UUID("bbec1707-7ea3-49cb-9791-7a1358a2b894"),
-            match1_home.id
+            home.id
         )
-        Assertions.assert_equals("Bosnia & Herzegovina", match1_home.name)
-        Assertions.assert_equals("BIH.png", match1_home.imagePath)
-        Assertions.assert_equals(Confederation.UEFA, match1_home.confederation)
+        Assertions.assert_equals("Bosnia & Herzegovina", home.name)
+        Assertions.assert_equals("BIH.png", home.imagePath)
+        Assertions.assert_equals(Confederation.UEFA, home.confederation)
 
-        match1_away: Team = match.awayTeam
+        away: Team = match.awayTeam
         Assertions.assert_equals(
             UUID("463de8d9-8520-4fa4-b30c-5aac0f3b363c"),
-            match1_away.id
+            away.id
         )
-        Assertions.assert_equals("Nigeria", match1_away.name)
-        Assertions.assert_equals("NGA.png", match1_away.imagePath)
-        Assertions.assert_equals(Confederation.CAF, match1_away.confederation)
+        Assertions.assert_equals("Nigeria", away.name)
+        Assertions.assert_equals("NGA.png", away.imagePath)
+        Assertions.assert_equals(Confederation.CAF, away.confederation)
+
+        group: Group = match.group
+        Assertions.assert_equals(
+            UUID("4c2c8046-0007-48db-a76a-865f9048d9de"),
+            group.id
+        )
+        Assertions.assert_equals("Group A", group.name)
 
     def test_should_error_tournament_not_exists_get_match_by_id(self):
         # Given
