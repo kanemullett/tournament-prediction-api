@@ -76,6 +76,7 @@ class TestMatchService:
                         "awayGoals": 1,
                         "afterExtraTime": False,
                         "afterPenalties": False,
+                        "penaltiesWinner": None,
                         "groupName": "Group A",
                         "roundName": None,
                         "teamCount": None,
@@ -102,6 +103,7 @@ class TestMatchService:
                         "awayGoals": 1,
                         "afterExtraTime": False,
                         "afterPenalties": False,
+                        "penaltiesWinner": None,
                         "groupName": None,
                         "roundName": "Round of 16",
                         "teamCount": 16,
@@ -153,7 +155,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(24, len(request.columns))
+        Assertions.assert_equals(25, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -216,28 +218,31 @@ class TestMatchService:
         Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
 
         column18: Column = request.columns[17]
-        Assertions.assert_equals(["group", "name"], column18.parts)
-        Assertions.assert_equals("groupName", column18.alias)
+        Assertions.assert_equals(["result", "penaltiesWinner"], column18.parts)
 
         column19: Column = request.columns[18]
-        Assertions.assert_equals(["round", "name"], column19.parts)
-        Assertions.assert_equals("roundName", column19.alias)
+        Assertions.assert_equals(["group", "name"], column19.parts)
+        Assertions.assert_equals("groupName", column19.alias)
 
         column20: Column = request.columns[19]
-        Assertions.assert_equals(["round", "teamCount"], column20.parts)
+        Assertions.assert_equals(["round", "name"], column20.parts)
+        Assertions.assert_equals("roundName", column20.alias)
 
         column21: Column = request.columns[20]
-        Assertions.assert_equals(["round", "roundOrder"], column21.parts)
+        Assertions.assert_equals(["round", "teamCount"], column21.parts)
 
         column22: Column = request.columns[21]
-        Assertions.assert_equals(["round", "twoLegs"], column22.parts)
+        Assertions.assert_equals(["round", "roundOrder"], column22.parts)
 
         column23: Column = request.columns[22]
-        Assertions.assert_equals(["round", "extraTime"], column23.parts)
+        Assertions.assert_equals(["round", "twoLegs"], column23.parts)
 
         column24: Column = request.columns[23]
-        Assertions.assert_equals(["round", "awayGoals"], column24.parts)
-        Assertions.assert_equals("awayGoalsDecider", column24.alias)
+        Assertions.assert_equals(["round", "extraTime"], column24.parts)
+
+        column25: Column = request.columns[24]
+        Assertions.assert_equals(["round", "awayGoals"], column25.parts)
+        Assertions.assert_equals("awayGoalsDecider", column25.alias)
 
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
@@ -514,6 +519,7 @@ class TestMatchService:
                         "awayGoals": 1,
                         "afterExtraTime": False,
                         "afterPenalties": False,
+                        "penaltiesWinner": None,
                         "groupName": "Group A",
                         "roundName": None,
                         "teamCount": None,
@@ -565,7 +571,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(24, len(request.columns))
+        Assertions.assert_equals(25, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -628,28 +634,31 @@ class TestMatchService:
         Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
 
         column18: Column = request.columns[17]
-        Assertions.assert_equals(["group", "name"], column18.parts)
-        Assertions.assert_equals("groupName", column18.alias)
+        Assertions.assert_equals(["result", "penaltiesWinner"], column18.parts)
 
         column19: Column = request.columns[18]
-        Assertions.assert_equals(["round", "name"], column19.parts)
-        Assertions.assert_equals("roundName", column19.alias)
+        Assertions.assert_equals(["group", "name"], column19.parts)
+        Assertions.assert_equals("groupName", column19.alias)
 
         column20: Column = request.columns[19]
-        Assertions.assert_equals(["round", "teamCount"], column20.parts)
+        Assertions.assert_equals(["round", "name"], column20.parts)
+        Assertions.assert_equals("roundName", column20.alias)
 
         column21: Column = request.columns[20]
-        Assertions.assert_equals(["round", "roundOrder"], column21.parts)
+        Assertions.assert_equals(["round", "teamCount"], column21.parts)
 
         column22: Column = request.columns[21]
-        Assertions.assert_equals(["round", "twoLegs"], column22.parts)
+        Assertions.assert_equals(["round", "roundOrder"], column22.parts)
 
         column23: Column = request.columns[22]
-        Assertions.assert_equals(["round", "extraTime"], column23.parts)
+        Assertions.assert_equals(["round", "twoLegs"], column23.parts)
 
         column24: Column = request.columns[23]
-        Assertions.assert_equals(["round", "awayGoals"], column24.parts)
-        Assertions.assert_equals("awayGoalsDecider", column24.alias)
+        Assertions.assert_equals(["round", "extraTime"], column24.parts)
+
+        column25: Column = request.columns[24]
+        Assertions.assert_equals(["round", "awayGoals"], column25.parts)
+        Assertions.assert_equals("awayGoalsDecider", column25.alias)
 
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
@@ -902,6 +911,7 @@ class TestMatchService:
                         "awayGoals": 1,
                         "afterExtraTime": False,
                         "afterPenalties": False,
+                        "penaltiesWinner": None,
                         "groupName": None,
                         "roundName": "Round of 16",
                         "teamCount": 16,
@@ -953,7 +963,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(24, len(request.columns))
+        Assertions.assert_equals(25, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -1016,28 +1026,31 @@ class TestMatchService:
         Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
 
         column18: Column = request.columns[17]
-        Assertions.assert_equals(["group", "name"], column18.parts)
-        Assertions.assert_equals("groupName", column18.alias)
+        Assertions.assert_equals(["result", "penaltiesWinner"], column18.parts)
 
         column19: Column = request.columns[18]
-        Assertions.assert_equals(["round", "name"], column19.parts)
-        Assertions.assert_equals("roundName", column19.alias)
+        Assertions.assert_equals(["group", "name"], column19.parts)
+        Assertions.assert_equals("groupName", column19.alias)
 
         column20: Column = request.columns[19]
-        Assertions.assert_equals(["round", "teamCount"], column20.parts)
+        Assertions.assert_equals(["round", "name"], column20.parts)
+        Assertions.assert_equals("roundName", column20.alias)
 
         column21: Column = request.columns[20]
-        Assertions.assert_equals(["round", "roundOrder"], column21.parts)
+        Assertions.assert_equals(["round", "teamCount"], column21.parts)
 
         column22: Column = request.columns[21]
-        Assertions.assert_equals(["round", "twoLegs"], column22.parts)
+        Assertions.assert_equals(["round", "roundOrder"], column22.parts)
 
         column23: Column = request.columns[22]
-        Assertions.assert_equals(["round", "extraTime"], column23.parts)
+        Assertions.assert_equals(["round", "twoLegs"], column23.parts)
 
         column24: Column = request.columns[23]
-        Assertions.assert_equals(["round", "awayGoals"], column24.parts)
-        Assertions.assert_equals("awayGoalsDecider", column24.alias)
+        Assertions.assert_equals(["round", "extraTime"], column24.parts)
+
+        column25: Column = request.columns[24]
+        Assertions.assert_equals(["round", "awayGoals"], column25.parts)
+        Assertions.assert_equals("awayGoalsDecider", column25.alias)
 
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
@@ -1287,6 +1300,7 @@ class TestMatchService:
                         "awayGoals": 1,
                         "afterExtraTime": False,
                         "afterPenalties": False,
+                        "penaltiesWinner": None,
                         "roundName": "Round of 16",
                         "teamCount": 16,
                         "roundOrder": 1,
@@ -1337,7 +1351,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(23, len(request.columns))
+        Assertions.assert_equals(24, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -1400,24 +1414,27 @@ class TestMatchService:
         Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
 
         column18: Column = request.columns[17]
-        Assertions.assert_equals(["round", "name"], column18.parts)
-        Assertions.assert_equals("roundName", column18.alias)
+        Assertions.assert_equals(["result", "penaltiesWinner"], column18.parts)
 
         column19: Column = request.columns[18]
-        Assertions.assert_equals(["round", "teamCount"], column19.parts)
+        Assertions.assert_equals(["round", "name"], column19.parts)
+        Assertions.assert_equals("roundName", column19.alias)
 
         column20: Column = request.columns[19]
-        Assertions.assert_equals(["round", "roundOrder"], column20.parts)
+        Assertions.assert_equals(["round", "teamCount"], column20.parts)
 
         column21: Column = request.columns[20]
-        Assertions.assert_equals(["round", "twoLegs"], column21.parts)
+        Assertions.assert_equals(["round", "roundOrder"], column21.parts)
 
         column22: Column = request.columns[21]
-        Assertions.assert_equals(["round", "extraTime"], column22.parts)
+        Assertions.assert_equals(["round", "twoLegs"], column22.parts)
 
         column23: Column = request.columns[22]
-        Assertions.assert_equals(["round", "awayGoals"], column23.parts)
-        Assertions.assert_equals("awayGoalsDecider", column23.alias)
+        Assertions.assert_equals(["round", "extraTime"], column23.parts)
+
+        column24: Column = request.columns[23]
+        Assertions.assert_equals(["round", "awayGoals"], column24.parts)
+        Assertions.assert_equals("awayGoalsDecider", column24.alias)
 
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
@@ -1620,6 +1637,7 @@ class TestMatchService:
                         "awayGoals": 1,
                         "afterExtraTime": False,
                         "afterPenalties": False,
+                        "penaltiesWinner": None,
                         "groupName": "Group A"
                     }
                 ]
@@ -1665,7 +1683,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(18, len(request.columns))
+        Assertions.assert_equals(19, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -1728,8 +1746,11 @@ class TestMatchService:
         Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
 
         column18: Column = request.columns[17]
-        Assertions.assert_equals(["group", "name"], column18.parts)
-        Assertions.assert_equals("groupName", column18.alias)
+        Assertions.assert_equals(["result", "penaltiesWinner"], column18.parts)
+
+        column19: Column = request.columns[18]
+        Assertions.assert_equals(["group", "name"], column19.parts)
+        Assertions.assert_equals("groupName", column19.alias)
 
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
@@ -1960,6 +1981,7 @@ class TestMatchService:
                         "awayGoals": 1,
                         "afterExtraTime": False,
                         "afterPenalties": False,
+                        "penaltiesWinner": None,
                         "groupName": "Group A",
                         "roundName": None,
                         "teamCount": None,
@@ -1986,6 +2008,7 @@ class TestMatchService:
                         "awayGoals": 1,
                         "afterExtraTime": False,
                         "afterPenalties": False,
+                        "penaltiesWinner": None,
                         "groupName": None,
                         "roundName": "Round of 16",
                         "teamCount": 16,
@@ -2072,7 +2095,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(24, len(request.columns))
+        Assertions.assert_equals(25, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -2135,28 +2158,31 @@ class TestMatchService:
         Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
 
         column18: Column = request.columns[17]
-        Assertions.assert_equals(["group", "name"], column18.parts)
-        Assertions.assert_equals("groupName", column18.alias)
+        Assertions.assert_equals(["result", "penaltiesWinner"], column18.parts)
 
         column19: Column = request.columns[18]
-        Assertions.assert_equals(["round", "name"], column19.parts)
-        Assertions.assert_equals("roundName", column19.alias)
+        Assertions.assert_equals(["group", "name"], column19.parts)
+        Assertions.assert_equals("groupName", column19.alias)
 
         column20: Column = request.columns[19]
-        Assertions.assert_equals(["round", "teamCount"], column20.parts)
+        Assertions.assert_equals(["round", "name"], column20.parts)
+        Assertions.assert_equals("roundName", column20.alias)
 
         column21: Column = request.columns[20]
-        Assertions.assert_equals(["round", "roundOrder"], column21.parts)
+        Assertions.assert_equals(["round", "teamCount"], column21.parts)
 
         column22: Column = request.columns[21]
-        Assertions.assert_equals(["round", "twoLegs"], column22.parts)
+        Assertions.assert_equals(["round", "roundOrder"], column22.parts)
 
         column23: Column = request.columns[22]
-        Assertions.assert_equals(["round", "extraTime"], column23.parts)
+        Assertions.assert_equals(["round", "twoLegs"], column23.parts)
 
         column24: Column = request.columns[23]
-        Assertions.assert_equals(["round", "awayGoals"], column24.parts)
-        Assertions.assert_equals("awayGoalsDecider", column24.alias)
+        Assertions.assert_equals(["round", "extraTime"], column24.parts)
+
+        column25: Column = request.columns[24]
+        Assertions.assert_equals(["round", "awayGoals"], column25.parts)
+        Assertions.assert_equals("awayGoalsDecider", column25.alias)
 
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)
@@ -2482,6 +2508,7 @@ class TestMatchService:
                         "awayGoals": 1,
                         "afterExtraTime": False,
                         "afterPenalties": False,
+                        "penaltiesWinner": None,
                         "groupName": "Group A",
                         "roundName": None,
                         "teamCount": None,
@@ -2531,7 +2558,7 @@ class TestMatchService:
         Assertions.assert_type(QueryRequest, match_args[0])
 
         request: QueryRequest = match_args[0]
-        Assertions.assert_equals(24, len(request.columns))
+        Assertions.assert_equals(25, len(request.columns))
 
         column1: Column = request.columns[0]
         Assertions.assert_equals(["match", "id"], column1.parts)
@@ -2594,28 +2621,31 @@ class TestMatchService:
         Assertions.assert_equals(["result", "afterPenalties"], column17.parts)
 
         column18: Column = request.columns[17]
-        Assertions.assert_equals(["group", "name"], column18.parts)
-        Assertions.assert_equals("groupName", column18.alias)
+        Assertions.assert_equals(["result", "penaltiesWinner"], column18.parts)
 
         column19: Column = request.columns[18]
-        Assertions.assert_equals(["round", "name"], column19.parts)
-        Assertions.assert_equals("roundName", column19.alias)
+        Assertions.assert_equals(["group", "name"], column19.parts)
+        Assertions.assert_equals("groupName", column19.alias)
 
         column20: Column = request.columns[19]
-        Assertions.assert_equals(["round", "teamCount"], column20.parts)
+        Assertions.assert_equals(["round", "name"], column20.parts)
+        Assertions.assert_equals("roundName", column20.alias)
 
         column21: Column = request.columns[20]
-        Assertions.assert_equals(["round", "roundOrder"], column21.parts)
+        Assertions.assert_equals(["round", "teamCount"], column21.parts)
 
         column22: Column = request.columns[21]
-        Assertions.assert_equals(["round", "twoLegs"], column22.parts)
+        Assertions.assert_equals(["round", "roundOrder"], column22.parts)
 
         column23: Column = request.columns[22]
-        Assertions.assert_equals(["round", "extraTime"], column23.parts)
+        Assertions.assert_equals(["round", "twoLegs"], column23.parts)
 
         column24: Column = request.columns[23]
-        Assertions.assert_equals(["round", "awayGoals"], column24.parts)
-        Assertions.assert_equals("awayGoalsDecider", column24.alias)
+        Assertions.assert_equals(["round", "extraTime"], column24.parts)
+
+        column25: Column = request.columns[24]
+        Assertions.assert_equals(["round", "awayGoals"], column25.parts)
+        Assertions.assert_equals("awayGoalsDecider", column25.alias)
 
         match_table: Table = request.table
         Assertions.assert_equals("predictor", match_table.schema_)

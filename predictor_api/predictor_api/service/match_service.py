@@ -235,7 +235,8 @@ class MatchService:
             Column.of("result", "homeGoals"),
             Column.of("result", "awayGoals"),
             Column.of("result", "afterExtraTime"),
-            Column.of("result", "afterPenalties")
+            Column.of("result", "afterPenalties"),
+            Column.of("result", "penaltiesWinner")
         ]
 
         table_joins: list[TableJoin] = [
@@ -454,7 +455,8 @@ class MatchService:
                 homeGoals=record["homeGoals"],
                 awayGoals=record["awayGoals"],
                 afterExtraTime=record["afterExtraTime"],
-                afterPenalties=record["afterPenalties"]
+                afterPenalties=record["afterPenalties"],
+                penaltiesWinner=record["penaltiesWinner"]
             )
 
         group: Group | None = None

@@ -608,7 +608,7 @@ class TestTournamentService:
             results_table_definition.table
         )
 
-        Assertions.assert_equals(5, len(results_table_definition.columns))
+        Assertions.assert_equals(6, len(results_table_definition.columns))
 
         results_table_column1: ColumnDefinition = (
             results_table_definition.columns

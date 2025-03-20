@@ -217,6 +217,10 @@ class TournamentService:
                         ColumnDefinition.of(
                             "afterPenalties",
                             SqlDataType.BOOLEAN
+                        ),
+                        ColumnDefinition.of(
+                            "penaltiesWinner",
+                            SqlDataType.VARCHAR
                         )
                     ]
                 )
