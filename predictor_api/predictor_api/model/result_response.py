@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from predictor_api.predictor_api.model.type.winner import Winner
 
 
-class ResultResponse(BaseModel):
+class MatchOutcome(BaseModel):
     homeGoals: int
     awayGoals: int
     afterExtraTime: bool

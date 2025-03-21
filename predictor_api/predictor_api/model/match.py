@@ -3,7 +3,7 @@ from uuid import UUID
 
 from predictor_api.predictor_api.model.group import Group
 from predictor_api.predictor_api.model.match_base import MatchBase
-from predictor_api.predictor_api.model.result_response import ResultResponse
+from predictor_api.predictor_api.model.result_response import MatchOutcome
 from predictor_api.predictor_api.model.round import Round
 from predictor_api.predictor_api.model.team import Team
 
@@ -32,7 +32,7 @@ class Match(MatchBase):
     round: Optional[Round] = None
     groupId: Optional[UUID] = None
     roundId: Optional[UUID] = None
-    result: Optional[ResultResponse] = None
+    result: Optional[MatchOutcome] = None
 
     @classmethod
     def get_target_table(cls, tournament_id: UUID) -> str:
