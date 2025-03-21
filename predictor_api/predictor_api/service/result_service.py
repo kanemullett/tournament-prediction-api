@@ -91,3 +91,53 @@ class ResultService:
         )
 
         return results
+
+    def update_results(self, tournament_id: UUID, results: list[Result]) -> list[Result]:
+        self.__tournament_service.get_tournament_by_id(tournament_id)
+
+        self.__query_service.update_records(
+            UpdateRequest(
+                operation=SqlOperator.INSERT,
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Result.get_target_table(tournament_id)
+                ),
+                records=list(
+                    map(
+                        lambda result:
+                        result.model_dump(exclude_none=True),
+                        results
+                    )
+                )
+            )
+        )
+
+        response: QueryResponse = self.__query_service.retrieve_records(
+            QueryRequest(
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Result.get_target_table(tournament_id)
+                ),
+                conditionGroup=QueryConditionGroup.of(
+                    QueryCondition(
+                        column=Column.of(StoreConstants.ID),
+                        operator=ConditionOperator.IN,
+                        value=list(
+                            map(
+                                lambda result:
+                                result.id,
+                                results
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        return list(
+            map(
+                lambda record:
+                Result.model_validate(record),
+                response.records
+            )
+        )

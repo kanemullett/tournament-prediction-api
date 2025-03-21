@@ -43,9 +43,30 @@ class ResultController:
                 }
             }
         )
+        self.router.add_api_route(
+            "/tournaments/{tournament_id}/results",
+            self.create_results,
+            methods=["PUT"],
+            responses={
+                404: {
+                    "description": "Not Found",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "detail": "No tournaments found with a "
+                                          "matching id."
+                            }
+                        }
+                    }
+                }
+            }
+        )
 
     async def create_results(
             self,
             tournament_id: UUID,
             results: list[Result]) -> list[Result]:
         return self.__service.create_results(tournament_id, results)
+
+    async def update_results(self, tournament_id: UUID, results: list[Result]) -> list[Result]:
+        return self.__service.update_results(tournament_id, results)
