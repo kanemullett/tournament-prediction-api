@@ -232,3 +232,22 @@ class TestResultController:
         # Then
         Assertions.assert_equals(404, httpe.value.status_code)
         Assertions.assert_equals("Not Found", httpe.value.detail)
+
+    @pytest.mark.asyncio
+    async def test_should_pass_error_delete_result(self):
+        # Given
+        self.__service.delete_result_by_id.side_effect = HTTPException(
+            status_code=404,
+            detail="Not Found"
+        )
+
+        # When
+        with raises(HTTPException) as httpe:
+            await self.__controller.delete_result_by_id(
+                UUID("1c29f6c3-9f98-41a8-ba0f-e07013742797"),
+                UUID("1db1fe5c-97d4-42e9-974f-633edb1dc0c4")
+            )
+
+        # Then
+        Assertions.assert_equals(404, httpe.value.status_code)
+        Assertions.assert_equals("Not Found", httpe.value.detail)

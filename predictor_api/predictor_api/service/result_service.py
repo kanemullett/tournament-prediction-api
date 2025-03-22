@@ -97,7 +97,7 @@ class ResultService:
 
         self.__query_service.update_records(
             UpdateRequest(
-                operation=SqlOperator.INSERT,
+                operation=SqlOperator.UPDATE,
                 table=Table.of(
                     PredictorConstants.PREDICTOR_SCHEMA,
                     Result.get_target_table(tournament_id)
@@ -139,5 +139,24 @@ class ResultService:
                 lambda record:
                 Result.model_validate(record),
                 response.records
+            )
+        )
+
+    def delete_result_by_id(self, tournament_id: UUID, result_id: UUID) -> None:
+        self.__tournament_service.get_tournament_by_id(tournament_id)
+
+        self.__query_service.update_records(
+            UpdateRequest(
+                operation=SqlOperator.DELETE,
+                table=Table.of(
+                    PredictorConstants.PREDICTOR_SCHEMA,
+                    Result.get_target_table(tournament_id)
+                ),
+                conditionGroup=QueryConditionGroup.of(
+                    QueryCondition.of(
+                        Column.of(StoreConstants.ID),
+                        result_id
+                    )
+                )
             )
         )

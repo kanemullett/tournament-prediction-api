@@ -330,7 +330,7 @@ class TestResultService:
         Assertions.assert_type(UpdateRequest, update_args[0])
 
         update_request: UpdateRequest = update_args[0]
-        Assertions.assert_equals(SqlOperator.INSERT, update_request.operation)
+        Assertions.assert_equals(SqlOperator.UPDATE, update_request.operation)
 
         update_table: Table = update_request.table
         Assertions.assert_equals("predictor", update_table.schema_)
@@ -454,6 +454,59 @@ class TestResultService:
             self.__service.update_results(
                 UUID("5341cff8-df9f-4068-8a42-4b4288ecba87"),
                 results
+            )
+
+        # Then
+        Assertions.assert_equals(404, httpe.value.status_code)
+        Assertions.assert_equals(
+            "No tournaments found with a matching id.",
+            httpe.value.detail
+        )
+
+    def test_should_delete_result(self):
+        # When
+        self.__service.delete_result_by_id(
+            UUID("5341cff8-df9f-4068-8a42-4b4288ecba87"),
+            UUID("1db1fe5c-97d4-42e9-974f-633edb1dc0c4")
+        )
+
+        # Then
+        update_args, update_kwargs = (
+            self.__query_service.update_records.call_args
+        )
+        Assertions.assert_type(UpdateRequest, update_args[0])
+
+        update_request: UpdateRequest = update_args[0]
+        Assertions.assert_equals(SqlOperator.DELETE, update_request.operation)
+
+        update_table: Table = update_request.table
+        Assertions.assert_equals("predictor", update_table.schema_)
+        Assertions.assert_equals(
+            "results_5341cff8-df9f-4068-8a42-4b4288ecba87",
+            update_table.table
+        )
+
+        Assertions.assert_equals(1, len(update_request.conditionGroup.conditions))
+
+        update_condition: QueryCondition = update_request.conditionGroup.conditions[0]
+        Assertions.assert_equals(["id"], update_condition.column.parts)
+        Assertions.assert_equals(ConditionOperator.EQUAL, update_condition.operator)
+        Assertions.assert_equals(UUID("1db1fe5c-97d4-42e9-974f-633edb1dc0c4"), update_condition.value)
+
+    def test_should_error_tournament_not_exists_delete_result(self):
+        # Given
+        self.__tournament_service.get_tournament_by_id.side_effect = (
+            HTTPException(
+                status_code=404,
+                detail="No tournaments found with a matching id."
+            )
+        )
+
+        # When
+        with raises(HTTPException) as httpe:
+            self.__service.delete_result_by_id(
+                UUID("5341cff8-df9f-4068-8a42-4b4288ecba87"),
+                UUID("1db1fe5c-97d4-42e9-974f-633edb1dc0c4")
             )
 
         # Then
