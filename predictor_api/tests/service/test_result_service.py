@@ -486,12 +486,23 @@ class TestResultService:
             update_table.table
         )
 
-        Assertions.assert_equals(1, len(update_request.conditionGroup.conditions))
+        Assertions.assert_equals(
+            1,
+            len(update_request.conditionGroup.conditions)
+        )
 
-        update_condition: QueryCondition = update_request.conditionGroup.conditions[0]
+        update_condition: QueryCondition = (
+            update_request.conditionGroup.conditions
+        )[0]
         Assertions.assert_equals(["id"], update_condition.column.parts)
-        Assertions.assert_equals(ConditionOperator.EQUAL, update_condition.operator)
-        Assertions.assert_equals(UUID("1db1fe5c-97d4-42e9-974f-633edb1dc0c4"), update_condition.value)
+        Assertions.assert_equals(
+            ConditionOperator.EQUAL,
+            update_condition.operator
+        )
+        Assertions.assert_equals(
+            UUID("1db1fe5c-97d4-42e9-974f-633edb1dc0c4"),
+            update_condition.value
+        )
 
     def test_should_error_tournament_not_exists_delete_result(self):
         # Given

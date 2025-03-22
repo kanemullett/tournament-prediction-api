@@ -92,7 +92,10 @@ class ResultService:
 
         return results
 
-    def update_results(self, tournament_id: UUID, results: list[Result]) -> list[Result]:
+    def update_results(
+            self,
+            tournament_id: UUID,
+            results: list[Result]) -> list[Result]:
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
         self.__query_service.update_records(
@@ -142,7 +145,10 @@ class ResultService:
             )
         )
 
-    def delete_result_by_id(self, tournament_id: UUID, result_id: UUID) -> None:
+    def delete_result_by_id(
+            self,
+            tournament_id: UUID,
+            result_id: UUID) -> None:
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
         self.__query_service.update_records(

@@ -39,7 +39,9 @@ from predictor_api.predictor_api.controller.league_template_controller import (
 from predictor_api.predictor_api.controller.match_controller import (
     MatchController
 )
-from predictor_api.predictor_api.controller.result_controller import ResultController
+from predictor_api.predictor_api.controller.result_controller import (
+    ResultController
+)
 from predictor_api.predictor_api.controller.round_controller import (
     RoundController
 )

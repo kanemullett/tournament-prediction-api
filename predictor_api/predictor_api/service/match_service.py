@@ -28,7 +28,7 @@ from predictor_api.predictor_api.model.group import Group
 from predictor_api.predictor_api.model.match import Match
 from predictor_api.predictor_api.model.match_request import MatchUpdate
 from predictor_api.predictor_api.model.result import Result
-from predictor_api.predictor_api.model.result_response import MatchOutcome
+from predictor_api.predictor_api.model.match_outcome import MatchOutcome
 from predictor_api.predictor_api.model.round import Round
 from predictor_api.predictor_api.model.team import Team
 from predictor_api.predictor_api.model.type.confederation import Confederation

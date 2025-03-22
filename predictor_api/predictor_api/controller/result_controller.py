@@ -89,10 +89,16 @@ class ResultController:
             results: list[Result]) -> list[Result]:
         return self.__service.create_results(tournament_id, results)
 
-    async def update_results(self, tournament_id: UUID, results: list[Result]) -> list[Result]:
+    async def update_results(
+            self,
+            tournament_id: UUID,
+            results: list[Result]) -> list[Result]:
         return self.__service.update_results(tournament_id, results)
 
-    async def delete_result_by_id(self, tournament_id: UUID, result_id: UUID) -> Response:
+    async def delete_result_by_id(
+            self,
+            tournament_id: UUID,
+            result_id: UUID) -> Response:
         self.__service.delete_result_by_id(tournament_id, result_id)
 
         return Response(status_code=204)

@@ -3,7 +3,7 @@ from uuid import UUID
 
 from predictor_api.predictor_api.model.group import Group
 from predictor_api.predictor_api.model.match_base import MatchBase
-from predictor_api.predictor_api.model.result_response import MatchOutcome
+from predictor_api.predictor_api.model.match_outcome import MatchOutcome
 from predictor_api.predictor_api.model.round import Round
 from predictor_api.predictor_api.model.team import Team
 
