@@ -596,9 +596,73 @@ class TestTournamentService:
         )
         Assertions.assert_false(matches_table_column7.primaryKey)
 
-        groups_table_args, groups_table_kwargs = (
+        results_table_args, results_table_kwargs = (
             self.__table_service.create_table.call_args_list
         )[1]
+        Assertions.assert_type(TableDefinition, results_table_args[0])
+
+        results_table_definition: TableDefinition = results_table_args[0]
+        Assertions.assert_equals("predictor", results_table_definition.schema_)
+        Assertions.assert_equals(
+            "results_c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
+            results_table_definition.table
+        )
+
+        Assertions.assert_equals(6, len(results_table_definition.columns))
+
+        results_table_column1: ColumnDefinition = (
+            results_table_definition.columns
+        )[0]
+        Assertions.assert_equals("id", results_table_column1.name)
+        Assertions.assert_equals(
+            SqlDataType.VARCHAR,
+            results_table_column1.dataType
+        )
+        Assertions.assert_true(results_table_column1.primaryKey)
+
+        results_table_column2: ColumnDefinition = (
+            results_table_definition.columns
+        )[1]
+        Assertions.assert_equals("homeGoals", results_table_column2.name)
+        Assertions.assert_equals(
+            SqlDataType.INTEGER,
+            results_table_column2.dataType
+        )
+        Assertions.assert_false(results_table_column2.primaryKey)
+
+        results_table_column3: ColumnDefinition = (
+            results_table_definition.columns
+        )[2]
+        Assertions.assert_equals("awayGoals", results_table_column3.name)
+        Assertions.assert_equals(
+            SqlDataType.INTEGER,
+            results_table_column3.dataType
+        )
+        Assertions.assert_false(results_table_column3.primaryKey)
+
+        results_table_column4: ColumnDefinition = (
+            results_table_definition.columns
+        )[3]
+        Assertions.assert_equals("afterExtraTime", results_table_column4.name)
+        Assertions.assert_equals(
+            SqlDataType.BOOLEAN,
+            results_table_column4.dataType
+        )
+        Assertions.assert_false(results_table_column4.primaryKey)
+
+        results_table_column5: ColumnDefinition = (
+            results_table_definition.columns
+        )[4]
+        Assertions.assert_equals("afterPenalties", results_table_column5.name)
+        Assertions.assert_equals(
+            SqlDataType.BOOLEAN,
+            results_table_column5.dataType
+        )
+        Assertions.assert_false(results_table_column5.primaryKey)
+
+        groups_table_args, groups_table_kwargs = (
+            self.__table_service.create_table.call_args_list
+        )[2]
         Assertions.assert_type(TableDefinition, groups_table_args[0])
 
         groups_table_definition: TableDefinition = groups_table_args[0]
@@ -632,7 +696,7 @@ class TestTournamentService:
 
         rounds_table_args, groups_update_kwargs = (
             self.__table_service.create_table.call_args_list
-        )[2]
+        )[3]
         Assertions.assert_type(TableDefinition, rounds_table_args[0])
 
         group_teams_table_definition: TableDefinition = (
@@ -706,7 +770,7 @@ class TestTournamentService:
 
         rounds_table_args, rounds_table_kwargs = (
             self.__table_service.create_table.call_args_list
-        )[3]
+        )[4]
         Assertions.assert_type(TableDefinition, rounds_table_args[0])
 
         rounds_definition: TableDefinition = rounds_table_args[0]
@@ -771,9 +835,21 @@ class TestTournamentService:
             matches_table.table
         )
 
-        delete_groups_table_args, delete_groups_table_kwargs = (
+        delete_results_table_args, delete_results_table_kwargs = (
             self.__table_service.delete_table.call_args_list
         )[1]
+        Assertions.assert_type(Table, delete_results_table_args[0])
+
+        results_table: Table = delete_results_table_args[0]
+        Assertions.assert_equals("predictor", results_table.schema_)
+        Assertions.assert_equals(
+            "results_c08fd796-7fea-40d9-9a0a-cb3a49cce2e4",
+            results_table.table
+        )
+
+        delete_groups_table_args, delete_groups_table_kwargs = (
+            self.__table_service.delete_table.call_args_list
+        )[2]
         Assertions.assert_type(Table, delete_groups_table_args[0])
 
         groups_table: Table = delete_groups_table_args[0]
@@ -785,7 +861,7 @@ class TestTournamentService:
 
         delete_group_teams_table_args, delete_group_teams_table_kwargs = (
             self.__table_service.delete_table.call_args_list
-        )[2]
+        )[3]
         Assertions.assert_type(Table, delete_group_teams_table_args[0])
 
         group_teams_table: Table = delete_group_teams_table_args[0]
@@ -797,7 +873,7 @@ class TestTournamentService:
 
         delete_rounds_table_args, delete_rounds_table_kwargs = (
             self.__table_service.delete_table.call_args_list
-        )[3]
+        )[4]
         Assertions.assert_type(Table, delete_rounds_table_args[0])
 
         rounds_table: Table = delete_rounds_table_args[0]
