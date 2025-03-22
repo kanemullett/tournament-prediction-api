@@ -30,11 +30,26 @@ from predictor_api.predictor_api.util.predictor_constants import (
 
 
 class ResultService:
+    """
+    Service for performing result-related actions.
+
+    Attributes:
+        __query_service (DatabaseQueryService): The database query service.
+        __tournament_service (TournamentService): The tournament service.
+    """
 
     def __init__(
             self,
             database_query_service: DatabaseQueryService,
             tournament_service: TournamentService) -> None:
+        """
+        Initialise the ResultService.
+
+        Args:
+            database_query_service (DatabaseQueryService): The database query
+                service.
+            tournament_service (TournamentService): The tournament service.
+        """
         self.__query_service = database_query_service
         self.__tournament_service = tournament_service
 
@@ -42,6 +57,17 @@ class ResultService:
             self,
             tournament_id: UUID,
             results: list[Result]) -> list[Result]:
+        """
+        Create new results.
+
+        Args:
+            tournament_id (UUID): The id of the tournament to which the
+                results belong.
+            results (list[Result]): The new results to create.
+
+        Returns:
+            list[Result]: The newly created results.
+        """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
         match_response: QueryResponse = self.__query_service.retrieve_records(
@@ -96,6 +122,17 @@ class ResultService:
             self,
             tournament_id: UUID,
             results: list[Result]) -> list[Result]:
+        """
+        Update existing results.
+
+        Args:
+            tournament_id (UUID): The id of the tournament to which the
+                results belong.
+            results (list[Result]): The results to update.
+
+        Returns:
+            list[Result]: The newly updated results.
+        """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
         self.__query_service.update_records(
@@ -149,6 +186,14 @@ class ResultService:
             self,
             tournament_id: UUID,
             result_id: UUID) -> None:
+        """
+        Delete a single stored result by its id.
+
+        Args:
+            tournament_id (UUID): The id of the tournament to which the
+                result belongs.
+            result_id (UUID): The id of the result to delete.
+        """
         self.__tournament_service.get_tournament_by_id(tournament_id)
 
         self.__query_service.update_records(
