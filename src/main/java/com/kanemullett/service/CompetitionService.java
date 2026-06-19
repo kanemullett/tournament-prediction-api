@@ -136,8 +136,10 @@ public class CompetitionService {
                     .value(usernames)
                     .build()
             ))
+            .recordClass(User.class)
             .build();
 
+        // TODO: Consider replacing this with a call to UsersService when it's migrated.
         final QueryResponse<User> userResponse = queryService.retrieveRecords(userRequest);
 
         if (usernames.size() > userResponse.getRecordCount()) {
