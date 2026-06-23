@@ -60,6 +60,7 @@ public class TeamService {
             .orderBy(OrderBy.of(Column.of(Team.NAME_COLUMN)))
             .recordClass(Team.class);
 
+        // TODO: Consider how this can be reworked when migration is complete.
         if (tournamentId == null) {
             requestBuilder
                 .table(Table.of(PredictorConstants.PREDICTOR_SCHEMA, Team.TARGET_TABLE));
@@ -149,6 +150,7 @@ public class TeamService {
                         .toList())
                     .build()
             ))
+            .orderBy(OrderBy.of(Column.of(Team.NAME_COLUMN)))
             .recordClass(Team.class)
             .build();
 
