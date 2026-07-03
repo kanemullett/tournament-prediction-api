@@ -15,6 +15,7 @@ public interface TournamentTemplateRecord extends DatabaseRecord {
     static String TARGET_TABLE = "tournament-templates";
 
     static String LEAGUE_TEMPLATE_ID_COLUMN = "leagueTemplateId";
+    static String KNOCKOUT_TEMPLATE_ID_COLUMN = "knockoutTemplateId";
 
     String getName();
 
