@@ -73,7 +73,7 @@ public class TournamentTemplateService {
 
         return getTournamentTemplates(QueryConditionGroup.of(
             ImmutableQueryCondition.builder()
-                .column(Column.of(DatabaseConstants.ID))
+                .column(Column.of(TOURNAMENT_TEMPLATES_TABLE_ALIAS, DatabaseConstants.ID))
                 .operator(ConditionOperator.IN)
                 .value(tournamentTemplates.stream()
                     .map(TournamentTemplateRecord::getId)
@@ -85,7 +85,7 @@ public class TournamentTemplateService {
     public TournamentTemplate getTournamentTemplateById(String tournamentTemplateId) {
         final QueryConditionGroup conditionGroup = QueryConditionGroup.of(
             QueryCondition.of(
-                Column.of(DatabaseConstants.ID),
+                Column.of(TOURNAMENT_TEMPLATES_TABLE_ALIAS, DatabaseConstants.ID),
                 tournamentTemplateId
             )
         );
@@ -148,6 +148,7 @@ public class TournamentTemplateService {
                 Column.of(LEAGUE_TEMPLATES_TABLE_ALIAS, LeagueTemplate.GROUP_COUNT_COLUMN),
                 Column.of(LEAGUE_TEMPLATES_TABLE_ALIAS, LeagueTemplate.TEAMS_PER_GROUP_COLUMN),
                 Column.of(LEAGUE_TEMPLATES_TABLE_ALIAS, LeagueTemplate.HOME_AND_AWAY_COLUMN),
+                Column.of(TOURNAMENT_TEMPLATES_TABLE_ALIAS, TournamentTemplateRecord.KNOCKOUT_TEMPLATE_ID_COLUMN),
                 ImmutableColumn.builder()
                     .parts(List.of(KNOCKOUT_TEMPLATES_TABLE_ALIAS, KnockoutTemplate.NAME_COLUMN))
                     .alias(KNOCKOUT_TEMPLATE_NAME_COLUMN)
