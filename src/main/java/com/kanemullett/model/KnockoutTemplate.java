@@ -16,6 +16,9 @@ public interface KnockoutTemplate extends DatabaseRecord {
 
     static String TARGET_TABLE = "knockout-templates";
 
+    static String NAME_COLUMN = "name";
+    static String ROUNDS_COLUMN = "rounds";
+
     String getName();
 
     @Nullable
