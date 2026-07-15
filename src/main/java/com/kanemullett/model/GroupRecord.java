@@ -11,12 +11,12 @@ import com.kanemullett.util.DatabaseConstants;
 import com.kanemullett.util.PredictorConstants;
 
 @Immutable
-@JsonSerialize(as = ImmutableGroupTeam.class)
-@JsonDeserialize(as = ImmutableGroupTeam.class)
-public interface GroupTeam extends DatabaseRecord {
+@JsonSerialize(as = ImmutableGroupRecord.class)
+@JsonDeserialize(as = ImmutableGroupRecord.class)
+public interface GroupRecord extends DatabaseRecord {
 
     static String getTargetTable(String tournamentId) {
-        return "group-teams_" + tournamentId;
+        return "groups_" + tournamentId;
     }
 
     static TableDefinition getTableDefinition(String tournamentId) {
@@ -29,16 +29,12 @@ public interface GroupTeam extends DatabaseRecord {
                     .dataType(SqlDataType.VARCHAR)
                     .primaryKey(true)
                     .build(),
-                ColumnDefinition.of(GROUP_ID_COLUMN, SqlDataType.VARCHAR),
-                ColumnDefinition.of(TEAM_ID_COLUMN, SqlDataType.VARCHAR)
+                ColumnDefinition.of(NAME_COLUMN, SqlDataType.VARCHAR)
             ))
             .build();
     }
 
-    static String GROUP_ID_COLUMN = "groupId";
-    static String TEAM_ID_COLUMN = "teamId";
+    static String NAME_COLUMN = "name";
 
-    String getGroupId();
-
-    String getTeamId();
+    String getName();
 }
