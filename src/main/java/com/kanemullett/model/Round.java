@@ -62,7 +62,7 @@ public interface Round extends DatabaseRecord {
         return ImmutableRound.builder()
             .name(roundTemplate.getName())
             .teamCount(roundTemplate.getTeamCount())
-            .roundOrder(roundTemplate.getTeamCount())
+            .roundOrder(roundTemplate.getRoundOrder())
             .twoLegs(roundTemplate.getTwoLegs())
             .extraTime(roundTemplate.getExtraTime())
             .awayGoals(roundTemplate.getAwayGoals())

@@ -275,8 +275,6 @@ public class TournamentServiceTest {
 
         assertTournament(EUROS, created.get(0));
         assertTournament(WORLD_CUP, created.get(1));
-
-        // TODO: Create tests for all TableDefinition methods on models
     }
 
     @Test
