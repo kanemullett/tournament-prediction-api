@@ -9,20 +9,19 @@ import com.kanemullett.model.type.Confederation;
 import jakarta.annotation.Nullable;
 
 @Immutable
-@JsonSerialize(as=ImmutableTournament.class)
-@JsonDeserialize(as=ImmutableTournament.class)
-public interface Tournament extends DatabaseRecord {
+@JsonSerialize(as = ImmutableTournamentUpdate.class)
+@JsonDeserialize(as = ImmutableTournamentUpdate.class)
+public interface TournamentUpdate extends DatabaseRecord {
 
-    static String TARGET_TABLE = "tournaments";
-
-    static String TEMPLATE_ID_COLUMN = "templateId";
-
+    @Nullable
     String getName();
 
-    int getYear();
+    @Nullable
+    Integer getYear();
 
     @Nullable
     Confederation getConfederation();
 
+    @Nullable
     String getTemplateId();
 }
