@@ -7,7 +7,37 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-public class RoundTest {
+import com.kanemullett.model.type.SqlDataType;
+
+public class RoundTest extends AbstractRecordTest {
+
+    @Test
+    void shouldReturnRoundTargetTable() {
+        // When
+        final String targetTable = Round.getTargetTable("tournamentId");
+
+        // Then
+        assertEquals("rounds_tournamentId", targetTable);
+    }
+
+    @Test
+    void shouldReturnRoundTableDefinition() {
+        // When
+        final TableDefinition tableDefinition = Round.getTableDefinition("tournamentId");
+
+        // Then
+        assertEquals("predictor", tableDefinition.getSchema());
+        assertEquals("rounds_tournamentId", tableDefinition.getTable());
+        assertEquals(7, tableDefinition.getColumns().size());
+
+        assertColumnDefinition("id", SqlDataType.VARCHAR, true, tableDefinition.getColumns().get(0));
+        assertColumnDefinition("name", SqlDataType.VARCHAR, false, tableDefinition.getColumns().get(1));
+        assertColumnDefinition("teamCount", SqlDataType.INTEGER, false, tableDefinition.getColumns().get(2));
+        assertColumnDefinition("roundOrder", SqlDataType.INTEGER, false, tableDefinition.getColumns().get(3));
+        assertColumnDefinition("twoLegs", SqlDataType.BOOLEAN, false, tableDefinition.getColumns().get(4));
+        assertColumnDefinition("extraTime", SqlDataType.BOOLEAN, false, tableDefinition.getColumns().get(5));
+        assertColumnDefinition("awayGoals", SqlDataType.BOOLEAN, false, tableDefinition.getColumns().get(6));
+    }
 
     @Test
     void shouldReturnRoundFromRoundTemplate() {
