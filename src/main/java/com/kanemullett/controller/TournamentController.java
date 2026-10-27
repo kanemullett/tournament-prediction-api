@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,23 +33,23 @@ public class TournamentController {
     }
 
     @PostMapping
-    public List<Tournament> createTournaments(List<Tournament> tournaments) {
+    public List<Tournament> createTournaments(@RequestBody List<Tournament> tournaments) {
         return tournamentService.createTournaments(tournaments);
     }
 
     @PutMapping
-    public List<Tournament> updateTournaments(List<TournamentUpdate> tournamentUpdates) {
+    public List<Tournament> updateTournaments(@RequestBody List<TournamentUpdate> tournamentUpdates) {
         return tournamentService.updateTournaments(tournamentUpdates);
     }
 
     @GetMapping("/{tournamentId}")
-    public Tournament getTournamentById(String tournamentId) {
+    public Tournament getTournamentById(@PathVariable String tournamentId) {
         return tournamentService.getTournamentById(tournamentId);
     }
 
     @DeleteMapping("/{tournamentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteTournamentById(String tournamentId) {
+    public void deleteTournamentById(@PathVariable String tournamentId) {
         tournamentService.deleteTournamentById(tournamentId);
     }
 }
