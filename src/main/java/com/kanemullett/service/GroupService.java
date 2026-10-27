@@ -13,6 +13,7 @@ import com.kanemullett.model.DatabaseRecord;
 import com.kanemullett.model.Group;
 import com.kanemullett.model.GroupRecord;
 import com.kanemullett.model.GroupTeam;
+import com.kanemullett.model.ImmutableColumn;
 import com.kanemullett.model.ImmutableGroup;
 import com.kanemullett.model.ImmutableGroupTeam;
 import com.kanemullett.model.ImmutableQueryCondition;
@@ -168,7 +169,7 @@ public class GroupService {
             .build();
 
         final QueryResponse<DatabaseRecord> teamsPerGroupResponse = queryService.retrieveRecords(teamsPerGroupRequest);
-        final int teamsPerGroup = teamsPerGroupResponse.getRecordCount();
+        final int teamsPerGroup = (Integer) teamsPerGroupResponse.getRecords().get(0).getData().get(LeagueTemplate.TEAMS_PER_GROUP_COLUMN);
 
         if (teamsInGroup + teamIds.size() > teamsPerGroup) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Adding teams to the specified group will exceed its maximum team count.");
@@ -291,9 +292,15 @@ public class GroupService {
         final QueryRequest<DatabaseRecord> queryRequest = ImmutableQueryRequest.<DatabaseRecord>builder()
             .columns(List.of(
                 Column.of(GROUP_TEAMS_TABLE_ALIAS, GroupTeam.GROUP_ID_COLUMN),
-                Column.of(GROUPS_TABLE_ALIAS, GroupRecord.NAME_COLUMN, "groupName"),
+                ImmutableColumn.builder()
+                    .addParts(GROUPS_TABLE_ALIAS, GroupRecord.NAME_COLUMN)
+                    .alias("groupName")
+                    .build(),
                 Column.of(GROUP_TEAMS_TABLE_ALIAS, GroupTeam.TEAM_ID_COLUMN),
-                Column.of(TEAMS_TABLE_ALIAS, Team.NAME_COLUMN, "teamName"),
+                ImmutableColumn.builder()
+                    .addParts(TEAMS_TABLE_ALIAS, Team.NAME_COLUMN)
+                    .alias("teamName")
+                    .build(),
                 Column.of(TEAMS_TABLE_ALIAS, Team.IMAGE_PATH_COLUMN),
                 Column.of(TEAMS_TABLE_ALIAS, Team.CONFEDERATION_COLUMN),
                 Column.of(TEAMS_TABLE_ALIAS, Team.RANKING_COLUMN)
