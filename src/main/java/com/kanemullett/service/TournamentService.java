@@ -222,7 +222,7 @@ public class TournamentService {
     private Stream<MatchRecord> generateGroupMatches(String groupId, int teamsPerGroup, boolean homeAndAway) {
         return IntStream.rangeClosed(1, calculateTotalGameDays(teamsPerGroup, homeAndAway))
             .boxed()
-            .flatMap(gameDay -> Stream.generate(() -> (MatchRecord) ImmutableMatchRecord.builder()
+            .flatMap(gameDay -> Stream.generate(() -> ImmutableMatchRecord.builder()
                     .groupMatchDay(gameDay)
                     .groupId(groupId)
                     .build())
@@ -273,7 +273,7 @@ public class TournamentService {
     }
 
     private Stream<MatchRecord> generateRoundMatches(String roundId, int teamCount) {
-        return Stream.generate(() -> (MatchRecord) ImmutableMatchRecord.builder()
+        return Stream.<MatchRecord>generate(() -> ImmutableMatchRecord.builder()
                 .roundId(roundId)
                 .build())
             .limit(calculateMatchesPerGameDay(teamCount));
