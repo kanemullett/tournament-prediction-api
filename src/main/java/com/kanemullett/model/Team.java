@@ -18,6 +18,7 @@ public interface Team extends DatabaseRecord {
     static String NAME_COLUMN = "name";
     static String IMAGE_PATH_COLUMN = "imagePath";
     static String CONFEDERATION_COLUMN = "confederation";
+    static String RANKING_COLUMN = "ranking";
 
     String getName();
 
