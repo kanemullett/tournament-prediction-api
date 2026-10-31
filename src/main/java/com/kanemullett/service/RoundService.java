@@ -74,7 +74,6 @@ public class RoundService {
 
     public Round getRoundById(String tournamentId, String roundId) {
         verifyTournament(tournamentId);
-        verifyRound(tournamentId, roundId);
 
         return retrieveRound(tournamentId, roundId);
     }
@@ -121,25 +120,6 @@ public class RoundService {
         }
     }
 
-    private void verifyRound(String tournamentId, String roundId) {
-        final QueryRequest<Round> queryRequest = ImmutableQueryRequest.<Round>builder()
-            .table(Table.of(PredictorConstants.PREDICTOR_SCHEMA, Round.getTargetTable(tournamentId)))
-            .conditionGroup(QueryConditionGroup.of(
-                QueryCondition.of(
-                    Column.of(DatabaseConstants.ID),
-                    roundId
-                )
-            ))
-            .recordClass(Round.class)
-            .build();
-
-        final QueryResponse<Round> queryResponse = queryService.retrieveRecords(queryRequest);
-
-        if (queryResponse.getRecordCount() == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No rounds found with a matching id.");
-        }
-    }
-
     private Round retrieveRound(String tournamentId, String roundId) {
         final QueryConditionGroup conditionGroup = QueryConditionGroup.of(
             QueryCondition.of(
@@ -148,7 +128,12 @@ public class RoundService {
             )
         );
 
-        return retrieveRounds(tournamentId, conditionGroup).get(0);
+        final List<Round> rounds = retrieveRounds(tournamentId, conditionGroup);
+
+        if (rounds.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No rounds found with a matching id.");
+        }
+        return rounds.get(0);
     }
 
     private List<Round> retrieveRounds(String tournamentId) {
