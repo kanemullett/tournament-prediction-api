@@ -331,22 +331,22 @@ public class GroupService {
         final QueryResponse<DatabaseRecord> queryResponse = queryService.retrieveRecords(queryRequest);
 
         return queryResponse.getRecords().stream()
-            .collect(Collectors.groupingBy(record -> (String) record.getData().get(GroupTeam.GROUP_ID_COLUMN), LinkedHashMap::new, Collectors.toList()))
+            .collect(Collectors.groupingBy(groupRecord -> (String) groupRecord.getData().get(GroupTeam.GROUP_ID_COLUMN), LinkedHashMap::new, Collectors.toList()))
             .entrySet().stream()
             .map(entry -> buildGroup(entry.getKey(), entry.getValue()))
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private Group buildGroup(String groupId, List<DatabaseRecord> groupRecords) {
         final String groupName = (String) groupRecords.get(0).getData().get("groupName");
 
         final List<Team> teams = groupRecords.stream()
-            .map(record -> ImmutableTeam.builder()
-                .id((String) record.getData().get(GroupTeam.TEAM_ID_COLUMN))
-                .name((String) record.getData().get("teamName"))
-                .imagePath((String) record.getData().get(Team.IMAGE_PATH_COLUMN))
-                .confederation(Enum.valueOf(Confederation.class, (String) record.getData().get(Team.CONFEDERATION_COLUMN)))
-                .ranking((Integer) record.getData().get(Team.RANKING_COLUMN))
+            .map(teamRecord -> ImmutableTeam.builder()
+                .id((String) teamRecord.getData().get(GroupTeam.TEAM_ID_COLUMN))
+                .name((String) teamRecord.getData().get("teamName"))
+                .imagePath((String) teamRecord.getData().get(Team.IMAGE_PATH_COLUMN))
+                .confederation(Enum.valueOf(Confederation.class, (String) teamRecord.getData().get(Team.CONFEDERATION_COLUMN)))
+                .ranking((Integer) teamRecord.getData().get(Team.RANKING_COLUMN))
                 .build())
             .collect(Collectors.toList());
 

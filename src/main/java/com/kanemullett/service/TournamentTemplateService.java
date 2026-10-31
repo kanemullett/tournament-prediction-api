@@ -217,7 +217,7 @@ public class TournamentTemplateService {
 
     private List<RoundTemplate> parseRounds(Object rawValue) {
         if (rawValue == null) {
-            return null;
+            return List.of();
         }
         try {
             return mapper.readValue(rawValue.toString(), new TypeReference<List<RoundTemplate>>() {});

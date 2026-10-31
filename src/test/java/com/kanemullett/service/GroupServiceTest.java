@@ -24,7 +24,6 @@ import com.kanemullett.model.ImmutableDatabaseRecord;
 import com.kanemullett.model.ImmutableGroupRecord;
 import com.kanemullett.model.ImmutableQueryResponse;
 import com.kanemullett.model.ImmutableTeam;
-import com.kanemullett.model.ImmutableTournament;
 import com.kanemullett.model.QueryCondition;
 import com.kanemullett.model.QueryConditionGroup;
 import com.kanemullett.model.QueryRequest;
