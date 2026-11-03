@@ -87,7 +87,8 @@ public class TeamServiceTest {
         assertEquals("predictor", table.getSchema());
         assertEquals("teams", table.getTable());
 
-        final OrderBy orderBy = request.getOrderBy();
+        assertEquals(1, request.getOrderBy().size());
+        final OrderBy orderBy = request.getOrderBy().get(0);
         assertEquals(List.of("name"), orderBy.getColumn().getParts());
         assertEquals(OrderDirection.ASCENDING, orderBy.getDirection());
 
@@ -143,7 +144,8 @@ public class TeamServiceTest {
         assertEquals(ConditionOperator.EQUAL, condition.getOperator());
         assertEquals(Confederation.UEFA, condition.getValue());
 
-        final OrderBy orderBy = request.getOrderBy();
+        assertEquals(1, request.getOrderBy().size());
+        final OrderBy orderBy = request.getOrderBy().get(0);
         assertEquals(List.of("name"), orderBy.getColumn().getParts());
         assertEquals(OrderDirection.ASCENDING, orderBy.getDirection());
 
@@ -255,7 +257,8 @@ public class TeamServiceTest {
         final Column queryJoinConditionValue = (Column) queryJoinCondition.getValue();
         assertEquals(List.of("teamIds", "teamId"), queryJoinConditionValue.getParts());
 
-        final OrderBy orderBy = request.getOrderBy();
+        assertEquals(1, request.getOrderBy().size());
+        final OrderBy orderBy = request.getOrderBy().get(0);
         assertEquals(List.of("name"), orderBy.getColumn().getParts());
         assertEquals(OrderDirection.ASCENDING, orderBy.getDirection());
 
@@ -386,7 +389,8 @@ public class TeamServiceTest {
         assertEquals(ConditionOperator.IN, queryCondition.getOperator());
         assertEquals(List.of("c08fd796-7fea-40d9-9a0a-cb3a49cce2e4", "6ee28143-1286-4618-a8b9-ad86d348ead1"), queryCondition.getValue());
 
-        final OrderBy queryOrderBy = queryRequest.getOrderBy();
+        assertEquals(1, queryRequest.getOrderBy().size());
+        final OrderBy queryOrderBy = queryRequest.getOrderBy().get(0);
         assertEquals(List.of("name"), queryOrderBy.getColumn().getParts());
         assertEquals(OrderDirection.ASCENDING, queryOrderBy.getDirection());
 

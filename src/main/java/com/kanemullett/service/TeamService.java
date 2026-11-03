@@ -57,7 +57,7 @@ public class TeamService {
 
         final ImmutableQueryRequest.Builder<Team> requestBuilder = ImmutableQueryRequest.<Team>builder()
             .conditionGroup(queryConditionGroup)
-            .orderBy(OrderBy.of(Column.of(Team.NAME_COLUMN)))
+            .orderBy(List.of(OrderBy.of(Column.of(Team.NAME_COLUMN))))
             .recordClass(Team.class);
 
         // TODO: Consider how this can be reworked when migration is complete.
@@ -150,7 +150,7 @@ public class TeamService {
                         .toList())
                     .build()
             ))
-            .orderBy(OrderBy.of(Column.of(Team.NAME_COLUMN)))
+            .orderBy(List.of(OrderBy.of(Column.of(Team.NAME_COLUMN))))
             .recordClass(Team.class)
             .build();
 

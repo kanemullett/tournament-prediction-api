@@ -215,6 +215,58 @@ public class GroupService {
         return retrieveAndBuildGroup(tournamentId, groupId);
     }
 
+    public boolean tournamentHasGroupStage(String tournamentId) {
+
+        final QueryRequest<DatabaseRecord> queryRequest = ImmutableQueryRequest.builder()
+            .columns(List.of(
+                Column.of(
+                    TOURNAMENT_TEMPLATES_TABLE_ALIAS,
+                    TournamentTemplateRecord.LEAGUE_TEMPLATE_ID_COLUMN
+                )
+            ))
+            .table(Table.of(
+                PredictorConstants.PREDICTOR_SCHEMA,
+                Tournament.TARGET_TABLE,
+                TOURNAMENTS_TABLE_ALIAS
+            ))
+            .joins(List.of(
+                TableJoin.of(
+                    Table.of(
+                        PredictorConstants.PREDICTOR_SCHEMA,
+                        TournamentTemplateRecord.TARGET_TABLE,
+                        TOURNAMENT_TEMPLATES_TABLE_ALIAS
+                    ),
+                    QueryCondition.of(
+                        Column.of(
+                            TOURNAMENTS_TABLE_ALIAS,
+                            Tournament.TEMPLATE_ID_COLUMN
+                        ),
+                        Column.of(
+                            TOURNAMENT_TEMPLATES_TABLE_ALIAS,
+                            DatabaseConstants.ID
+                        )
+                    ),
+                    JoinType.INNER
+                )
+            ))
+            .conditionGroup(QueryConditionGroup.of(
+                QueryCondition.of(
+                    Column.of(
+                        TOURNAMENTS_TABLE_ALIAS,
+                        DatabaseConstants.ID
+                    ),
+                    tournamentId
+                )
+            ))
+            .recordClass(DatabaseRecord.class)
+            .build();
+
+        final QueryResponse<DatabaseRecord> response = queryService.retrieveRecords(queryRequest);
+
+        return response.getRecordCount() != 0
+            && response.getRecords().get(0).getData().get(TournamentTemplateRecord.LEAGUE_TEMPLATE_ID_COLUMN) != null;
+    }
+
     private void verifyTournament(String tournamentId) {
         final QueryRequest<DatabaseRecord> queryRequest = ImmutableQueryRequest.<DatabaseRecord>builder()
             .columns(List.of(
