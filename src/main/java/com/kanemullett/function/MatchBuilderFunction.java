@@ -45,6 +45,7 @@ public class MatchBuilderFunction implements Function<DatabaseRecord, Match> {
                 .confederation(Confederation.valueOf((String) recordData.get("awayConfederation")))
                 .build() : null;
 
+        final Winner winner = recordData.get(Result.PENALTIES_WINNER_COLUMN) != null ? Winner.valueOf((String) recordData.get(Result.PENALTIES_WINNER_COLUMN)) : null;
         final MatchOutcome result = recordData.get(Result.HOME_GOALS_COLUMN) != null
             && recordData.get(Result.AWAY_GOALS_COLUMN) != null ?
                 ImmutableMatchOutcome.builder()
@@ -52,7 +53,7 @@ public class MatchBuilderFunction implements Function<DatabaseRecord, Match> {
                     .awayGoals((Integer) recordData.get(Result.AWAY_GOALS_COLUMN))
                     .isAfterExtraTime((Boolean) recordData.get(Result.AFTER_EXTRA_TIME_COLUMN))
                     .isAfterPenalties((Boolean) recordData.get(Result.AFTER_PENALTIES_COLUMN))
-                    .winner(Winner.valueOf((String) recordData.get(Result.PENALTIES_WINNER_COLUMN)))
+                    .winner(winner)
                     .build() : null;
 
         final Group group = recordData.get(MatchRecord.GROUP_ID_COLUMN) != null ?

@@ -10,6 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -69,7 +70,7 @@ public class MatchServiceTest {
         .putData("awayName", "Nigeria")
         .putData("awayImagePath", "NGA.png")
         .putData("awayConfederation", "CAF")
-        .putData("kickoff", "2025-06-01T14:00:00")
+        .putData("kickoff", Timestamp.valueOf(LocalDateTime.of(2025, 6, 1, 14, 0, 0)))
         .putData("groupMatchDay", 1)
         .putData("groupId", "4c2c8046-0007-48db-a76a-865f9048d9de")
         .putData("homeGoals", 2)
@@ -88,7 +89,7 @@ public class MatchServiceTest {
         .putData("awayName", "Iran")
         .putData("awayImagePath", "IRI.png")
         .putData("awayConfederation", "AFC")
-        .putData("kickoff", "2025-06-01T17:30:00")
+        .putData("kickoff", Timestamp.valueOf(LocalDateTime.of(2025, 6, 1, 17, 30, 0)))
         .putData("roundId", "322ab9d0-ae46-49ac-89b3-c789a0d9d889")
         .putData("homeGoals", 2)
         .putData("awayGoals", 1)
