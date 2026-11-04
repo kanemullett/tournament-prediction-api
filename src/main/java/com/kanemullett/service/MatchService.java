@@ -72,7 +72,7 @@ public class MatchService {
     public List<Match> getMatches(
             String tournamentId,
             @Nullable String groupId,
-            @Nullable int groupMatchDay,
+            @Nullable Integer groupMatchDay,
             @Nullable String roundId) {
 
         tournamentService.getTournamentById(tournamentId);
@@ -362,6 +362,7 @@ public class MatchService {
                     .join(ConditionJoin.AND)
                     .build() : null)
             .orderBy(orderBy)
+            .recordClass(DatabaseRecord.class)
             .build();
 
         final QueryResponse<DatabaseRecord> response = queryService.retrieveRecords(queryRequest);
