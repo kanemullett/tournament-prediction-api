@@ -19,6 +19,7 @@ import com.kanemullett.model.QueryResponse;
 import com.kanemullett.model.Round;
 import com.kanemullett.model.RoundUpdate;
 import com.kanemullett.model.Table;
+import com.kanemullett.model.TableJoin;
 import com.kanemullett.model.Tournament;
 import com.kanemullett.model.TournamentTemplateRecord;
 import com.kanemullett.model.UpdateRequest;
@@ -76,6 +77,57 @@ public class RoundService {
         verifyTournament(tournamentId);
 
         return retrieveRound(tournamentId, roundId);
+    }
+
+    public boolean tournamentHasKnockoutStage(String tournamentId) {
+
+        final QueryRequest<DatabaseRecord> queryRequest = ImmutableQueryRequest.builder()
+            .columns(List.of(
+                Column.of(
+                    TOURNAMENT_TEMPLATES_TABLE_ALIAS,
+                    TournamentTemplateRecord.KNOCKOUT_TEMPLATE_ID_COLUMN
+                )
+            ))
+            .table(Table.of(
+                PredictorConstants.PREDICTOR_SCHEMA,
+                Tournament.TARGET_TABLE,
+                TOURNAMENTS_TABLE_ALIAS
+            ))
+            .joins(List.of(
+                TableJoin.of(
+                    Table.of(
+                        PredictorConstants.PREDICTOR_SCHEMA,
+                        TournamentTemplateRecord.TARGET_TABLE,
+                        TOURNAMENT_TEMPLATES_TABLE_ALIAS
+                    ),
+                    QueryCondition.of(
+                        Column.of(
+                            TOURNAMENTS_TABLE_ALIAS,
+                            Tournament.TEMPLATE_ID_COLUMN
+                        ),
+                        Column.of(
+                            TOURNAMENT_TEMPLATES_TABLE_ALIAS,
+                            DatabaseConstants.ID
+                        )
+                    ),
+                    JoinType.INNER
+                )
+            ))
+            .conditionGroup(QueryConditionGroup.of(
+                QueryCondition.of(
+                    Column.of(
+                        TOURNAMENTS_TABLE_ALIAS,
+                        DatabaseConstants.ID
+                    ),
+                    tournamentId
+                )
+            ))
+            .build();
+
+        final QueryResponse<DatabaseRecord> response = queryService.retrieveRecords(queryRequest);
+
+        return response.getRecordCount() != 0
+            && response.getRecords().get(0).getData().get(TournamentTemplateRecord.KNOCKOUT_TEMPLATE_ID_COLUMN) != null;
     }
 
     private void verifyTournament(String tournamentId) {
