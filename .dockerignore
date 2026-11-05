@@ -1,0 +1,3 @@
+# Only the built jar is needed in the image.
+*
+!target/tournament-prediction-api-*.jar

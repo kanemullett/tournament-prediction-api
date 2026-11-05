@@ -3,6 +3,8 @@ package com.kanemullett.service;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
@@ -230,6 +232,36 @@ public class GroupServiceTest {
     }
 
     @Test
+    void shouldReturnGroupsWithNoTeams() {
+        // Given
+        final QueryResponse<DatabaseRecord> existsResponse = buildTournamentExistsResponse();
+
+        // A LEFT JOIN row for a group with no teams has no team columns populated.
+        final DatabaseRecord emptyGroupRecord = ImmutableDatabaseRecord.builder()
+            .putData("groupId", "9b60ac29-905a-437d-918f-b98b74ce3e1b")
+            .putData("groupName", "Group B")
+            .build();
+        final QueryResponse<DatabaseRecord> groupTeamsResponse = buildGroupTeamsResponse(List.of(MEXICO_RECORD, emptyGroupRecord));
+
+        when(queryService.retrieveRecords(any()))
+            .thenReturn(existsResponse, groupTeamsResponse);
+
+        // When
+        final List<Group> groups = groupService.getGroups("2c299156-dd35-4791-8684-eca54a433042");
+
+        // Then
+        assertEquals(2, groups.size());
+
+        assertEquals("Group A", groups.get(0).getName());
+        assertEquals(1, groups.get(0).getTeams().size());
+        assertTeam(MEXICO, groups.get(0).getTeams().get(0));
+
+        assertEquals("9b60ac29-905a-437d-918f-b98b74ce3e1b", groups.get(1).getId());
+        assertEquals("Group B", groups.get(1).getName());
+        assertEquals(0, groups.get(1).getTeams().size());
+    }
+
+    @Test
     void shouldErrorIfTournamentDoesNotExistWhileRetrievingGroups() {
         // Given
         final QueryResponse<DatabaseRecord> existsResponse = mock(QueryResponse.class);
@@ -438,7 +470,7 @@ public class GroupServiceTest {
         
         final QueryConditionGroup expectedConditionGroup = QueryConditionGroup.of(
             QueryCondition.of(
-                Column.of("gt", "groupId"), "5ffe2393-7717-43d4-860d-9fbd52775b5a"
+                Column.of("gr", "id"), "5ffe2393-7717-43d4-860d-9fbd52775b5a"
             )
         );
         assertGroupRequest(expectedConditionGroup, requests.get(2), "5341cff8-df9f-4068-8a42-4b4288ecba87");
@@ -815,6 +847,48 @@ public class GroupServiceTest {
         assertEquals("No groups found with a matching id.", rse.getReason());
     }
 
+    @Test
+    void shouldReportGroupStageWhenTemplateHasLeague() {
+        // Given
+        final QueryResponse<DatabaseRecord> response = buildTournamentExistsResponse();
+        when(queryService.retrieveRecords(any()))
+            .thenReturn(response);
+
+        // When
+        final boolean hasGroupStage = groupService.tournamentHasGroupStage("2c299156-dd35-4791-8684-eca54a433042");
+
+        // Then
+        final ArgumentCaptor<QueryRequest<DatabaseRecord>> requestCaptor = ArgumentCaptor.forClass(QueryRequest.class);
+        verify(queryService).retrieveRecords(requestCaptor.capture());
+        final QueryRequest<DatabaseRecord> request = requestCaptor.getValue();
+
+        assertEquals(1, request.getColumns().size());
+        assertColumn("tt", "leagueTemplateId", request.getColumns().get(0));
+        assertTable("predictor", "tournaments", "to", request.getTable());
+        assertCondition(
+            QueryCondition.of(Column.of("to", "id"), "2c299156-dd35-4791-8684-eca54a433042"),
+            request.getConditionGroup().getConditions().get(0)
+        );
+        assertEquals(DatabaseRecord.class, request.getRecordClass());
+
+        assertTrue(hasGroupStage);
+    }
+
+    @Test
+    void shouldReportNoGroupStageWhenTemplateHasNoLeague() {
+        // Given
+        final QueryResponse<DatabaseRecord> response = mock(QueryResponse.class);
+        when(response.getRecordCount())
+            .thenReturn(1);
+        when(response.getRecords())
+            .thenReturn(List.of(ImmutableDatabaseRecord.builder().id("2c299156-dd35-4791-8684-eca54a433042").build()));
+        when(queryService.retrieveRecords(any()))
+            .thenReturn(response);
+
+        // When / Then
+        assertFalse(groupService.tournamentHasGroupStage("2c299156-dd35-4791-8684-eca54a433042"));
+    }
+
     private static QueryResponse<DatabaseRecord> buildTournamentExistsResponse() {
         final QueryResponse<DatabaseRecord> existsResponse = mock(QueryResponse.class);
         when(existsResponse.getRecordCount())
@@ -890,7 +964,7 @@ public class GroupServiceTest {
     private static void assertGroupRequest(@Nullable QueryConditionGroup expectedConditionGroup, QueryRequest<DatabaseRecord> actual, String tournamentId) {
         final List<Column> columns = actual.getColumns();
         assertEquals(7, columns.size());
-        assertColumn("gt", "groupId", columns.get(0));
+        assertColumn("gr", "id", "groupId", columns.get(0));
         assertColumn("gr", "name", "groupName", columns.get(1));
         assertColumn("gt", "teamId", columns.get(2));
         assertColumn("te", "name", "teamName", columns.get(3));
@@ -898,22 +972,22 @@ public class GroupServiceTest {
         assertColumn("te", "confederation", columns.get(5));
         assertColumn("te", "ranking", columns.get(6));
 
-        assertTable("predictor", "group-teams_" + tournamentId, "gt", actual.getTable());
+        assertTable("predictor", "groups_" + tournamentId, "gr", actual.getTable());
 
         assertEquals(2, actual.getJoins().size());
 
         final TableJoin join1 = (TableJoin) actual.getJoins().get(0);
-        assertTable("predictor", "groups_" + tournamentId, "gr", join1.getTable());
-        assertEquals(JoinType.INNER, join1.getJoinType());
+        assertTable("predictor", "group-teams_" + tournamentId, "gt", join1.getTable());
+        assertEquals(JoinType.LEFT, join1.getJoinType());
 
         final QueryCondition join1Condition = join1.getJoinCondition();
-        assertColumn("gt", "groupId", join1Condition.getColumn());
+        assertColumn("gr", "id", join1Condition.getColumn());
         assertEquals(ConditionOperator.EQUAL, join1Condition.getOperator());
-        assertColumn("gr", "id", (Column) join1Condition.getValue());
+        assertColumn("gt", "groupId", (Column) join1Condition.getValue());
 
         final TableJoin join2 = (TableJoin) actual.getJoins().get(1);
         assertTable("predictor", "teams", "te", join2.getTable());
-        assertEquals(JoinType.INNER, join2.getJoinType());
+        assertEquals(JoinType.LEFT, join2.getJoinType());
 
         final QueryCondition join2Condition = join2.getJoinCondition();
         assertColumn("gt", "teamId", join2Condition.getColumn());

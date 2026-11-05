@@ -1,12 +1,13 @@
 package com.kanemullett.function;
 
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -132,6 +133,44 @@ public class MatchBuilderFunctionTest {
 
         // Then
         assertMatch(match, built);
+    }
+
+    @Test
+    void shouldBuildUnscheduledMatchFromRecord() {
+        // Given - a freshly generated group match: no kickoff, teams or result yet
+        final DatabaseRecord unscheduledRecord = ImmutableDatabaseRecord.builder()
+            .putData("matchId", "0b7f6c1e-5d2a-4f43-9a51-2f8f3d1f6a10")
+            .putData("groupMatchDay", 1)
+            .putData("groupId", "4c2c8046-0007-48db-a76a-865f9048d9de")
+            .putData("groupName", "Group A")
+            .build();
+
+        // When
+        final Match built = matchBuilderFunction.apply(unscheduledRecord);
+
+        // Then
+        assertEquals("0b7f6c1e-5d2a-4f43-9a51-2f8f3d1f6a10", built.getId());
+        assertNull(built.getKickoff());
+        assertNull(built.getHomeTeam());
+        assertNull(built.getAwayTeam());
+        assertNull(built.getResult());
+        assertEquals(1, built.getGroupMatchDay());
+        assertEquals("Group A", built.getGroup().getName());
+    }
+
+    @Test
+    void shouldBuildMatchFromLocalDateTimeKickoff() {
+        // Given
+        final DatabaseRecord dbRecord = ImmutableDatabaseRecord.builder()
+            .putData("matchId", "0b7f6c1e-5d2a-4f43-9a51-2f8f3d1f6a10")
+            .putData("kickoff", LocalDateTime.of(2026, 6, 11, 20, 0, 0))
+            .build();
+
+        // When
+        final Match built = matchBuilderFunction.apply(dbRecord);
+
+        // Then
+        assertEquals(LocalDateTime.of(2026, 6, 11, 20, 0, 0), built.getKickoff());
     }
 
     private static void assertMatch(Match expected, Match actual) {

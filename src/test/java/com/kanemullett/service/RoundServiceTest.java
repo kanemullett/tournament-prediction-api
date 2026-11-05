@@ -1,6 +1,8 @@
 package com.kanemullett.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -338,6 +340,47 @@ public class RoundServiceTest {
         // Then
         assertEquals(HttpStatus.NOT_FOUND, rse.getStatusCode());
         assertEquals("No rounds found with a matching id.", rse.getReason());
+    }
+
+    @Test
+    void shouldReportKnockoutStageWhenTemplateHasKnockout() {
+        // Given
+        final QueryResponse<DatabaseRecord> response = buildTournamentExistsResponse();
+        when(queryService.retrieveRecords(any()))
+            .thenReturn(response);
+
+        // When
+        final boolean hasKnockoutStage = roundService.tournamentHasKnockoutStage(TOURNAMENT_ID);
+
+        // Then
+        final ArgumentCaptor<QueryRequest<DatabaseRecord>> requestCaptor = ArgumentCaptor.forClass(QueryRequest.class);
+        verify(queryService).retrieveRecords(requestCaptor.capture());
+        final QueryRequest<DatabaseRecord> request = requestCaptor.getValue();
+
+        assertEquals(List.of(Column.of("tt", "knockoutTemplateId")), request.getColumns());
+        assertTable("predictor", "tournaments", "to", request.getTable());
+        assertCondition(
+            QueryCondition.of(Column.of("to", "id"), TOURNAMENT_ID),
+            request.getConditionGroup().getConditions().get(0)
+        );
+        assertEquals(DatabaseRecord.class, request.getRecordClass());
+
+        assertTrue(hasKnockoutStage);
+    }
+
+    @Test
+    void shouldReportNoKnockoutStageWhenTemplateHasNoKnockout() {
+        // Given
+        final QueryResponse<DatabaseRecord> response = mock(QueryResponse.class);
+        when(response.getRecordCount())
+            .thenReturn(1);
+        when(response.getRecords())
+            .thenReturn(List.of(ImmutableDatabaseRecord.builder().id(TOURNAMENT_ID).build()));
+        when(queryService.retrieveRecords(any()))
+            .thenReturn(response);
+
+        // When / Then
+        assertFalse(roundService.tournamentHasKnockoutStage(TOURNAMENT_ID));
     }
 
     private static QueryResponse<DatabaseRecord> buildTournamentExistsResponse() {
