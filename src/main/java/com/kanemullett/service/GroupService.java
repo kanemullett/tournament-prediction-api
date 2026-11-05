@@ -331,7 +331,7 @@ public class GroupService {
     private Group retrieveAndBuildGroup(String tournamentId, String groupId) {
         final QueryConditionGroup conditionGroup = QueryConditionGroup.of(
             QueryCondition.of(
-                Column.of(GROUP_TEAMS_TABLE_ALIAS, GroupTeam.GROUP_ID_COLUMN),
+                Column.of(GROUPS_TABLE_ALIAS, DatabaseConstants.ID),
                 groupId
             )
         );
@@ -343,7 +343,10 @@ public class GroupService {
 
         final QueryRequest<DatabaseRecord> queryRequest = ImmutableQueryRequest.<DatabaseRecord>builder()
             .columns(List.of(
-                Column.of(GROUP_TEAMS_TABLE_ALIAS, GroupTeam.GROUP_ID_COLUMN),
+                ImmutableColumn.builder()
+                    .addParts(GROUPS_TABLE_ALIAS, DatabaseConstants.ID)
+                    .alias(GroupTeam.GROUP_ID_COLUMN)
+                    .build(),
                 ImmutableColumn.builder()
                     .addParts(GROUPS_TABLE_ALIAS, GroupRecord.NAME_COLUMN)
                     .alias("groupName")
@@ -357,19 +360,20 @@ public class GroupService {
                 Column.of(TEAMS_TABLE_ALIAS, Team.CONFEDERATION_COLUMN),
                 Column.of(TEAMS_TABLE_ALIAS, Team.RANKING_COLUMN)
             ))
-            .table(Table.of(PredictorConstants.PREDICTOR_SCHEMA, GroupTeam.getTargetTable(tournamentId), GROUP_TEAMS_TABLE_ALIAS))
+            // Root on groups and LEFT JOIN teams so that groups with no teams assigned are still returned.
+            .table(Table.of(PredictorConstants.PREDICTOR_SCHEMA, GroupRecord.getTargetTable(tournamentId), GROUPS_TABLE_ALIAS))
             .joins(List.of(
                 ImmutableTableJoin.builder()
-                    .table(Table.of(PredictorConstants.PREDICTOR_SCHEMA, GroupRecord.getTargetTable(tournamentId), GROUPS_TABLE_ALIAS))
-                    .joinType(JoinType.INNER)
+                    .table(Table.of(PredictorConstants.PREDICTOR_SCHEMA, GroupTeam.getTargetTable(tournamentId), GROUP_TEAMS_TABLE_ALIAS))
+                    .joinType(JoinType.LEFT)
                     .joinCondition(QueryCondition.of(
-                        Column.of(GROUP_TEAMS_TABLE_ALIAS, GroupTeam.GROUP_ID_COLUMN),
-                        Column.of(GROUPS_TABLE_ALIAS, DatabaseConstants.ID)
+                        Column.of(GROUPS_TABLE_ALIAS, DatabaseConstants.ID),
+                        Column.of(GROUP_TEAMS_TABLE_ALIAS, GroupTeam.GROUP_ID_COLUMN)
                     ))
                     .build(),
                 ImmutableTableJoin.builder()
                     .table(Table.of(PredictorConstants.PREDICTOR_SCHEMA, Team.TARGET_TABLE, TEAMS_TABLE_ALIAS))
-                    .joinType(JoinType.INNER)
+                    .joinType(JoinType.LEFT)
                     .joinCondition(QueryCondition.of(
                         Column.of(GROUP_TEAMS_TABLE_ALIAS, GroupTeam.TEAM_ID_COLUMN),
                         Column.of(TEAMS_TABLE_ALIAS, DatabaseConstants.ID)
@@ -393,6 +397,7 @@ public class GroupService {
         final String groupName = (String) groupRecords.get(0).getData().get("groupName");
 
         final List<Team> teams = groupRecords.stream()
+            .filter(teamRecord -> teamRecord.getData().get(GroupTeam.TEAM_ID_COLUMN) != null)
             .map(teamRecord -> ImmutableTeam.builder()
                 .id((String) teamRecord.getData().get(GroupTeam.TEAM_ID_COLUMN))
                 .name((String) teamRecord.getData().get("teamName"))

@@ -122,6 +122,7 @@ public class RoundService {
                     tournamentId
                 )
             ))
+            .recordClass(DatabaseRecord.class)
             .build();
 
         final QueryResponse<DatabaseRecord> response = queryService.retrieveRecords(queryRequest);

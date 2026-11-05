@@ -1,6 +1,7 @@
 package com.kanemullett.function;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -77,11 +78,19 @@ public class MatchBuilderFunction implements Function<DatabaseRecord, Match> {
             .id((String) recordData.get("matchId"))
             .homeTeam(home)
             .awayTeam(away)
-            .kickoff(((Timestamp) recordData.get(MatchRecord.KICKOFF_COLUMN)).toLocalDateTime())
+            .kickoff(toLocalDateTime(recordData.get(MatchRecord.KICKOFF_COLUMN)))
             .groupMatchDay((Integer) recordData.get(MatchRecord.GROUP_MATCH_DAY_COLUMN))
             .group(group)
             .round(round)
             .result(result)
             .build();
+    }
+
+    // Kickoff is unset on freshly generated matches.
+    private static LocalDateTime toLocalDateTime(Object value) {
+        if (value instanceof Timestamp timestamp) {
+            return timestamp.toLocalDateTime();
+        }
+        return (LocalDateTime) value;
     }
 }
