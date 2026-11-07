@@ -36,7 +36,12 @@ public interface Result extends DatabaseRecord {
                 ColumnDefinition.of(AWAY_GOALS_COLUMN, SqlDataType.INTEGER),
                 ColumnDefinition.of(AFTER_EXTRA_TIME_COLUMN, SqlDataType.BOOLEAN),
                 ColumnDefinition.of(AFTER_PENALTIES_COLUMN, SqlDataType.BOOLEAN),
-                ColumnDefinition.of(PENALTIES_WINNER_COLUMN, SqlDataType.VARCHAR)
+                // Only set when a match is decided on penalties.
+                ImmutableColumnDefinition.builder()
+                    .name(PENALTIES_WINNER_COLUMN)
+                    .dataType(SqlDataType.VARCHAR)
+                    .isNullable(true)
+                    .build()
             ))
             .build();
     }

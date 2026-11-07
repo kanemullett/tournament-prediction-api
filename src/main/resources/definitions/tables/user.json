@@ -1,0 +1,15 @@
+{
+    "schema": "predictor",
+    "table": "users",
+    "columns": [
+        {
+            "name": "id",
+            "dataType": "VARCHAR",
+            "primaryKey": true
+        },
+        {
+            "name": "displayName",
+            "dataType": "VARCHAR"
+        }
+    ]
+}

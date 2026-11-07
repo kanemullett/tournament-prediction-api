@@ -47,7 +47,7 @@ This runs the tests and produces `target/tournament-prediction-api-*.jar`, which
 | `CORS_ORIGINS` | Comma-separated origins allowed to call the API from a browser | none |
 | `SERVER_PORT` | HTTP port | `8000` |
 
-Database migrations in `src/main/resources/db/migration` run automatically on startup.
+Tables described by the JSON files in `src/main/resources/definitions/tables` are created on startup if they don't already exist (handled by `database-handler`).
 
 ## Endpoints
 

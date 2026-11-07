@@ -1,0 +1,25 @@
+{
+    "schema": "predictor",
+    "table": "tournament-templates",
+    "columns": [
+        {
+            "name": "id",
+            "dataType": "VARCHAR",
+            "primaryKey": true
+        },
+        {
+            "name": "name",
+            "dataType": "VARCHAR"
+        },
+        {
+            "name": "leagueTemplateId",
+            "dataType": "VARCHAR",
+            "isNullable": true
+        },
+        {
+            "name": "knockoutTemplateId",
+            "dataType": "VARCHAR",
+            "isNullable": true
+        }
+    ]
+}

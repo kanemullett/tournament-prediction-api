@@ -1,0 +1,20 @@
+{
+    "schema": "predictor",
+    "table": "competitions",
+    "columns": [
+        {
+            "name": "id",
+            "dataType": "VARCHAR",
+            "primaryKey": true
+        },
+        {
+            "name": "name",
+            "dataType": "VARCHAR"
+        },
+        {
+            "name": "tournamentId",
+            "dataType": "VARCHAR",
+            "isNullable": true
+        }
+    ]
+}
