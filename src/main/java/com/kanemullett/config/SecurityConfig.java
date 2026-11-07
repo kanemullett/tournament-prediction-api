@@ -37,7 +37,7 @@ public class SecurityConfig {
             // Uses the origins from CorsConfig, and answers preflight requests before authentication.
             .cors(withDefaults())
             // Tokens are sent in the Authorization header, never in cookies, so CSRF doesn't apply.
-            .csrf(AbstractHttpConfigurer::disable)
+            .csrf(AbstractHttpConfigurer::disable) // NOSONAR java:S4502 - stateless bearer-token API, no cookies
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(PUBLIC_PATHS).permitAll()
