@@ -1,0 +1,20 @@
+{
+    "schema": "predictor",
+    "table": "knockout-templates",
+    "columns": [
+        {
+            "name": "id",
+            "dataType": "VARCHAR",
+            "primaryKey": true
+        },
+        {
+            "name": "name",
+            "dataType": "VARCHAR"
+        },
+        {
+            "name": "rounds",
+            "dataType": "JSONB",
+            "isNullable": true
+        }
+    ]
+}

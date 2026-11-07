@@ -1,0 +1,19 @@
+{
+    "schema": "predictor",
+    "table": "competition-users",
+    "columns": [
+        {
+            "name": "id",
+            "dataType": "VARCHAR",
+            "primaryKey": true
+        },
+        {
+            "name": "competitionId",
+            "dataType": "VARCHAR"
+        },
+        {
+            "name": "username",
+            "dataType": "VARCHAR"
+        }
+    ]
+}

@@ -1,0 +1,28 @@
+{
+    "schema": "predictor",
+    "table": "tournaments",
+    "columns": [
+        {
+            "name": "id",
+            "dataType": "VARCHAR",
+            "primaryKey": true
+        },
+        {
+            "name": "name",
+            "dataType": "VARCHAR"
+        },
+        {
+            "name": "year",
+            "dataType": "INTEGER"
+        },
+        {
+            "name": "confederation",
+            "dataType": "VARCHAR",
+            "isNullable": true
+        },
+        {
+            "name": "templateId",
+            "dataType": "VARCHAR"
+        }
+    ]
+}

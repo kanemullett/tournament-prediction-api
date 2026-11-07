@@ -28,11 +28,11 @@ public class MatchRecordTest extends AbstractRecordTest {
         assertEquals(7, tableDefinition.getColumns().size());
 
         assertColumnDefinition("id", SqlDataType.VARCHAR, true, tableDefinition.getColumns().get(0));
-        assertColumnDefinition("homeTeamId", SqlDataType.VARCHAR, false, tableDefinition.getColumns().get(1));
-        assertColumnDefinition("awayTeamId", SqlDataType.VARCHAR, false, tableDefinition.getColumns().get(2));
-        assertColumnDefinition("kickoff", SqlDataType.TIMESTAMP_WITHOUT_TIME_ZONE, false, tableDefinition.getColumns().get(3));
-        assertColumnDefinition("groupMatchDay", SqlDataType.INTEGER, false, tableDefinition.getColumns().get(4));
-        assertColumnDefinition("groupId", SqlDataType.VARCHAR, false, tableDefinition.getColumns().get(5));
-        assertColumnDefinition("roundId", SqlDataType.VARCHAR, false, tableDefinition.getColumns().get(6));
+        assertColumnDefinition("homeTeamId", SqlDataType.VARCHAR, false, true, tableDefinition.getColumns().get(1));
+        assertColumnDefinition("awayTeamId", SqlDataType.VARCHAR, false, true, tableDefinition.getColumns().get(2));
+        assertColumnDefinition("kickoff", SqlDataType.TIMESTAMP_WITHOUT_TIME_ZONE, false, true, tableDefinition.getColumns().get(3));
+        assertColumnDefinition("groupMatchDay", SqlDataType.INTEGER, false, true, tableDefinition.getColumns().get(4));
+        assertColumnDefinition("groupId", SqlDataType.VARCHAR, false, true, tableDefinition.getColumns().get(5));
+        assertColumnDefinition("roundId", SqlDataType.VARCHAR, false, true, tableDefinition.getColumns().get(6));
     }
 }

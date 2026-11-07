@@ -1,0 +1,27 @@
+{
+    "schema": "predictor",
+    "table": "league-templates",
+    "columns": [
+        {
+            "name": "id",
+            "dataType": "VARCHAR",
+            "primaryKey": true
+        },
+        {
+            "name": "name",
+            "dataType": "VARCHAR"
+        },
+        {
+            "name": "groupCount",
+            "dataType": "INTEGER"
+        },
+        {
+            "name": "teamsPerGroup",
+            "dataType": "INTEGER"
+        },
+        {
+            "name": "homeAndAway",
+            "dataType": "BOOLEAN"
+        }
+    ]
+}

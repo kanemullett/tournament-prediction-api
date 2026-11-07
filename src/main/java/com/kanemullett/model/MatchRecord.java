@@ -32,13 +32,23 @@ public interface MatchRecord extends DatabaseRecord {
                     .dataType(SqlDataType.VARCHAR)
                     .primaryKey(true)
                     .build(),
-                ColumnDefinition.of(HOME_TEAM_ID_COLUMN, SqlDataType.VARCHAR),
-                ColumnDefinition.of(AWAY_TEAM_ID_COLUMN, SqlDataType.VARCHAR),
-                ColumnDefinition.of(KICKOFF_COLUMN, SqlDataType.TIMESTAMP_WITHOUT_TIME_ZONE),
-                ColumnDefinition.of(GROUP_MATCH_DAY_COLUMN, SqlDataType.INTEGER),
-                ColumnDefinition.of(GROUP_ID_COLUMN, SqlDataType.VARCHAR),
-                ColumnDefinition.of(ROUND_ID_COLUMN, SqlDataType.VARCHAR)
+                // Generated matches start without teams or a kickoff, and a match belongs to
+                // either a group or a round, so every column apart from the id is nullable.
+                nullableColumn(HOME_TEAM_ID_COLUMN, SqlDataType.VARCHAR),
+                nullableColumn(AWAY_TEAM_ID_COLUMN, SqlDataType.VARCHAR),
+                nullableColumn(KICKOFF_COLUMN, SqlDataType.TIMESTAMP_WITHOUT_TIME_ZONE),
+                nullableColumn(GROUP_MATCH_DAY_COLUMN, SqlDataType.INTEGER),
+                nullableColumn(GROUP_ID_COLUMN, SqlDataType.VARCHAR),
+                nullableColumn(ROUND_ID_COLUMN, SqlDataType.VARCHAR)
             ))
+            .build();
+    }
+
+    private static ColumnDefinition nullableColumn(String name, SqlDataType dataType) {
+        return ImmutableColumnDefinition.builder()
+            .name(name)
+            .dataType(dataType)
+            .isNullable(true)
             .build();
     } 
 

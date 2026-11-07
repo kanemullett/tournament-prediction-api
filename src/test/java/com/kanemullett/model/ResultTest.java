@@ -32,6 +32,6 @@ public class ResultTest extends AbstractRecordTest {
         assertColumnDefinition("awayGoals", SqlDataType.INTEGER, false, tableDefinition.getColumns().get(2));
         assertColumnDefinition("afterExtraTime", SqlDataType.BOOLEAN, false, tableDefinition.getColumns().get(3));
         assertColumnDefinition("afterPenalties", SqlDataType.BOOLEAN, false, tableDefinition.getColumns().get(4));
-        assertColumnDefinition("penaltiesWinner", SqlDataType.VARCHAR, false, tableDefinition.getColumns().get(5));
+        assertColumnDefinition("penaltiesWinner", SqlDataType.VARCHAR, false, true, tableDefinition.getColumns().get(5));
     }
 }

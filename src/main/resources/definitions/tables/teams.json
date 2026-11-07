@@ -1,0 +1,28 @@
+{
+    "schema": "predictor",
+    "table": "teams",
+    "columns": [
+        {
+            "name": "id",
+            "dataType": "VARCHAR",
+            "primaryKey": true
+        },
+        {
+            "name": "name",
+            "dataType": "VARCHAR"
+        },
+        {
+            "name": "imagePath",
+            "dataType": "VARCHAR"
+        },
+        {
+            "name": "confederation",
+            "dataType": "VARCHAR"
+        },
+        {
+            "name": "ranking",
+            "dataType": "INTEGER",
+            "isNullable": true
+        }
+    ]
+}
